@@ -1,18 +1,213 @@
+/*CSS PAG LOGIN */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
 body {
-  background-color: #f0f0f0;
-  font-family: Arial, sans-serif;
+    height: 100vh;
 }
 
-h1 {
-  color: #1a3cff;
-  font-size: 32px;
+.container {
+    display: flex;
+    height: 100vh;
 }
 
-button {
-  background: #1a3cff;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.left {
+    width: 50%;
+    background: #32CD72;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
 }
+
+.left-content {
+    max-width: 500px;
+}
+
+.logo {
+    font-size: 60px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.left h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: black;
+}
+
+.left p {
+    font-size: 22px;
+    line-height: 1.6;
+}
+
+.right {
+    width: 50%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-login {
+    width: 450px;
+    padding: 40px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+}
+
+.card-login h2 {
+    margin-bottom: 5px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #999;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.social-btn {
+    width: 100%;
+    background: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+.social-btn:hover {
+    background: #f7f7f7;
+}
+
+.social-btn svg {
+    margin-right: 10px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: #bbb;
+    font-size: 14px;
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #eee;
+}
+
+.divider span {
+    padding: 0 15px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group.senha {
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.forgot-password a {
+    color: #888;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.btn-entrar {
+    width: 100%;
+    border: none;
+    padding: 18px;
+    border-radius: 12px;
+    background: #32CD72;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-entrar:hover {
+    background: #2ebc68;
+}
+
+.bottom-links {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.bottom-links a {
+    color: #32CD72;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.bottom-links a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVO */
+@media(max-width:900px){
+    .container {
+        flex-direction: column;
+    }
+
+    .left, .right {
+        width: 100%;
+        height: auto;
+    }
+    
+    .left {
+        padding: 40px 20px;
+    }
+
+    .left h1 {
+        font-size: 32px;
+    }
+
+    .card-login {
+        width: 90%;
+        margin: 40px 0;
+    }
+}
+/* FIM CSS PAG LOGIN */
