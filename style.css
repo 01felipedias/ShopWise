@@ -92,11 +92,33 @@ body {
     margin-bottom: 12px;
     transition: 0.2s;
 }
+.social--btn-facebook {
+    width: 100%;
+    background: #3b5998;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
 
 .social-btn:hover {
     background: #f7f7f7;
+    transform: scale(1.05); /* aumenta 5% */
+    transition: 0.2s; /* suaviza a animação */
 }
-
+.social--btn-facebook:hover {
+    background: #2d4373; /* tom mais escuro do azul do Facebook */
+    transform: scale(1.05); /* aumenta 5% */
+    transition: 0.2s; /* suaviza a animação */
+}
 .social-btn svg {
     margin-right: 10px;
 }
@@ -165,6 +187,8 @@ input {
 
 .btn-entrar:hover {
     background: #2ebc68;
+    transform: scale(1.05); /* aumenta 5% */
+    transition: 0.2s; /* suaviza a animação */
 }
 
 .bottom-links {
@@ -210,4 +234,4 @@ input {
         margin: 40px 0;
     }
 }
-/* FIM CSS PAG LOGIN */
+/*----------------------------------- FIM CSS PAG LOGIN-------------------------------------------- */
