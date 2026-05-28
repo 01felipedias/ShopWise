@@ -119,10 +119,6 @@ body {
     transform: scale(1.05); /* aumenta 5% */
     transition: 0.2s; /* suaviza a animação */
 }
-.social-btn svg {
-    margin-right: 10px;
-}
-
 .divider {
     display: flex;
     align-items: center;
