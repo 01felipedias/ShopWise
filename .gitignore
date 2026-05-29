@@ -1,0 +1,3 @@
+# Ignorar arquivos de ambiente locais
+.env.development
+.env.production
