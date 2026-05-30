@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro ShopWise</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <section class="left">
+        <div class="left-content">
+            <img src="../assets/logoshopwise.png" alt="logo shopwise" style="margin-bottom: 20px;">
+            <h1>Crie sua conta e aproveite benefícios exclusivos</h1>
+
+            <p>
+                Cadastre-se gratuitamente para acompanhar preços,
+                receber alertas, utilizar cupons e ganhar cashback
+                em suas compras.
+            </p>
+        </div>
+    </section>
+
+    <section class="right">
+
+        <div class="card-login">
+
+            <h2>Bem vindo ao ShopWise!</h2>
+            <p class="subtitle">Preencha os dados para continuar</p>
+
+            <form action="/cadastro" method="POST">
+                <div class="input-group">
+                    <input type="text" name="nome" placeholder="Digite seu nome" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" name="cpf" placeholder="Digite seu CPF" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Digite seu email" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" name="cep" placeholder="Digite seu CEP" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" name="senha" placeholder="Digite sua senha" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" name="confirmasenha" placeholder="Confirme sua senha" required>
+                </div>
+                
+                <button type="submit" class="btn-verde">Cadastrar-se</button>
+            </form>
+                
+                <div class="bottom-links">
+                    <a href="login.html">Já possui conta? Entrar</a>
+                </div>
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>

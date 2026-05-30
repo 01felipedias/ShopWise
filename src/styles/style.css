@@ -7,12 +7,12 @@
 }
 
 body {
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .container {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .left {
@@ -92,7 +92,7 @@ body {
     margin-bottom: 12px;
     transition: 0.2s;
 }
-.social--btn-facebook {
+.social-btn-azul {
     width: 100%;
     background: #3b5998;
     color: #fff;
@@ -111,13 +111,13 @@ body {
 
 .social-btn:hover {
     background: #f7f7f7;
-    transform: scale(1.05); /* aumenta 5% */
-    transition: 0.2s; /* suaviza a animação */
+    transform: scale(1.05); 
+    transition: 0.2s;
 }
-.social--btn-facebook:hover {
-    background: #2d4373; /* tom mais escuro do azul do Facebook */
-    transform: scale(1.05); /* aumenta 5% */
-    transition: 0.2s; /* suaviza a animação */
+.social-btn-azul:hover {
+    background: #2d4373;
+    transform: scale(1.05); 
+    transition: 0.2s;
 }
 .divider {
     display: flex;
@@ -169,7 +169,7 @@ input {
     text-decoration: underline;
 }
 
-.btn-entrar {
+.btn-verde {
     width: 100%;
     border: none;
     padding: 18px;
@@ -181,10 +181,10 @@ input {
     cursor: pointer;
 }
 
-.btn-entrar:hover {
+.btn-verde:hover {
     background: #2ebc68;
-    transform: scale(1.05); /* aumenta 5% */
-    transition: 0.2s; /* suaviza a animação */
+    transform: scale(1.05); 
+    transition: 0.2s; 
 }
 
 .bottom-links {
@@ -196,7 +196,7 @@ input {
 }
 
 .bottom-links a {
-    color: #32CD72;
+    color: #2ECC71;
     text-decoration: none;
     font-size: 16px;
     font-weight: 500;
