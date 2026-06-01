@@ -1,12 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Supermercado</title>
+    <title>Cadastro de Supermercado ShopWise</title>
+
     <link rel="stylesheet" href="../styles/style.css">
 </head>
+
 <body>
-    
+
+    <header class="header-cadastro">
+        <img src="../assets//img/logoshopwise.png" alt="Logo ShopWise">
+    </header>
+
+    <main class="form-mercado">
+
+        <div class="card-login">
+
+            <h2>Cadastro de Supermercado</h2>
+            <p class="subtitulo">
+                Preencha os dados da sua loja para continuar
+            </p>
+
+            <form>
+
+                <h3>Informações da Loja</h3>
+
+                <div class="input-group">
+                    <input name="nome responsavel" type="text" placeholder="Nome do responsável" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="cnpj" type="text" placeholder="CNPJ" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="razaosocial" type="text" placeholder="Razão Social" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="nomeloja" type="text" placeholder="Nome da Loja" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="emailcomercial" type="email" placeholder="Email Comercial" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="telefone" type="tel" placeholder="Telefone para contato" required>
+                </div>
+
+                <h3>Localização da Loja</h3>
+
+                <div class="input-group">
+                    <input name="cep" type="text" placeholder="CEP" required>
+                </div>
+
+                <div class="linha">
+                    <input name="estado" type="text" placeholder="Estado" required>
+                    <input name="cidade" type="text" placeholder="Cidade" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="bairro" type="text" placeholder="Bairro" required>
+                </div>
+
+                <div class="input-group">
+                    <input name="endereco" type="text" placeholder="Endereço" required>
+                </div>
+
+                <div class="linha">
+                    <input name="numloja" type="text" placeholder="Número" required>
+                    <input name="complemento" type="text" placeholder="Complemento" required>
+                </div>
+
+                <button type="submit" class="btn-verde">
+                    Cadastrar Supermercado
+                </button>
+
+            </form>
+            <div class="bottom-links">
+                <a href="login.html">Já possui conta? Entrar</a>
+            </div>
+        </div>
+
+    </main>
+
 </body>
 </html>

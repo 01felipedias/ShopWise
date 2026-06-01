@@ -15,9 +15,9 @@ body {
     min-height: 100vh;
 }
 
-.left {
+.areaverde {
     width: 50%;
-    background: #32CD72;
+    background: #2ECC71;
     color: white;
     display: flex;
     justify-content: center;
@@ -26,30 +26,23 @@ body {
     padding: 50px;
 }
 
-.left-content {
+.areaverde-conteudo {
     max-width: 500px;
 }
 
-.logo {
-    font-size: 60px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
-
-.left h1 {
+.areaverde h1 {
     font-size: 48px;
     margin-bottom: 20px;
     color: rgba(26, 24, 24, 0.922);
 }
 
-.left p {
+.areaverde p {
     font-size: 22px;
     line-height: 1.6;
 }
 
-.right {
+.form {
     width: 50%;
-    background: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -69,14 +62,14 @@ body {
     font-size: 28px;
 }
 
-.subtitle {
+.subtitulo {
     text-align: center;
     color: #999;
     margin-bottom: 25px;
     font-size: 15px;
 }
 
-.social-btn {
+.btn-branco {
     width: 100%;
     background: #fff;
     color: #333;
@@ -92,7 +85,12 @@ body {
     margin-bottom: 12px;
     transition: 0.2s;
 }
-.social-btn-azul {
+.btn-branco img, .btn-azul img{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+.btn-azul {
     width: 100%;
     background: #3b5998;
     color: #fff;
@@ -109,15 +107,14 @@ body {
     transition: 0.2s;
 }
 
-.social-btn:hover {
+.btn-branco:hover {
     background: #f7f7f7;
     transform: scale(1.05); 
-    transition: 0.2s;
 }
-.social-btn-azul:hover {
+.btn-azul:hover {
     background: #2d4373;
     transform: scale(1.05); 
-    transition: 0.2s;
+
 }
 .divider {
     display: flex;
@@ -142,10 +139,6 @@ body {
     margin-bottom: 20px;
 }
 
-.input-group.senha {
-    margin-bottom: 8px;
-}
-
 input {
     width: 100%;
     padding: 16px;
@@ -154,18 +147,18 @@ input {
     font-size: 16px;
 }
 
-.forgot-password {
+.esqueci-senha {
     text-align: right;
     margin-bottom: 20px;
 }
 
-.forgot-password a {
+.esqueci-senha a {
     color: #888;
     text-decoration: none;
     font-size: 14px;
 }
 
-.forgot-password a:hover {
+.esqueci-senha a:hover {
     text-decoration: underline;
 }
 
@@ -174,17 +167,18 @@ input {
     border: none;
     padding: 18px;
     border-radius: 12px;
-    background: #32CD72;
+    background: #2ECC71;
     color: white;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.2s
 }
 
 .btn-verde:hover {
-    background: #2ebc68;
+    background: #008000;
     transform: scale(1.05); 
-    transition: 0.2s; 
+
 }
 
 .bottom-links {
@@ -206,30 +200,35 @@ input {
     text-decoration: underline;
 }
 
-/* RESPONSIVO */
-@media(max-width:900px){
-    .container {
-        flex-direction: column;
-    }
-
-    .left, .right {
-        width: 100%;
-        height: auto;
-    }
-    
-    .left {
-        padding: 40px 20px;
-    }
-
-    .left h1 {
-        font-size: 32px;
-    }
-
-    .card-login {
-        width: 90%;
-        margin: 40px 0;
-    }
-}
 /*----------------------------------- FIM CSS PAG LOGIN-------------------------------------------- */
 /*___________________________________PAG SENHA_______________________________________________________*/
 /* Reset Global */
+
+.header-cadastro{
+    height: 180px;
+    background: #2ECC71;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-mercado{
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: -50px;
+    padding-bottom: 40px;
+}
+
+.form-mercado .card-login{
+    width: 700px;
+}
+
+.linha{
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
