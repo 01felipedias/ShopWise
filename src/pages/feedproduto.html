@@ -151,10 +151,10 @@
 
     <script>
         const lojasFloriano = [
-            { id: 1, nome: "Mix Mateus", img: "C:/Users/helbe/ShopWise/src/assets/mix.png", desconto: "Até 30%" },
-            { id: 2, nome: "Super Quaresma", img: "C:/Users/helbe/ShopWise/src/assets/quaresma.png", desconto: "Ofertas" },
-            { id: 3, nome: "Carvalho", img: "C:/Users/helbe/ShopWise/src/assets/carvalho.png", desconto: "Até 25%" },
-            { id: 4, nome: "Jorge Batista", img: "C:/Users/helbe/ShopWise/src/assets/jorge-batista.png", desconto: "Novo" }
+            { id: 1, nome: "Mix Mateus", img: "../assets/mix.png", desconto: "Até 30%" },
+            { id: 2, nome: "Super Quaresma", img: "../assets/quaresma.png", desconto: "Ofertas" },
+            { id: 3, nome: "Carvalho", img: "../assets/carvalho.png", desconto: "Até 25%" },
+            { id: 4, nome: "Jorge Batista", img: "../assets/jorge-batista.png", desconto: "Novo" }
         ];
 
         function renderizarLojas() {
@@ -171,13 +171,13 @@
         }
 
         const dadosProdutos = [
-            { id: 1, nome: "Feijão Carioca tipo 1 Kicaldo 1kg", preco: "6,49", precoOriginal: "8,99", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/feijao-kicaldo.png" }, { id: 2, nome: "Feijão Preto Fugini 250g", preco: "3,49", precoOriginal: "5,00", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/feijao-fugini.png" }, { id: 3, nome: "Leite UHT Integral Ninho 1L", preco: "4,99", precoOriginal: "6,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "C:/Users/helbe/ShopWise/src/assets/leite-ninho.png" }, { id: 4, nome: "Queijo Mussarela Fatiado Itambé 150g", preco: "9,99", precoOriginal: "12,90", mercado: "Q", mercadoClass: "market-q", categoria: "laticinios", img: "C:/Users/helbe/ShopWise/src/assets/queijo-itambe.png" }, { id: 5, nome: "Iogurte Desnatado YoPRO 160g", preco: "8,99", precoOriginal: "11,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "C:/Users/helbe/ShopWise/src/assets/iogurte-yopro.png" }, { id: 6, nome: "Flocão de Milho Nutrivita 500g", preco: "2,19", precoOriginal: "3,20", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/flocao-bsb.png" }, { id: 7, nome: "Sabão em Pó Omo Lavagem Perfeita 800g", preco: "14,50", precoOriginal: "18,90", mercado: "Mix", mercadoClass: "market-mix", categoria: "limpeza", img: "C:/Users/helbe/ShopWise/src/assets/sabao-omo.png" }, { id: 8, nome: "Café Tradicional 3 Corações 250g", preco: "9,89", precoOriginal: "13,99", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/cafe-3coracoes.png" }, { id: 9, nome: "Refrigerante Coca-Cola 2L", preco: "8,49", precoOriginal: "10,99", mercado: "Q", mercadoClass: "market-q", categoria: "bebidas", img: "C:/Users/helbe/ShopWise/src/assets/coca-cola.png" }, { id: 10, nome: "Detergente Líquido Ypê Neutro 500ml", preco: "2,29", precoOriginal: "3,50", mercado: "Q", mercadoClass: "market-q", categoria: "limpeza", img: "C:/Users/helbe/ShopWise/src/assets/detergente-ype.png" }
+            { id: 1, nome: "Feijão Carioca tipo 1 Kicaldo 1kg", preco: "6,49", precoOriginal: "8,99", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/feijao-kicaldo.png" }, { id: 2, nome: "Feijão Preto Fugini 250g", preco: "3,49", precoOriginal: "5,00", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/feijao-fugini.png" }, { id: 3, nome: "Leite UHT Integral Ninho 1L", preco: "4,99", precoOriginal: "6,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/leite-ninho.png" }, { id: 4, nome: "Queijo Mussarela Fatiado Itambé 150g", preco: "9,99", precoOriginal: "12,90", mercado: "Q", mercadoClass: "market-q", categoria: "laticinios", img: "../assets/queijo-itambe.png" }, { id: 5, nome: "Iogurte Desnatado YoPRO 160g", preco: "8,99", precoOriginal: "11,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/iogurte-yopro.png" }, { id: 6, nome: "Flocão de Milho Nutrivita 500g", preco: "2,19", precoOriginal: "3,20", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/flocao-bsb.png" }, { id: 7, nome: "Sabão em Pó Omo Lavagem Perfeita 800g", preco: "14,50", precoOriginal: "18,90", mercado: "Mix", mercadoClass: "market-mix", categoria: "limpeza", img: "../assets/sabao-omo.png" }, { id: 8, nome: "Café Tradicional 3 Corações 250g", preco: "9,89", precoOriginal: "13,99", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/cafe-3coracoes.png" }, { id: 9, nome: "Refrigerante Coca-Cola 2L", preco: "8,49", precoOriginal: "10,99", mercado: "Q", mercadoClass: "market-q", categoria: "bebidas", img: "../assets/coca-cola.png" }, { id: 10, nome: "Detergente Líquido Ypê Neutro 500ml", preco: "2,29", precoOriginal: "3,50", mercado: "Q", mercadoClass: "market-q", categoria: "limpeza", img: "../assets/detergente-ype.png" }
         ];
 
         function criarHtmlProduto(produto) {
             const logoMercado = produto.mercado === 'Mix' 
-                ? 'C:/Users/helbe/ShopWise/src/assets/mix.png' 
-                : 'C:/Users/helbe/ShopWise/src/assets/quaresma.png';
+                ? '../assets/mix.png' 
+                : '../assets/quaresma.png';
 
             const precoAtual = parseFloat(produto.preco.replace(',', '.'));
             const precoOriginal = parseFloat(produto.precoOriginal.replace(',', '.'));
