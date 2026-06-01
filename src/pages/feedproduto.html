@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShopWise - Compare preços entre os principais supermercados da região e economize nas suas compras diárias.">
+    <title>ShopWise - Feed de Produtos</title>
+    
+    <link rel="stylesheet" href="../styles/feed.css">
+
+    <style>
+        .sidebar-full-logo {
+            max-height: 35px;
+            margin-left: 15px; /* Mais espaço para o menu hambúrguer */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .sidebar:hover .sidebar-full-logo,
+        .sidebar.pinned .sidebar-full-logo {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </div>
+                <a href="#" aria-label="Ir para a página inicial">
+                    <img src="C:/Users/helbe/ShopWise/src/assets/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" aria-label="Página Inicial">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Início</span>
+                </a>
+                
+                <a href="#" class="nav-item" aria-label="Seus Alertas">
+                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span>Alertas</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seu Perfil">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>Perfil</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seu Cashback">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span>Cashback</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seus Pedidos">
+                    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <span>Pedidos</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            
+            <header class="navbar" role="banner">
+                <div class="nav-container">
+                    <div class="nav-top">
+                        <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                        </div>
+
+                        <a href="#" class="mobile-logo-area">
+                            <img src="C:/Users/helbe/ShopWise/src/assets/logoshopwise.png" alt="ShopWise" style="max-height: 35px;" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                        </a>
+
+                        <div class="search-wrapper">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="searchInput" placeholder="Pesquise feijão, leite..." aria-label="Campo de pesquisa">
+                        </div>
+
+                        <div class="nav-actions">
+                            <div class="location" role="button" tabindex="0">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                Floriano, PI - 64800...
+                            </div>
+                            
+                            <div class="cart-icon" role="button" tabindex="0">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                <span class="cart-badge">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <nav class="categories-bar" aria-label="Categorias de produtos">
+                <div class="categories-container" id="categoryContainer">
+                    <button class="cat-btn active" data-categoria="todos">Todos</button>
+                    <button class="cat-btn" data-categoria="descontos">Descontos</button>
+                    <button class="cat-btn" data-categoria="mercearia">Mercearia</button>
+                    <button class="cat-btn" data-categoria="laticinios">Laticínios</button>
+                    <button class="cat-btn" data-categoria="bebidas">Bebidas</button>
+                    <button class="cat-btn" data-categoria="limpeza">Limpeza</button>
+                </div>
+            </nav>
+
+            <main class="page-container" role="main">
+                
+                <section class="banner" aria-labelledby="banner-title">
+                    <div class="banner-content">
+                        <span class="banner-badge">💰 ECONOMIZE EM SUAS COMPRAS</span>
+                        <h1 id="banner-title">Compare preços entre os principais mercados</h1>
+                        <p>Encontre o menor preço em segundos e economize até 30% nas suas compras diárias.</p>
+                        <button class="banner-btn">Comparar Agora</button>
+                    </div>
+                    </section>
+
+                <section class="stats" aria-label="Estatísticas">
+                    <div class="stat-card">
+                        <h3>+3.500</h3>
+                        <span>Produtos monitorados</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>+250</h3>
+                        <span>Ofertas ativas hoje</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>R$ 87</h3>
+                        <span>Economia média/compra</span>
+                    </div>
+                </section>
+
+                <h2 class="section-title">Supermercados em Destaque</h2>
+                <section class="stores-section" aria-label="Supermercados de Floriano">
+                    <div class="stores-carousel" id="storesCarousel">
+                        </div>
+                </section>
+
+                <h2 class="section-title">Ofertas Recentes</h2>
+                <section class="product-grid" id="productGrid" aria-live="polite">
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const lojasFloriano = [
+            { id: 1, nome: "Mix Mateus", img: "C:/Users/helbe/ShopWise/src/assets/mix.png", desconto: "Até 30%" },
+            { id: 2, nome: "Super Quaresma", img: "C:/Users/helbe/ShopWise/src/assets/quaresma.png", desconto: "Ofertas" },
+            { id: 3, nome: "Carvalho", img: "C:/Users/helbe/ShopWise/src/assets/carvalho.png", desconto: "Até 25%" },
+            { id: 4, nome: "Jorge Batista", img: "C:/Users/helbe/ShopWise/src/assets/jorge-batista.png", desconto: "Novo" }
+        ];
+
+        function renderizarLojas() {
+            const container = document.getElementById('storesCarousel');
+            container.innerHTML = lojasFloriano.map(loja => `
+                <a href="#" class="store-item" title="${loja.nome}">
+                    <div class="store-logo">
+                        <img src="${loja.img}" alt="${loja.nome}" onerror="this.onerror=null; this.src='https://placehold.co/100x100/eeeeee/333333?text=Loja';">
+                        <span class="store-discount-tag">${loja.desconto}</span>
+                    </div>
+                    <span class="store-name">${loja.nome}</span>
+                </a>
+            `).join('');
+        }
+
+        const dadosProdutos = [
+            { id: 1, nome: "Feijão Carioca tipo 1 Kicaldo 1kg", preco: "6,49", precoOriginal: "8,99", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/feijao-kicaldo.png" }, { id: 2, nome: "Feijão Preto Fugini 250g", preco: "3,49", precoOriginal: "5,00", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/feijao-fugini.png" }, { id: 3, nome: "Leite UHT Integral Ninho 1L", preco: "4,99", precoOriginal: "6,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "C:/Users/helbe/ShopWise/src/assets/leite-ninho.png" }, { id: 4, nome: "Queijo Mussarela Fatiado Itambé 150g", preco: "9,99", precoOriginal: "12,90", mercado: "Q", mercadoClass: "market-q", categoria: "laticinios", img: "C:/Users/helbe/ShopWise/src/assets/queijo-itambe.png" }, { id: 5, nome: "Iogurte Desnatado YoPRO 160g", preco: "8,99", precoOriginal: "11,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "C:/Users/helbe/ShopWise/src/assets/iogurte-yopro.png" }, { id: 6, nome: "Flocão de Milho Nutrivita 500g", preco: "2,19", precoOriginal: "3,20", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/flocao-bsb.png" }, { id: 7, nome: "Sabão em Pó Omo Lavagem Perfeita 800g", preco: "14,50", precoOriginal: "18,90", mercado: "Mix", mercadoClass: "market-mix", categoria: "limpeza", img: "C:/Users/helbe/ShopWise/src/assets/sabao-omo.png" }, { id: 8, nome: "Café Tradicional 3 Corações 250g", preco: "9,89", precoOriginal: "13,99", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "C:/Users/helbe/ShopWise/src/assets/cafe-3coracoes.png" }, { id: 9, nome: "Refrigerante Coca-Cola 2L", preco: "8,49", precoOriginal: "10,99", mercado: "Q", mercadoClass: "market-q", categoria: "bebidas", img: "C:/Users/helbe/ShopWise/src/assets/coca-cola.png" }, { id: 10, nome: "Detergente Líquido Ypê Neutro 500ml", preco: "2,29", precoOriginal: "3,50", mercado: "Q", mercadoClass: "market-q", categoria: "limpeza", img: "C:/Users/helbe/ShopWise/src/assets/detergente-ype.png" }
+        ];
+
+        function criarHtmlProduto(produto) {
+            const logoMercado = produto.mercado === 'Mix' 
+                ? 'C:/Users/helbe/ShopWise/src/assets/mix.png' 
+                : 'C:/Users/helbe/ShopWise/src/assets/quaresma.png';
+
+            const precoAtual = parseFloat(produto.preco.replace(',', '.'));
+            const precoOriginal = parseFloat(produto.precoOriginal.replace(',', '.'));
+            
+            const valorEconomizado = precoOriginal - precoAtual;
+            const economiaFormatada = valorEconomizado.toFixed(2).replace('.', ',');
+            const porcentagemDesconto = Math.round((valorEconomizado / precoOriginal) * 100);
+
+            return `
+                <article class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="${produto.img}" alt="${produto.nome}" onerror="this.onerror=null; this.src='https://placehold.co/300x300/f4f7f6/777777?text=Sem+Imagem';">
+                    </div>
+                    <div class="product-info">
+                        
+                        <div class="price-header">
+                            <span class="original-price">R$ ${produto.precoOriginal}</span>
+                            <span class="discount-badge">-${porcentagemDesconto}%</span>
+                        </div>
+
+                        <div class="price-row">
+                            <span class="price">R$ ${produto.preco}</span>
+                            <div class="market-logo" title="${produto.mercado}">
+                                <img src="${logoMercado}" alt="Logo ${produto.mercado}">
+                            </div>
+                        </div>
+
+                        <div class="savings-text">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            Economiza R$ ${economiaFormatada}
+                        </div>
+
+                        <h3 class="product-name">${produto.nome}</h3>
+                        <button class="btn-add">Adicionar</button>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderizarProdutos(lista) {
+            const grid = document.getElementById('productGrid');
+            if (lista.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><h2>Nenhum produto encontrado</h2><p>Tente ajustar a sua pesquisa.</p></div>`;
+                return;
+            }
+            grid.innerHTML = lista.map(criarHtmlProduto).join('');
+        }
+
+        const desktopMenuToggle = document.getElementById('desktopMenuToggle');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.querySelector('.main-content');
+
+        function toggleMenu() {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.toggle('pinned');
+                mainContent.classList.toggle('sidebar-pinned');
+            } else {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        if (desktopMenuToggle) desktopMenuToggle.addEventListener('click', toggleMenu);
+        if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarLojas();
+            renderizarProdutos(dadosProdutos);
+
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const cat = this.getAttribute('data-categoria');
+                    document.getElementById('searchInput').value = ''; 
+                    
+                    if (cat === 'todos') renderizarProdutos(dadosProdutos);
+                    else if (cat === 'descontos') renderizarProdutos(dadosProdutos.filter(p => parseFloat(p.preco.replace(',','.')) < 5));
+                    else renderizarProdutos(dadosProdutos.filter(p => p.categoria === cat));
+                });
+            });
+
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const termo = e.target.value.toLowerCase();
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-categoria="todos"]').classList.add('active');
+                renderizarProdutos(dadosProdutos.filter(p => p.nome.toLowerCase().includes(termo) || p.categoria.toLowerCase().includes(termo)));
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    if(window.innerWidth < 768) toggleMenu();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
