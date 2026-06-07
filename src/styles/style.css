@@ -172,7 +172,11 @@ input {
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
 }
 
 .btn-verde:hover {

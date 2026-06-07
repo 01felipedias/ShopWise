@@ -7,19 +7,6 @@
     <title>ShopWise - Feed de Produtos</title>
     
     <link rel="stylesheet" href="../styles/feed.css">
-
-    <style>
-        .sidebar-full-logo {
-            max-height: 35px;
-            margin-left: 15px; /* Mais espaço para o menu hambúrguer */
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .sidebar:hover .sidebar-full-logo,
-        .sidebar.pinned .sidebar-full-logo {
-            opacity: 1;
-        }
-    </style>
 </head>
 <body>
 
@@ -33,7 +20,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </div>
                 <a href="#" aria-label="Ir para a página inicial">
-                    <img src="../assets/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                 </a>
             </div>
 
@@ -75,7 +62,7 @@
                         </div>
 
                         <a href="#" class="mobile-logo-area">
-                            <img src="../logoshopwise.png" alt="ShopWise" style="max-height: 35px;" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                            <img src="../assets/img/logoshopwise.png" alt="ShopWise" style="max-height: 35px;" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                         </a>
 
                         <div class="search-wrapper">
@@ -89,10 +76,14 @@
                                 Floriano, PI - 64800...
                             </div>
                             
-                            <div class="cart-icon" role="button" tabindex="0">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                            <a href="carrinho.html" class="cart-icon" aria-label="Ir para o carrinho">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <path d="M16 10a4 2 0 0 1-8 0"></path>
+                                </svg>
                                 <span class="cart-badge">3</span>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -211,7 +202,7 @@
                         </div>
 
                         <h3 class="product-name">${produto.nome}</h3>
-                        <button class="btn-add">Adicionar</button>
+                        <button class="btn-add" onclick="adicionarCarrinho(${produto.id})">Adicionar</button>
                     </div>
                 </article>
             `;
@@ -279,6 +270,51 @@
                 });
             });
         });
+        // CARRINHO
+        let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+        atualizarBadgeCarrinho();
+
+        function adicionarCarrinho(idProduto) {
+
+            const produto = dadosProdutos.find(
+                p => p.id === idProduto
+            );
+
+            const itemExistente = carrinho.find(
+                item => item.id === idProduto
+            );
+
+            if(itemExistente){
+                itemExistente.quantidade++;
+            }else{
+                carrinho.push({
+                    ...produto,
+                    quantidade: 1
+                });
+            }
+
+            localStorage.setItem(
+                "carrinho",
+                JSON.stringify(carrinho)
+            );
+
+            atualizarBadgeCarrinho();
+        }
+
+        function atualizarBadgeCarrinho(){
+
+            const badge = document.querySelector(".cart-badge");
+
+            if(!badge) return;
+
+            const total = carrinho.reduce(
+                (acc,item) => acc + item.quantidade,
+                0
+            );
+
+            badge.textContent = total;
+        }
     </script>
 </body>
 </html>
