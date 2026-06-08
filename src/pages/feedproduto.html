@@ -203,6 +203,9 @@
 
                         <h3 class="product-name">${produto.nome}</h3>
                         <button class="btn-add" onclick="adicionarCarrinho(${produto.id})">Adicionar</button>
+                        <button class="btn-comparar" onclick="openModal()">
+                            📊 Comparar preços
+                        </button>
                     </div>
                 </article>
             `;
@@ -316,5 +319,245 @@
             badge.textContent = total;
         }
     </script>
+
+<!-- MODAL COMPARAÇÃO DE PREÇOS -->
+    <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+      <div class="modal" id="modal">
+
+        <div class="modal-header">
+          <div class="modal-product-thumb">
+            <img src="../assets/feijao-kicaldo.png" alt="Feijão Kicaldo 1kg">
+          </div>
+          <div class="modal-header-info">
+            <h2>Feijão Carioca Kicaldo 1kg</h2>
+            <p>Comparando preços em 4 supermercados</p>
+          </div>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="best-pick-banner">
+            <div class="best-pick-icon">🏆</div>
+            <div class="best-pick-info">
+              <h4>Melhor opção: Super Quaresma</h4>
+              <p>Você economiza R$ 2,50 em relação ao mais caro</p>
+            </div>
+            <div class="best-pick-price">
+              <strong>R$ 6,49</strong>
+              <span>melhor preço</span>
+            </div>
+          </div>
+
+          <div class="modal-tabs">
+            <button class="tab-btn active" onclick="switchTab('precos', this)">💰 Preços</button>
+            <button class="tab-btn" onclick="switchTab('grafico', this)">📊 Gráfico</button>
+            <button class="tab-btn" onclick="switchTab('distancia', this)">📍 Distância</button>
+          </div>
+
+          <div class="tab-panel active" id="tab-precos">
+            <div class="supermarket-list">
+
+              <div class="supermarket-row best">
+                <div class="best-tag">✓ Melhor preço</div>
+                <div class="sm-logo">
+                  <span style="color:#e74c3c;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">SUPER<br>Q</span>
+                </div>
+                <div class="sm-info">
+                  <h4>Super Quaresma</h4>
+                  <div class="sm-distance">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    1,2 km de você
+                  </div>
+                  <div class="price-bar-wrapper">
+                    <div class="price-bar-track">
+                      <div class="price-bar-fill" style="width:72%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="sm-price-area">
+                  <div class="sm-price best-price">R$ 6,49</div>
+                  <div class="sm-savings">💚 Mais barato</div>
+                </div>
+              </div>
+
+              <div class="supermarket-row">
+                <div class="sm-logo">
+                  <span style="color:#1a1a6e;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">MIX<br>MAT.</span>
+                </div>
+                <div class="sm-info">
+                  <h4>Mix Mateus</h4>
+                  <div class="sm-distance">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    2,5 km de você
+                  </div>
+                  <div class="price-bar-wrapper">
+                    <div class="price-bar-track">
+                      <div class="price-bar-fill expensive" style="width:82%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="sm-price-area">
+                  <div class="sm-price">R$ 7,39</div>
+                  <div class="sm-higher">+ R$ 0,90 mais caro</div>
+                </div>
+              </div>
+
+              <div class="supermarket-row">
+                <div class="sm-logo">
+                  <span style="color:#006400;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">CAR<br>VLH</span>
+                </div>
+                <div class="sm-info">
+                  <h4>Carvalho</h4>
+                  <div class="sm-distance">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    3,8 km de você
+                  </div>
+                  <div class="price-bar-wrapper">
+                    <div class="price-bar-track">
+                      <div class="price-bar-fill expensive" style="width:88%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="sm-price-area">
+                  <div class="sm-price">R$ 7,99</div>
+                  <div class="sm-higher">+ R$ 1,50 mais caro</div>
+                </div>
+              </div>
+
+              <div class="supermarket-row">
+                <div class="sm-logo">
+                  <span style="color:#cc0000;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">JRG<br>BAT</span>
+                </div>
+                <div class="sm-info">
+                  <h4>Jorge Batista</h4>
+                  <div class="sm-distance">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    5,1 km de você
+                  </div>
+                  <div class="price-bar-wrapper">
+                    <div class="price-bar-track">
+                      <div class="price-bar-fill most-expensive" style="width:100%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="sm-price-area">
+                  <div class="sm-price">R$ 8,99</div>
+                  <div class="sm-higher">+ R$ 2,50 mais caro</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="tab-panel" id="tab-grafico">
+            <p class="chart-title">Comparativo visual de preços — Feijão Carioca Kicaldo 1kg</p>
+            <div class="bar-chart">
+              <div class="bar-group">
+                <div class="bar-value">R$ 6,49</div>
+                <div class="bar best-bar" id="chartBar1" style="height:0px"></div>
+                <div class="bar-label">Super Quaresma</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">R$ 7,39</div>
+                <div class="bar mid-bar" id="chartBar2" style="height:0px"></div>
+                <div class="bar-label">Mix Mateus</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">R$ 7,99</div>
+                <div class="bar mid-bar" id="chartBar3" style="height:0px"></div>
+                <div class="bar-label">Carvalho</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">R$ 8,99</div>
+                <div class="bar high-bar" id="chartBar4" style="height:0px"></div>
+                <div class="bar-label">Jorge Batista</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#777;">
+                <div style="width:12px;height:12px;border-radius:3px;background:#2ECC71;"></div> Melhor preço
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#777;">
+                <div style="width:12px;height:12px;border-radius:3px;background:#f39c12;"></div> Intermediário
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#777;">
+                <div style="width:12px;height:12px;border-radius:3px;background:#e74c3c;"></div> Mais caro
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="tab-distancia">
+            <div class="map-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2ECC71" stroke-width="1.5" style="margin-bottom:10px;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <p>Supermercados próximos à sua localização<br>
+              <strong style="color:#333;">Fortaleza, CE</strong></p>
+            </div>
+            <div class="distance-list">
+              <div class="distance-row">
+                <div class="distance-dot" style="background:#2ECC71;"></div>
+                <div class="sm-info">
+                  <h4>Super Quaresma</h4>
+                  <span style="font-size:12px;color:#777;">R. das Flores, 150 — Centro</span>
+                </div>
+                <div class="distance-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  1,2 km
+                </div>
+              </div>
+              <div class="distance-row">
+                <div class="distance-dot" style="background:#f39c12;"></div>
+                <div class="sm-info">
+                  <h4>Mix Mateus</h4>
+                  <span style="font-size:12px;color:#777;">Av. Principal, 580 — Bairro Novo</span>
+                </div>
+                <div class="distance-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  2,5 km
+                </div>
+              </div>
+              <div class="distance-row">
+                <div class="distance-dot" style="background:#e67e22;"></div>
+                <div class="sm-info">
+                  <h4>Carvalho</h4>
+                  <span style="font-size:12px;color:#777;">R. do Comércio, 44 — Aldeota</span>
+                </div>
+                <div class="distance-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  3,8 km
+                </div>
+              </div>
+              <div class="distance-row">
+                <div class="distance-dot" style="background:#e74c3c;"></div>
+                <div class="sm-info">
+                  <h4>Jorge Batista</h4>
+                  <span style="font-size:12px;color:#777;">Av. Bezerra de Menezes, 900 — Fátima</span>
+                </div>
+                <div class="distance-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  5,1 km
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-add-modal" onclick="addToCart()">
+            🛒 Adicionar ao carrinho — R$ 6,49
+          </button>
+          <button class="btn-secondary-modal" onclick="closeModal()">
+            Fechar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="../utils/modal.js"></script>
 </body>
 </html>

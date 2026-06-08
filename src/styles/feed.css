@@ -1038,3 +1038,239 @@ body {
         margin-left:auto;
     }
 }
+
+/* ===== BOTÃO COMPARAR (abaixo do btn-add no card) ===== */
+.btn-comparar {
+  margin-top: 8px;
+  width: 100%;
+  padding: 10px;
+  background: white;
+  color: #27ae60;
+  border: 1px solid #2ECC71;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.btn-comparar:hover {
+  background: #f0fdf7;
+  border-style: solid;
+}
+
+/* ===== OVERLAY DO MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  background: var(--white);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+  transform: translateY(30px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.active .modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Header */
+.modal-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 20px 20px 0 0;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+.modal-product-thumb {
+  width: 70px; height: 70px;
+  background: white;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.modal-product-thumb img { width: 90%; height: 90%; object-fit: contain; }
+.modal-header-info h2 { color: white; font-size: 20px; font-weight: 800; }
+.modal-header-info p  { color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 4px; }
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: none; color: white; font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.35); }
+
+/* Body */
+.modal-body { padding: 28px; }
+
+/* Melhor opção */
+.best-pick-banner {
+  background: linear-gradient(135deg, #e8faf2, #d5f5e3);
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px;
+}
+.best-pick-icon {
+  width: 44px; height: 44px;
+  background: var(--primary); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.best-pick-info h4 { color: var(--primary-dark); font-size: 15px; font-weight: 800; }
+.best-pick-info p  { color: var(--primary-dark); font-size: 13px; margin-top: 2px; opacity: 0.85; }
+.best-pick-price { margin-left: auto; text-align: right; }
+.best-pick-price strong { font-size: 24px; font-weight: 900; color: var(--primary-dark); display: block; }
+.best-pick-price span  { font-size: 12px; color: var(--primary-dark); opacity: 0.75; }
+
+/* Tabs */
+.modal-tabs {
+  display: flex; gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+}
+.tab-btn {
+  padding: 10px 18px; border: none; background: none;
+  font-size: 14px; font-weight: 600; color: var(--text-light);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.tab-btn.active { color: var(--primary-dark); border-bottom-color: var(--primary); }
+.tab-btn:hover:not(.active) { color: var(--text-main); background: var(--bg-color); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Lista supermercados */
+.supermarket-list { display: flex; flex-direction: column; gap: 12px; }
+.supermarket-row {
+  background: var(--bg-color); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.supermarket-row.best { background: #f0fdf7; border-color: var(--primary); }
+.supermarket-row:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.07); transform: translateX(3px); }
+.best-tag {
+  position: absolute; top: 0; right: 0;
+  background: var(--primary); color: white;
+  font-size: 10px; font-weight: 800;
+  padding: 4px 10px; border-radius: 0 12px 0 10px;
+  text-transform: uppercase;
+}
+.sm-logo {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: white; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.sm-info { flex: 1; }
+.sm-info h4 { font-size: 15px; font-weight: 700; }
+.sm-distance {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--text-light); margin-top: 3px;
+}
+.price-bar-wrapper { width: 100%; margin-top: 8px; }
+.price-bar-track { height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.price-bar-fill { height: 100%; border-radius: 10px; background: var(--primary); transition: width 0.8s; }
+.price-bar-fill.expensive { background: #f39c12; }
+.price-bar-fill.most-expensive { background: var(--danger); }
+.sm-price-area { text-align: right; }
+.sm-price { font-size: 22px; font-weight: 900; }
+.sm-price.best-price { color: var(--primary-dark); }
+.sm-savings { font-size: 12px; color: var(--primary-dark); font-weight: 600; margin-top: 2px; }
+.sm-higher  { font-size: 12px; color: var(--danger); font-weight: 600; margin-top: 2px; }
+
+/* Gráfico */
+.chart-title { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+.bar-chart {
+  display: flex; align-items: flex-end; gap: 16px;
+  height: 200px; padding: 0 10px;
+  border-bottom: 2px solid var(--border);
+}
+.bar-group { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
+.bar-value { font-size: 13px; font-weight: 800; }
+.bar { width: 100%; border-radius: 8px 8px 0 0; transition: height 1s cubic-bezier(0.34,1.56,0.64,1); cursor: pointer; }
+.bar.best-bar { background: linear-gradient(180deg, var(--primary), var(--primary-dark)); }
+.bar.mid-bar  { background: linear-gradient(180deg, #f39c12, #e67e22); }
+.bar.high-bar { background: linear-gradient(180deg, var(--danger), #c0392b); }
+.bar-label { font-size: 11px; font-weight: 600; color: var(--text-light); text-align: center; line-height: 1.2; }
+
+/* Distância */
+.map-placeholder {
+  background: linear-gradient(135deg, #e8f5e9, #f1f8f4);
+  border: 2px dashed var(--primary);
+  border-radius: 14px; padding: 30px;
+  text-align: center; margin-bottom: 20px;
+}
+.map-placeholder p { color: var(--text-light); font-size: 14px; }
+.distance-list { display: flex; flex-direction: column; gap: 10px; }
+.distance-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg-color); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+}
+.distance-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.distance-badge {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700;
+}
+
+/* Footer */
+.modal-footer {
+  padding: 0 28px 28px;
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.btn-add-modal {
+  flex: 1; padding: 14px 20px; border-radius: 12px;
+  border: none; background: var(--primary); color: white;
+  font-weight: 700; font-size: 15px; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center;
+  justify-content: center; gap: 8px; min-width: 180px;
+}
+.btn-add-modal:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.btn-secondary-modal {
+  flex: 1; padding: 14px 20px; border-radius: 12px;
+  border: 1px solid var(--border); background: white;
+  color: var(--text-main); font-weight: 600; font-size: 15px;
+  cursor: pointer; transition: all 0.2s; min-width: 140px;
+}
+.btn-secondary-modal:hover { background: var(--bg-color); }
+
+.btn-comparar:hover {
+    background: var(--primary) !important;
+    color: var(--white) !important;
+    border-color: var(--primary) !important;
+}
