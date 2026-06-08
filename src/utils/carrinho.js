@@ -169,4 +169,13 @@ document.addEventListener(
     () => {
         renderizarCarrinho();
     }
-);
+); // O parêntese e ponto e vírgula fecham aqui!
+
+// A função fica solta no final do arquivo
+function irParaCheckout() {
+    // Usando a variável 'total' REAL que o seu código já calcula!
+    localStorage.setItem('shopwiseTotal', total);
+    
+    // Manda o cara pro checkout
+    window.location.href = 'checkout.html';
+}
