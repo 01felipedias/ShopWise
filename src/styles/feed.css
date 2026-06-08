@@ -1274,3 +1274,682 @@ body {
     color: var(--white) !important;
     border-color: var(--primary) !important;
 }
+/* ================= AJUSTES EXTRAS FEEDPRODUTO ================= */
+
+.sidebar-full-logo {
+    max-height: 35px;
+    margin-left: 15px; 
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar:hover .sidebar-full-logo,
+.sidebar.pinned .sidebar-full-logo {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.mobile-logo-img {
+    max-height: 35px;
+}
+
+/* ================= BANNER ESTILO PREVIEW ================= */
+
+.hero-shopwise {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 375px;
+    gap: 22px;
+    margin-bottom: 34px;
+}
+
+.hero-shopwise .banner {
+    min-height: 328px;
+    margin-bottom: 0;
+    border-radius: 20px;
+    padding: 34px;
+    box-shadow: 0 14px 34px rgba(46, 204, 113, 0.22);
+    overflow: hidden;
+}
+
+.hero-shopwise .banner::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    right: -80px;
+    top: -80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.hero-shopwise .banner-content {
+    max-width: 700px;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-shopwise .banner-badge {
+    font-weight: 900;
+    font-size: 13px;
+    padding: 8px 14px;
+    margin-bottom: 18px;
+}
+
+.hero-shopwise .banner h1 {
+    font-size: 44px;
+    line-height: 1.08;
+    margin-bottom: 14px;
+    max-width: 720px;
+}
+
+.hero-shopwise .banner p {
+    font-size: 19px;
+    line-height: 1.45;
+    max-width: 690px;
+    margin-bottom: 0;
+}
+
+.hero-shopwise .banner-btn {
+    display: none;
+}
+
+.hero-shopwise .stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 0;
+}
+
+.hero-shopwise .stat-card {
+    text-align: left;
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+}
+
+.hero-shopwise .stat-card h3 {
+    font-size: 30px;
+    margin-bottom: 6px;
+}
+
+.hero-shopwise .stat-card span {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* ================= FEED BUSCA / FILTROS / MERCADOS ================= */
+
+.feed-section-header {
+    margin: 34px 0 14px;
+}
+
+.feed-section-header h2 {
+    font-size: 24px;
+    line-height: 1.1;
+    color: #1f2d3d;
+    font-weight: 900;
+    margin: 0 0 3px;
+}
+
+.feed-section-header p {
+    color: #667575;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.offers-title {
+    margin-top: 28px;
+}
+
+.stores-section {
+    margin-bottom: 28px;
+}
+
+.stores-carousel {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    overflow: visible;
+    padding-bottom: 0;
+    justify-content: initial;
+}
+
+.store-item {
+    min-width: 0;
+    width: 100%;
+    min-height: 88px;
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+    transition: 0.2s ease;
+}
+
+.store-item:hover,
+.store-item.active {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 12px 28px rgba(46, 204, 113, 0.12);
+}
+
+.store-logo {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    border-radius: 18px;
+    border: none;
+    background: rgba(46, 204, 113, 0.11);
+    box-shadow: none;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+.store-logo img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+
+.store-discount-tag {
+    display: none;
+}
+
+.store-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.store-name {
+    max-width: none;
+    margin-top: 0;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 900;
+    color: #07152b;
+}
+
+.store-offer {
+    color: #00b978;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.offers-filter-panel {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 22px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.04);
+}
+
+.offers-filter-panel .categories-container {
+    max-width: none;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 0;
+}
+
+.offers-filter-panel .categories-container::-webkit-scrollbar {
+    display: none;
+}
+
+.offers-filter-panel .cat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    background: #f8fbfa;
+    border: 1px solid #dbe7e2;
+    color: #07152b;
+    font-size: 17px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.offers-filter-panel .cat-btn.active,
+.offers-filter-panel .cat-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+}
+
+.cat-count {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #00b978;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    box-shadow: inset 0 0 0 1px #e2eee9;
+}
+
+.cat-btn.active .cat-count,
+.cat-btn:hover .cat-count {
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    box-shadow: none;
+}
+
+.results-toolbar {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 22px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.04);
+}
+
+.results-info-area strong {
+    display: block;
+    font-size: 18px;
+    color: #07152b;
+    margin-bottom: 4px;
+}
+
+.results-info-area span {
+    color: #667575;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.results-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.results-actions label {
+    color: #667575;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.results-actions select {
+    min-width: 170px;
+    border: 1px solid #dbe7e2;
+    background: #ffffff;
+    color: #07152b;
+    padding: 12px 14px;
+    border-radius: 14px;
+    outline: none;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.btn-clear-filters {
+    border: 1px solid #dbe7e2;
+    background: #f8fbfa;
+    color: #07152b;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #ffffff;
+}
+
+/* ================= FOOTER SHOPWISE ================= */
+
+.shopwise-footer {
+    width: 100%;
+    background: #ffffff;
+    border-top: 1px solid #e8eef2;
+    margin-top: 60px;
+    color: #4f6684;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 20px;
+    display: grid;
+    grid-template-columns: 1.8fr repeat(4, 1fr);
+    gap: 58px;
+}
+
+.footer-brand {
+    max-width: 360px;
+}
+
+.footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    text-decoration: none;
+}
+
+.footer-logo-img {
+    width: 170px;
+    max-height: 56px;
+    object-fit: contain;
+    display: block;
+}
+
+.footer-brand p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #4f6684;
+    margin-bottom: 22px;
+}
+
+.footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-socials a {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #dce6f0;
+    border-radius: 50%;
+    color: #4f6684;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.footer-socials a:hover {
+    background: #00b978;
+    border-color: #00b978;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.footer-socials svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.footer-column h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #07152b;
+    margin-bottom: 8px;
+    font-weight: 900;
+}
+
+.footer-column a {
+    color: #4f6684;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+.footer-column a:hover {
+    color: #00b978;
+    transform: translateX(3px);
+}
+
+.footer-bottom {
+    border-top: 1px solid #edf2f7;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.footer-bottom p {
+    font-size: 13px;
+    color: #4f6684;
+}
+
+/* ================= AJUSTES DO MODAL SEM CSS INLINE ================= */
+
+.modal-market-text {
+    font-size: 9px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.modal-logo-super-q {
+    color: #e74c3c;
+}
+
+.modal-logo-mix {
+    color: #1a1a6e;
+}
+
+.modal-logo-carvalho {
+    color: #006400;
+}
+
+.modal-logo-jorge {
+    color: #cc0000;
+}
+
+.price-bar-72 {
+    width: 72%;
+}
+
+.price-bar-82 {
+    width: 82%;
+}
+
+.price-bar-88 {
+    width: 88%;
+}
+
+.price-bar-100 {
+    width: 100%;
+}
+
+.chart-bar-zero {
+    height: 0;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #777777;
+}
+
+.chart-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.legend-best {
+    background: #2ECC71;
+}
+
+.legend-mid {
+    background: #f39c12;
+}
+
+.legend-high {
+    background: #e74c3c;
+}
+
+.map-icon {
+    margin-bottom: 10px;
+}
+
+.map-placeholder strong {
+    color: #333333;
+}
+
+.distance-row .sm-info span {
+    font-size: 12px;
+    color: #777777;
+}
+
+.distance-dot-best {
+    background: #2ECC71;
+}
+
+.distance-dot-mid {
+    background: #f39c12;
+}
+
+.distance-dot-warning {
+    background: #e67e22;
+}
+
+.distance-dot-high {
+    background: #e74c3c;
+}
+
+/* ================= RESPONSIVIDADE ================= */
+
+@media (max-width: 1024px) {
+    .hero-shopwise {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-shopwise .stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stores-carousel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .results-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .results-actions {
+        justify-content: space-between;
+    }
+
+    .footer-container {
+        grid-template-columns: 1.5fr repeat(2, 1fr);
+        gap: 40px;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-shopwise {
+        gap: 18px;
+    }
+
+    .hero-shopwise .banner {
+        min-height: auto;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .hero-shopwise .banner h1 {
+        font-size: 28px;
+    }
+
+    .hero-shopwise .banner p {
+        font-size: 16px;
+    }
+
+    .hero-shopwise .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-shopwise .stat-card {
+        text-align: center;
+    }
+
+    .feed-section-header {
+        margin-top: 26px;
+    }
+
+    .stores-carousel {
+        grid-template-columns: 1fr;
+    }
+
+    .offers-filter-panel .cat-btn {
+        font-size: 15px;
+        padding: 10px 14px;
+    }
+
+    .results-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .results-actions select,
+    .btn-clear-filters {
+        width: 100%;
+    }
+
+    .shopwise-footer {
+        margin-top: 40px;
+    }
+
+    .footer-container {
+        padding: 42px 22px;
+        grid-template-columns: 1fr;
+        gap: 34px;
+    }
+
+    .footer-brand {
+        max-width: 100%;
+    }
+
+    .footer-column {
+        gap: 12px;
+    }
+
+    .footer-bottom {
+        padding: 20px 22px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
