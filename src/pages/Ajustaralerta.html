@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Alerta - ShopWise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="../styles/alerta.css">
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </div>
+                <a href="feedproduto.html" aria-label="Ir para a página inicial">
+                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="feedproduto.html" class="nav-item" aria-label="Página Inicial">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Início</span>
+                </a>
+                
+                <a href="Pag.AlertaPreco.html" class="nav-item active" aria-label="Seus Alertas">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span>Alertas</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seu Perfil">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Perfil</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seu Cashback">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Cashback</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seus Pedidos">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 2 0 0 1-8 0"></path>
+                    </svg>
+                    <span>Pedidos</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            
+            <header class="navbar" role="banner">
+                <div class="nav-container">
+                    <div class="nav-top">
+                        <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </div>
+
+                        <a href="feedproduto.html" class="mobile-logo-area">
+                            <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                        </a>
+
+                        <div class="results-info-area">
+                            <strong class="cart-title">Configurar Alerta</strong>
+                        </div>
+
+                        <div class="nav-actions">
+                            <div class="location">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                Floriano, PI
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-container" role="main">
+                
+                <div class="alert-config-box">
+                    <div class="config-image-container">
+                        <img src="../assets/leiteEmpoNinho.jpeg" alt="Leite Pó Integral Ninho Lata">
+                    </div>
+
+                    <div class="config-form-details">
+                        <h1 class="config-product-name">Leite Pó Integral Ninho Lata 380g</h1>
+                        <span class="config-product-badge">Laticínios e Mercearia</span>
+                        
+                        <div class="config-current-price-large">R$ 23,99/un</div>
+                        <div class="config-price-subtitle">Preço médio atual</div>
+                        
+                        <div class="divider"></div>
+
+                        <h2 class="feed-section-header" style="margin: 0 0 15px 0;"><h2 style="font-size:18px;">Definir Limites de Compra</h2></h2>
+
+                        <div class="config-input-group">
+                            <label>Quantidade Desejada</label>
+                            <div class="quantity-stepper">
+                                <button type="button" onclick="ajustarQuantidade(-1)"><i class="fa-solid fa-minus"></i></button>
+                                <span class="quantity-value-display" id="quantidadeDisplay">1</span>
+                                <button type="button" onclick="ajustarQuantidade(1)"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="config-input-group">
+                            <label>Preço Máximo por Unidade</label>
+                            <div class="price-input-wrapper">
+                                <span class="price-currency-prefix">R$</span>
+                                <input type="number" id="precoInput" value="23.99" step="0.01" oninput="atualizarEstimativa()">
+                            </div>
+                        </div>
+
+                        <div class="config-estimate-box">
+                            Com base nos dados atuais, comprando <strong id="resumoQuantidade">1 unidade(s)</strong> no preço alvo, sua compra ficará em <span class="highlight" id="resumoTotal">R$ 23,99</span>
+                        </div>
+
+                        <button class="btn-verde" style="border-radius:14px; padding:15px;" onclick="finalizarAlerta()">Salvar Alterações</button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let quantidadeAtual = 1;
+
+        function ajustarQuantidade(valor) {
+            quantidadeAtual += valor;
+            if (quantidadeAtual < 1) quantidadeAtual = 1;
+
+            document.getElementById('quantidadeDisplay').innerText = quantidadeAtual;
+            document.getElementById('resumoQuantidade').innerText = quantidadeAtual + ' unidade(s)';
+            
+            atualizarEstimativa();
+        }
+
+        function atualizarEstimativa() {
+            let precoInformado = parseFloat(document.getElementById('precoInput').value);
+            if(isNaN(precoInformado)) precoInformado = 0;
+
+            let total = quantidadeAtual * precoInformado;
+            document.getElementById('resumoTotal').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+        }
+
+        function finalizarAlerta() {
+            alert("✅ Alerta atualizado com sucesso!");
+            window.location.href = 'Pag.AlertaPreco.html'; 
+        }
+
+        // Script Sidebar
+        function configurarSidebar() {
+            const desktopMenuToggle = document.getElementById("desktopMenuToggle");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mainContent = document.querySelector(".main-content");
+
+            function toggleMenu() {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.toggle("pinned");
+                    mainContent.classList.toggle("sidebar-pinned");
+                } else {
+                    sidebar.classList.toggle("open");
+                    overlay.classList.toggle("active");
+                }
+            }
+
+            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
+            if (overlay) overlay.addEventListener("click", toggleMenu);
+        }
+        document.addEventListener("DOMContentLoaded", configurarSidebar);
+    </script>
+</body>
+</html>

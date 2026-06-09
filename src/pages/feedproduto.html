@@ -44,7 +44,7 @@
                     <span>Início</span>
                 </a>
                 
-                <a href="#" class="nav-item" aria-label="Seus Alertas">
+                <a href="AlertaPreco.html" class="nav-item" aria-label="Seus Alertas">
                     <svg viewBox="0 0 24 24">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -751,6 +751,9 @@
 
             document.querySelectorAll(".nav-item").forEach((item) => {
                 item.addEventListener("click", function (event) {
+                    if (this.getAttribute("href") !== "#") {
+                        return; 
+                    }
                     event.preventDefault();
 
                     document.querySelectorAll(".nav-item").forEach((nav) => {

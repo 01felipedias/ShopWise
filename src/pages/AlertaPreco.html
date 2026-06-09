@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertas de Preço - ShopWise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="../styles/alerta.css">
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </div>
+                <a href="feedproduto.html" aria-label="Ir para a página inicial">
+                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="feedproduto.html" class="nav-item" aria-label="Página Inicial">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Início</span>
+                </a>
+                
+                <a href="Pag.AlertaPreco.html" class="nav-item active" aria-label="Seus Alertas">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span>Alertas</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seu Perfil">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Perfil</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seu Cashback">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Cashback</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Seus Pedidos">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 2 0 0 1-8 0"></path>
+                    </svg>
+                    <span>Pedidos</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            
+            <header class="navbar" role="banner">
+                <div class="nav-container">
+                    <div class="nav-top">
+                        <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </div>
+
+                        <a href="feedproduto.html" class="mobile-logo-area">
+                            <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                        </a>
+
+                        <div class="results-info-area">
+                            <strong class="cart-title">Meus Alertas de Preço</strong>
+                        </div>
+
+                        <div class="nav-actions">
+                            <div class="location">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                Floriano, PI
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-container" role="main">
+                <section class="feed-section-header">
+                    <h2>Alertas Criados</h2>
+                    <p>Gerencie seus limites de monitoramento de preços.</p>
+                </section>
+
+                <div class="alerts-grid" id="alertsList">
+                    
+                    <div class="alert-card-item">
+                        <div class="alert-card-body">
+                            <div class="alert-product-img">
+                                <img src="../assets/feijaoPilao.jpeg" alt="Feijão Pilão">
+                            </div>
+                            <div class="alert-product-info">
+                                <h3 class="alert-product-title">Feijão Pilão Tradicional</h3>
+                                <span class="alert-product-weight">500g</span>
+                                <p class="alert-current-price">Preço atual: <del>R$15,99</del></p>
+                            </div>
+                        </div>
+                        <div class="alert-price-section">
+                            <p class="alert-price-title">Preço do alerta</p>
+                            <p class="alert-target-value">R$ 10,00</p>
+                        </div>
+                        <div class="alert-card-actions" style="margin-top: 15px;">
+                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
+                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
+                        </div>
+                    </div>
+
+                    <div class="alert-card-item">
+                        <div class="alert-card-body">
+                            <div class="alert-product-img">
+                                <img src="../assets/leiteEmpoNinho.jpeg" alt="Leite Ninho">
+                            </div>
+                            <div class="alert-product-info">
+                                <h3 class="alert-product-title">Leite Pó Integral Ninho Lata</h3>
+                                <span class="alert-product-weight">380g</span>
+                                <p class="alert-current-price">Preço atual: <del>R$23,99</del></p>
+                            </div>
+                        </div>
+                        <div class="alert-price-section">
+                            <p class="alert-price-title">Preço do alerta</p>
+                            <p class="alert-target-value">R$ 15,50</p>
+                        </div>
+                        <div class="alert-card-actions" style="margin-top: 15px;">
+                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
+                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
+                        </div>
+                    </div>
+
+                    <div class="alert-card-item">
+                        <div class="alert-card-body">
+                            <div class="alert-product-img">
+                                <img src="../assets/Iogurte YoPRO.jpeg" alt="YoPRO">
+                            </div>
+                            <div class="alert-product-info">
+                                <h3 class="alert-product-title">Iogurte Desnatado Coco zero</h3>
+                                <span class="alert-product-weight">160g</span>
+                                <p class="alert-current-price">Preço atual: <del>R$8,99</del></p>
+                            </div>
+                        </div>
+                        <div class="alert-price-section">
+                            <p class="alert-price-title">Preço do alerta</p>
+                            <p class="alert-target-value">R$ 5,00</p>
+                        </div>
+                        <div class="alert-card-actions" style="margin-top: 15px;">
+                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
+                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
+                        </div>
+                    </div>
+
+                    <div class="alert-card-item">
+                        <div class="alert-card-body">
+                            <div class="alert-product-img">
+                                <img src="../assets/CafetresCoracoes.jpeg" alt="Café 3 Corações">
+                            </div>
+                            <div class="alert-product-info">
+                                <h3 class="alert-product-title">Café Tradicional 3 Corações</h3>
+                                <span class="alert-product-weight">500g</span>
+                                <p class="alert-current-price">Preço atual: <del>R$18,50</del></p>
+                            </div>
+                        </div>
+                        <div class="alert-price-section">
+                            <p class="alert-price-title">Preço do alerta</p>
+                            <p class="alert-target-value">R$ 14,90</p>
+                        </div>
+                        <div class="alert-card-actions" style="margin-top: 15px;">
+                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
+                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function configurarSidebar() {
+            const desktopMenuToggle = document.getElementById("desktopMenuToggle");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mainContent = document.querySelector(".main-content");
+
+            function toggleMenu() {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.toggle("pinned");
+                    mainContent.classList.toggle("sidebar-pinned");
+                } else {
+                    sidebar.classList.toggle("open");
+                    overlay.classList.toggle("active");
+                }
+            }
+
+            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
+            if (overlay) overlay.addEventListener("click", toggleMenu);
+        }
+        document.addEventListener("DOMContentLoaded", configurarSidebar);
+    </script>
+</body>
+</html>
