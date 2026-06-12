@@ -145,8 +145,10 @@ body {
     flex-shrink: 0;
 }
 
-.nav-item.active svg {
-    fill: var(--white);
+/* Mantém o ícone ativo apenas em contorno, sem preenchimento branco */
+.nav-item.active svg,
+.nav-item.active svg * {
+    fill: none !important;
     stroke: var(--white);
 }
 
