@@ -1955,3 +1955,345 @@ body {
         align-items: flex-start;
     }
 }
+
+/* ================= FEEDBACK, TOASTS E VALIDAÇÃO (ALTA PRIORIDADE) ================= */
+.shopwise-toast-container {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(360px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.shopwise-toast {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-left: 5px solid var(--primary, #2ECC71);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.14);
+    color: var(--text-main, #333333);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    transform: translateX(120%);
+    opacity: 0;
+    pointer-events: auto;
+    transition: transform .25s ease, opacity .25s ease;
+}
+
+.shopwise-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.shopwise-toast.success { border-left-color: var(--primary, #2ECC71); }
+.shopwise-toast.error { border-left-color: var(--danger, #e74c3c); }
+.shopwise-toast.warning { border-left-color: #f39c12; }
+.shopwise-toast.info { border-left-color: #3498db; }
+
+.input-error,
+input.input-error,
+select.input-error,
+textarea.input-error {
+    border-color: var(--danger, #e74c3c) !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, .12) !important;
+}
+
+.input-success,
+input.input-success,
+select.input-success,
+textarea.input-success {
+    border-color: var(--primary, #2ECC71) !important;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, .10) !important;
+}
+
+.field-message {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--danger, #e74c3c);
+    line-height: 1.35;
+}
+
+.field-message.success {
+    color: var(--primary-dark, #27ae60);
+}
+
+.btn-loading,
+button:disabled {
+    opacity: .7;
+    cursor: not-allowed !important;
+}
+
+@media (max-width: 767px) {
+    .shopwise-toast-container {
+        top: auto;
+        right: 16px;
+        bottom: 16px;
+        left: 16px;
+        width: auto;
+    }
+}
+
+/* ========================================================
+   PRIORIDADE MÉDIA - CUPOM NO CARRINHO
+   ======================================================== */
+.coupon-box {
+    margin: 18px 0;
+    padding: 16px;
+    border: 1px dashed rgba(46, 204, 113, 0.55);
+    border-radius: 14px;
+    background: rgba(46, 204, 113, 0.06);
+}
+
+.coupon-box label {
+    display: block;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.coupon-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.coupon-input-row input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    outline: none;
+}
+
+.coupon-input-row input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.coupon-input-row button {
+    border: none;
+    background: var(--primary);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.coupon-input-row button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.coupon-box small {
+    display: block;
+    color: var(--text-light);
+    font-weight: 700;
+    margin-top: 8px;
+    line-height: 1.35;
+}
+
+.discount-row strong {
+    color: var(--primary-dark);
+}
+
+.summary-savings {
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f0fdf4;
+    color: var(--primary-dark);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+@media (max-width: 420px) {
+    .coupon-input-row {
+        flex-direction: column;
+    }
+
+    .coupon-input-row button {
+        padding: 12px;
+    }
+}
+
+.coupon-message.success { color: var(--primary-dark) !important; }
+.coupon-message.error { color: var(--danger) !important; }
+
+.btn-cart-remove {
+    border: 1px solid #f2d6d4;
+    background: #ffffff;
+    color: var(--danger);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.btn-cart-remove:hover {
+    background: var(--danger);
+    color: #ffffff;
+    border-color: var(--danger);
+}
+
+.btn-verde.is-disabled,
+.btn-verde:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ========================================================
+   MELHORIAS DE PRIORIDADE BAIXA
+   Skeleton loading + animações suaves de entrada/hover
+   ======================================================== */
+
+@keyframes shopwise-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shopwise-shimmer {
+    0% { background-position: -450px 0; }
+    100% { background-position: 450px 0; }
+}
+
+.animate-in,
+.product-card,
+.store-item,
+.stat-card,
+.cart-item,
+.cart-summary,
+.empty-state,
+.results-toolbar,
+.offers-filter-panel {
+    animation: shopwise-fade-up 0.45s ease both;
+}
+
+.product-card:nth-child(2),
+.store-item:nth-child(2),
+.cart-item:nth-child(2) { animation-delay: .04s; }
+.product-card:nth-child(3),
+.store-item:nth-child(3),
+.cart-item:nth-child(3) { animation-delay: .08s; }
+.product-card:nth-child(4),
+.store-item:nth-child(4),
+.cart-item:nth-child(4) { animation-delay: .12s; }
+.product-card:nth-child(5),
+.store-item:nth-child(5),
+.cart-item:nth-child(5) { animation-delay: .16s; }
+.product-card:nth-child(6),
+.store-item:nth-child(6),
+.cart-item:nth-child(6) { animation-delay: .20s; }
+
+.product-card,
+.store-item,
+.cart-item,
+.alert-card-item,
+.checkout-card {
+    will-change: transform, box-shadow;
+}
+
+.product-card:hover,
+.store-item:hover,
+.cart-item:hover,
+.alert-card-item:hover,
+.checkout-card:hover {
+    transform: translateY(-4px);
+}
+
+.skeleton-card,
+.skeleton-store {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 15px;
+    overflow: hidden;
+    position: relative;
+    animation: shopwise-fade-up 0.35s ease both;
+}
+
+.skeleton-store {
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 18px;
+    padding: 14px 16px;
+}
+
+.skeleton-line,
+.skeleton-box,
+.skeleton-circle,
+.skeleton-button {
+    background: linear-gradient(90deg, #eef3f1 0%, #f8fbfa 50%, #eef3f1 100%);
+    background-size: 450px 100%;
+    animation: shopwise-shimmer 1.2s infinite linear;
+}
+
+.skeleton-box {
+    width: 100%;
+    height: 150px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+
+.skeleton-line {
+    height: 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+.skeleton-line.short { width: 46%; }
+.skeleton-line.medium { width: 68%; }
+.skeleton-line.long { width: 86%; }
+
+.skeleton-button {
+    width: 100%;
+    height: 38px;
+    border-radius: 10px;
+    margin-top: 14px;
+}
+
+.skeleton-circle {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    border-radius: 18px;
+}
+
+.skeleton-store-text {
+    flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
