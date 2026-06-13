@@ -1,14 +1,76 @@
 const ORDER_VALUES = {
-    subtotal: 17.97,
+    subtotal: 0,
     deliveryFee: 5.00,
     discount: 0.00
 };
+
+let carrinho =
+    JSON.parse(localStorage.getItem("carrinho")) || [];
+
 
 const VALID_COUPONS = {
     SHOPWISE10: 0.10,
     ECONOMIA5: 0.05
 };
+function carregarResumoPedido() {
 
+    const container =
+        document.getElementById("checkoutPedidos");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    let subtotal = 0;
+
+    carrinho.forEach(produto => {
+
+        const preco =
+            typeof produto.preco === "number"
+                ? produto.preco
+                : Number(
+                    produto.preco
+                        .replace("R$", "")
+                        .replace(",", ".")
+                );
+
+        const totalProduto =
+            preco * produto.quantidade;
+
+        subtotal += totalProduto;
+
+        container.innerHTML += `
+            <div class="summary-item">
+                <span>
+                    ${produto.nome} (x${produto.quantidade})
+                </span>
+
+                <span>
+                    ${totalProduto.toLocaleString(
+                        "pt-BR",
+                        {
+                            style: "currency",
+                            currency: "BRL"
+                        }
+                    )}
+                </span>
+            </div>
+        `;
+    });
+
+    ORDER_VALUES.subtotal = subtotal;
+
+    document.getElementById("subtotalValue")
+        .textContent = subtotal.toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        );
+
+    updateTotal();
+}
 let currentTotal = ORDER_VALUES.subtotal + ORDER_VALUES.deliveryFee - ORDER_VALUES.discount;
 let pixTimerInterval = null;
 let pixSeconds = 10 * 60;
@@ -88,20 +150,41 @@ function updatePayButtonText() {
 }
 
 function updateTotal() {
-    const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || 'delivery';
-    const deliveryFee = deliveryMethod === 'delivery' ? ORDER_VALUES.deliveryFee : 0;
 
-    currentTotal = Math.max(0, ORDER_VALUES.subtotal + deliveryFee - ORDER_VALUES.discount);
+    const deliveryMethod =
+        document.querySelector(
+            'input[name="deliveryMethod"]:checked'
+        )?.value || "delivery";
 
-    document.getElementById('deliveryFeeValue').textContent = formatCurrency(deliveryFee);
-    document.getElementById('discountValue').textContent = `- ${formatCurrency(ORDER_VALUES.discount)}`;
-    document.getElementById('finalTotal').textContent = formatCurrency(currentTotal);
+    const deliveryFee =
+        deliveryMethod === "delivery"
+            ? ORDER_VALUES.deliveryFee
+            : 0;
 
-    const marketDeliveryInfo = document.getElementById('marketDeliveryInfo');
+    currentTotal = Math.max(
+        0,
+        ORDER_VALUES.subtotal +
+        deliveryFee -
+        ORDER_VALUES.discount
+    );
+
+    document.getElementById("deliveryFeeValue")?.textContent =
+        formatCurrency(deliveryFee);
+
+    document.getElementById("discountValue")?.textContent =
+        `- ${formatCurrency(ORDER_VALUES.discount)}`;
+
+    document.getElementById("finalTotal")?.textContent =
+        formatCurrency(currentTotal);
+
+    const marketDeliveryInfo =
+        document.getElementById("marketDeliveryInfo");
+
     if (marketDeliveryInfo) {
-        marketDeliveryInfo.textContent = deliveryMethod === 'delivery'
-            ? `Entrega em até 2h • Taxa ${formatCurrency(deliveryFee)}`
-            : 'Retirada no mercado • Sem taxa de entrega';
+        marketDeliveryInfo.textContent =
+            deliveryMethod === "delivery"
+                ? `Entrega em até 2h • Taxa ${formatCurrency(deliveryFee)}`
+                : "Retirada no mercado • Sem taxa de entrega";
     }
 
     updateInstallments();
@@ -600,4 +683,89 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleAddressConfig();
     updatePaymentPanels();
     updateCheckoutReview();
+    function carregarResumoPedido() {
+
+        carrinho =
+            JSON.parse(localStorage.getItem("carrinho")) || [];
+
+        const container =
+            document.getElementById("checkoutProducts");
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        if (carrinho.length === 0) {
+
+            container.innerHTML = `
+                <div class="summary-item">
+                    <span>Carrinho vazio</span>
+                    <span>R$ 0,00</span>
+                </div>
+            `;
+
+            ORDER_VALUES.subtotal = 0;
+
+            const subtotalElement =
+                document.getElementById("subtotalValue");
+
+            if (subtotalElement) {
+                subtotalElement.textContent = "R$ 0,00";
+            }
+
+            updateTotal();
+            return;
+        }
+
+        let subtotal = 0;
+
+        carrinho.forEach(produto => {
+
+            const preco = Number(
+                String(produto.preco)
+                    .replace("R$", "")
+                    .replace(/\s/g, "")
+                    .replace(",", ".")
+            );
+
+            const quantidade =
+                Number(produto.quantidade || 1);
+
+            const totalProduto =
+                preco * quantidade;
+
+            subtotal += totalProduto;
+
+            container.innerHTML += `
+                <div class="summary-item">
+                    <span>
+                        ${produto.nome} (x${quantidade})
+                    </span>
+
+                    <span>
+                        ${totalProduto.toLocaleString(
+                            "pt-BR",
+                            {
+                                style: "currency",
+                                currency: "BRL"
+                            }
+                        )}
+                    </span>
+                </div>
+            `;
+        });
+
+        ORDER_VALUES.subtotal = subtotal;
+
+        document.getElementById("subtotalValue")?.textContent =
+            subtotal.toLocaleString(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            );
+
+        updateTotal();
+    }
 });
