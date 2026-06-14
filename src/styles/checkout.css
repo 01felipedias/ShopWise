@@ -1139,3 +1139,41 @@
         text-align: left;
     }
 }
+
+/* PRODUTOS DO CARRINHO NO CHECKOUT */
+
+.product-summary{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:12px 0;
+}
+
+.product-summary-info{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex:1;
+}
+
+.product-summary-image{
+    width:50px;
+    height:50px;
+    object-fit:cover;
+    border-radius:8px;
+    border:1px solid #eee;
+    background:#fff;
+}
+
+.product-summary-info strong{
+    display:block;
+    font-size:14px;
+    color:var(--text-main);
+}
+
+.product-summary-info small{
+    display:block;
+    color:#666;
+    margin-top:4px;
+}

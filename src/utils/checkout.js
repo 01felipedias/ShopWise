@@ -4,73 +4,13 @@ const ORDER_VALUES = {
     discount: 0.00
 };
 
-let carrinho =
-    JSON.parse(localStorage.getItem("carrinho")) || [];
+let carrinho = [];
 
 
 const VALID_COUPONS = {
     SHOPWISE10: 0.10,
     ECONOMIA5: 0.05
 };
-function carregarResumoPedido() {
-
-    const container =
-        document.getElementById("checkoutPedidos");
-
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    let subtotal = 0;
-
-    carrinho.forEach(produto => {
-
-        const preco =
-            typeof produto.preco === "number"
-                ? produto.preco
-                : Number(
-                    produto.preco
-                        .replace("R$", "")
-                        .replace(",", ".")
-                );
-
-        const totalProduto =
-            preco * produto.quantidade;
-
-        subtotal += totalProduto;
-
-        container.innerHTML += `
-            <div class="summary-item">
-                <span>
-                    ${produto.nome} (x${produto.quantidade})
-                </span>
-
-                <span>
-                    ${totalProduto.toLocaleString(
-                        "pt-BR",
-                        {
-                            style: "currency",
-                            currency: "BRL"
-                        }
-                    )}
-                </span>
-            </div>
-        `;
-    });
-
-    ORDER_VALUES.subtotal = subtotal;
-
-    document.getElementById("subtotalValue")
-        .textContent = subtotal.toLocaleString(
-            "pt-BR",
-            {
-                style: "currency",
-                currency: "BRL"
-            }
-        );
-
-    updateTotal();
-}
 let currentTotal = ORDER_VALUES.subtotal + ORDER_VALUES.deliveryFee - ORDER_VALUES.discount;
 let pixTimerInterval = null;
 let pixSeconds = 10 * 60;
@@ -80,6 +20,119 @@ function formatCurrency(value) {
         style: 'currency',
         currency: 'BRL'
     });
+}
+
+function parsePrice(value) {
+    if (typeof value === "number") {
+        return value;
+    }
+
+    const priceText = String(value || "")
+        .replace("R$", "")
+        .replace(/\s/g, "")
+        .trim();
+
+    const normalizedValue = priceText.includes(",")
+        ? priceText.replace(/\./g, "").replace(",", ".")
+        : priceText;
+
+    return Number(normalizedValue) || 0;
+}
+
+function getCartItems() {
+    try {
+        const savedCart = JSON.parse(localStorage.getItem("carrinho"));
+        return Array.isArray(savedCart) ? savedCart : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function carregarResumoPedido() {
+
+    carrinho = getCartItems();
+
+    const summaryList =
+        document.getElementById("checkoutPedidos");
+
+    if (!summaryList) return;
+
+    summaryList.innerHTML = "";
+
+    let subtotal = 0;
+
+    if (carrinho.length === 0) {
+
+        summaryList.innerHTML = `
+            <div class="summary-item">
+                <span>Carrinho vazio</span>
+                <span>R$ 0,00</span>
+            </div>
+        `;
+
+        ORDER_VALUES.subtotal = 0;
+
+        const subtotalValue = document.getElementById("subtotalValue");
+
+        if (subtotalValue) {
+            subtotalValue.textContent = formatCurrency(0);
+        }
+
+        updateTotal();
+
+        return;
+    }
+
+    carrinho.forEach(produto => {
+
+        const preco = parsePrice(produto.preco);
+
+        const quantidade =
+            Number(produto.quantidade) || 1;
+
+        const totalItem =
+            preco * quantidade;
+
+        subtotal += totalItem;
+
+        summaryList.innerHTML += `
+            <div class="summary-item product-summary">
+
+                <div class="product-summary-info">
+
+                    <img
+                        src="${produto.img}"
+                        alt="${produto.nome}"
+                        class="product-summary-image"
+                    >
+
+                    <div>
+                        <strong>${produto.nome}</strong>
+
+                        <small>
+                            Quantidade: ${quantidade}
+                        </small>
+                    </div>
+
+                </div>
+
+                <span>
+                    ${formatCurrency(totalItem)}
+                </span>
+
+            </div>
+        `;
+    });
+
+    ORDER_VALUES.subtotal = subtotal;
+
+    const subtotalValue = document.getElementById("subtotalValue");
+
+    if (subtotalValue) {
+        subtotalValue.textContent = formatCurrency(subtotal);
+    }
+
+    updateTotal();
 }
 
 function getSelectedPaymentMethod() {
@@ -168,14 +221,21 @@ function updateTotal() {
         ORDER_VALUES.discount
     );
 
-    document.getElementById("deliveryFeeValue")?.textContent =
-        formatCurrency(deliveryFee);
+    const deliveryFeeValue = document.getElementById("deliveryFeeValue");
+    const discountValue = document.getElementById("discountValue");
+    const finalTotal = document.getElementById("finalTotal");
 
-    document.getElementById("discountValue")?.textContent =
-        `- ${formatCurrency(ORDER_VALUES.discount)}`;
+    if (deliveryFeeValue) {
+        deliveryFeeValue.textContent = formatCurrency(deliveryFee);
+    }
 
-    document.getElementById("finalTotal")?.textContent =
-        formatCurrency(currentTotal);
+    if (discountValue) {
+        discountValue.textContent = `- ${formatCurrency(ORDER_VALUES.discount)}`;
+    }
+
+    if (finalTotal) {
+        finalTotal.textContent = formatCurrency(currentTotal);
+    }
 
     const marketDeliveryInfo =
         document.getElementById("marketDeliveryInfo");
@@ -677,95 +737,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const field = document.getElementById(id);
         field?.addEventListener('input', () => clearFieldError(field));
     });
-
+    carregarResumoPedido();
     applyMasks();
     startPixTimer();
     toggleAddressConfig();
     updatePaymentPanels();
     updateCheckoutReview();
-    function carregarResumoPedido() {
-
-        carrinho =
-            JSON.parse(localStorage.getItem("carrinho")) || [];
-
-        const container =
-            document.getElementById("checkoutProducts");
-
-        if (!container) return;
-
-        container.innerHTML = "";
-
-        if (carrinho.length === 0) {
-
-            container.innerHTML = `
-                <div class="summary-item">
-                    <span>Carrinho vazio</span>
-                    <span>R$ 0,00</span>
-                </div>
-            `;
-
-            ORDER_VALUES.subtotal = 0;
-
-            const subtotalElement =
-                document.getElementById("subtotalValue");
-
-            if (subtotalElement) {
-                subtotalElement.textContent = "R$ 0,00";
-            }
-
-            updateTotal();
-            return;
-        }
-
-        let subtotal = 0;
-
-        carrinho.forEach(produto => {
-
-            const preco = Number(
-                String(produto.preco)
-                    .replace("R$", "")
-                    .replace(/\s/g, "")
-                    .replace(",", ".")
-            );
-
-            const quantidade =
-                Number(produto.quantidade || 1);
-
-            const totalProduto =
-                preco * quantidade;
-
-            subtotal += totalProduto;
-
-            container.innerHTML += `
-                <div class="summary-item">
-                    <span>
-                        ${produto.nome} (x${quantidade})
-                    </span>
-
-                    <span>
-                        ${totalProduto.toLocaleString(
-                            "pt-BR",
-                            {
-                                style: "currency",
-                                currency: "BRL"
-                            }
-                        )}
-                    </span>
-                </div>
-            `;
-        });
-
-        ORDER_VALUES.subtotal = subtotal;
-
-        document.getElementById("subtotalValue")?.textContent =
-            subtotal.toLocaleString(
-                "pt-BR",
-                {
-                    style: "currency",
-                    currency: "BRL"
-                }
-            );
-
-        updateTotal();
-    }
 });
