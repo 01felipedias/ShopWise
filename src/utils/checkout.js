@@ -6,11 +6,13 @@ const ORDER_VALUES = {
 
 let carrinho = [];
 
-
 const VALID_COUPONS = {
     SHOPWISE10: 0.10,
     ECONOMIA5: 0.05
 };
+
+
+
 let currentTotal = ORDER_VALUES.subtotal + ORDER_VALUES.deliveryFee - ORDER_VALUES.discount;
 let pixTimerInterval = null;
 let pixSeconds = 10 * 60;
@@ -334,9 +336,12 @@ function updateInstallments() {
     `;
 }
 
-function applyCoupon() {
+function applyCoupon(successMessage) {
     const couponInput = document.getElementById('couponCode');
     const feedback = document.getElementById('couponFeedback');
+
+    if (!couponInput || !feedback) return false;
+
     const code = couponInput.value.trim().toUpperCase();
 
     if (!code) {
@@ -344,7 +349,7 @@ function applyCoupon() {
         feedback.textContent = 'Digite um cupom para aplicar.';
         feedback.className = 'coupon-feedback-error';
         updateTotal();
-        return;
+        return false;
     }
 
     if (!VALID_COUPONS[code]) {
@@ -352,16 +357,53 @@ function applyCoupon() {
         feedback.textContent = 'Cupom inválido ou expirado.';
         feedback.className = 'coupon-feedback-error';
         updateTotal();
-        return;
+        return false;
     }
 
     ORDER_VALUES.discount = ORDER_VALUES.subtotal * VALID_COUPONS[code];
-    feedback.textContent = `Cupom ${code} aplicado com sucesso.`;
+
+    feedback.textContent = successMessage || `Cupom ${code} aplicado com sucesso.`;
     feedback.className = 'coupon-feedback-success';
+
     updateTotal();
 
-    if (window.showToast) window.showToast('Cupom aplicado com sucesso!', 'success');
+    if (window.showToast) {
+        window.showToast(feedback.textContent, 'success');
+    }
+
+    return true;
 }
+function openCouponModal() {
+    const modal = document.getElementById('couponModal');
+
+    if (!modal) return;
+
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+}
+
+function selectCoupon(code) {
+    const couponInput = document.getElementById('couponCode');
+
+    if (couponInput) {
+        couponInput.value = code;
+    }
+
+    const applied = applyCoupon('Cupom adicionado com sucesso.');
+
+    if (applied) {
+        closeCouponModal();
+    }
+}
+function closeCouponModal() {
+    const modal = document.getElementById('couponModal');
+
+    if (!modal) return;
+
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
 
 function setGatewayStatus(message, type) {
     const gatewayStatus = document.getElementById('gatewayStatus');
@@ -506,6 +548,7 @@ function buildPaymentPayload() {
         metodoPagamento: method,
         metodoRecebimento: deliveryMethod,
         valor: currentTotal,
+        cupom: appliedCouponCode,
         desconto: ORDER_VALUES.discount,
         parcelas: installments,
         observacoes: document.getElementById('orderNotes').value.trim(),
@@ -730,6 +773,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.key === 'Enter') {
             event.preventDefault();
             applyCoupon();
+        }
+    });
+    document.getElementById('couponModal')?.addEventListener('click', (event) => {
+        if (event.target.id === 'couponModal') {
+            closeCouponModal();
         }
     });
 
