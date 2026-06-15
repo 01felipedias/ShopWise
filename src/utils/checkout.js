@@ -11,8 +11,6 @@ const VALID_COUPONS = {
     ECONOMIA5: 0.05
 };
 
-
-
 let currentTotal = ORDER_VALUES.subtotal + ORDER_VALUES.deliveryFee - ORDER_VALUES.discount;
 let pixTimerInterval = null;
 let pixSeconds = 10 * 60;
@@ -51,77 +49,47 @@ function getCartItems() {
 }
 
 function carregarResumoPedido() {
-
     carrinho = getCartItems();
-
-    const summaryList =
-        document.getElementById("checkoutPedidos");
+    const summaryList = document.getElementById("checkoutPedidos");
 
     if (!summaryList) return;
 
     summaryList.innerHTML = "";
-
     let subtotal = 0;
 
     if (carrinho.length === 0) {
-
         summaryList.innerHTML = `
             <div class="summary-item">
                 <span>Carrinho vazio</span>
                 <span>R$ 0,00</span>
             </div>
         `;
-
         ORDER_VALUES.subtotal = 0;
 
         const subtotalValue = document.getElementById("subtotalValue");
-
         if (subtotalValue) {
             subtotalValue.textContent = formatCurrency(0);
         }
-
         updateTotal();
-
         return;
     }
 
     carrinho.forEach(produto => {
-
         const preco = parsePrice(produto.preco);
-
-        const quantidade =
-            Number(produto.quantidade) || 1;
-
-        const totalItem =
-            preco * quantidade;
-
+        const quantidade = Number(produto.quantidade) || 1;
+        const totalItem = preco * quantidade;
         subtotal += totalItem;
 
         summaryList.innerHTML += `
             <div class="summary-item product-summary">
-
                 <div class="product-summary-info">
-
-                    <img
-                        src="${produto.img}"
-                        alt="${produto.nome}"
-                        class="product-summary-image"
-                    >
-
+                    <img src="${produto.img}" alt="${produto.nome}" class="product-summary-image">
                     <div>
                         <strong>${produto.nome}</strong>
-
-                        <small>
-                            Quantidade: ${quantidade}
-                        </small>
+                        <small>Quantidade: ${quantidade}</small>
                     </div>
-
                 </div>
-
-                <span>
-                    ${formatCurrency(totalItem)}
-                </span>
-
+                <span>${formatCurrency(totalItem)}</span>
             </div>
         `;
     });
@@ -129,7 +97,6 @@ function carregarResumoPedido() {
     ORDER_VALUES.subtotal = subtotal;
 
     const subtotalValue = document.getElementById("subtotalValue");
-
     if (subtotalValue) {
         subtotalValue.textContent = formatCurrency(subtotal);
     }
@@ -148,7 +115,6 @@ function getPaymentMethodLabel(method) {
         debito: 'Cartão de Débito à vista',
         entrega: 'Pagamento na entrega'
     };
-
     return labels[method] || 'PIX';
 }
 
@@ -205,23 +171,10 @@ function updatePayButtonText() {
 }
 
 function updateTotal() {
+    const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
+    const deliveryFee = deliveryMethod === "delivery" ? ORDER_VALUES.deliveryFee : 0;
 
-    const deliveryMethod =
-        document.querySelector(
-            'input[name="deliveryMethod"]:checked'
-        )?.value || "delivery";
-
-    const deliveryFee =
-        deliveryMethod === "delivery"
-            ? ORDER_VALUES.deliveryFee
-            : 0;
-
-    currentTotal = Math.max(
-        0,
-        ORDER_VALUES.subtotal +
-        deliveryFee -
-        ORDER_VALUES.discount
-    );
+    currentTotal = Math.max(0, ORDER_VALUES.subtotal + deliveryFee - ORDER_VALUES.discount);
 
     const deliveryFeeValue = document.getElementById("deliveryFeeValue");
     const discountValue = document.getElementById("discountValue");
@@ -230,21 +183,16 @@ function updateTotal() {
     if (deliveryFeeValue) {
         deliveryFeeValue.textContent = formatCurrency(deliveryFee);
     }
-
     if (discountValue) {
         discountValue.textContent = `- ${formatCurrency(ORDER_VALUES.discount)}`;
     }
-
     if (finalTotal) {
         finalTotal.textContent = formatCurrency(currentTotal);
     }
 
-    const marketDeliveryInfo =
-        document.getElementById("marketDeliveryInfo");
-
+    const marketDeliveryInfo = document.getElementById("marketDeliveryInfo");
     if (marketDeliveryInfo) {
-        marketDeliveryInfo.textContent =
-            deliveryMethod === "delivery"
+        marketDeliveryInfo.textContent = deliveryMethod === "delivery"
                 ? `Entrega em até 2h • Taxa ${formatCurrency(deliveryFee)}`
                 : "Retirada no mercado • Sem taxa de entrega";
     }
@@ -373,33 +321,28 @@ function applyCoupon(successMessage) {
 
     return true;
 }
+
 function openCouponModal() {
     const modal = document.getElementById('couponModal');
-
     if (!modal) return;
-
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
 }
 
 function selectCoupon(code) {
     const couponInput = document.getElementById('couponCode');
-
     if (couponInput) {
         couponInput.value = code;
     }
-
     const applied = applyCoupon('Cupom adicionado com sucesso.');
-
     if (applied) {
         closeCouponModal();
     }
 }
+
 function closeCouponModal() {
     const modal = document.getElementById('couponModal');
-
     if (!modal) return;
-
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
 }
@@ -548,7 +491,7 @@ function buildPaymentPayload() {
         metodoPagamento: method,
         metodoRecebimento: deliveryMethod,
         valor: currentTotal,
-        cupom: appliedCouponCode,
+        cupom: typeof appliedCouponCode !== 'undefined' ? appliedCouponCode : null,
         desconto: ORDER_VALUES.discount,
         parcelas: installments,
         observacoes: document.getElementById('orderNotes').value.trim(),

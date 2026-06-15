@@ -1,0 +1,211 @@
+/* ========================================================
+   SHOPWISE - CSS EXCLUSIVO DA TELA pedidos.html
+   Mantém o feed.css como CSS global e concentra aqui
+   os estilos específicos de rastreamento/status do pedido.
+   ======================================================== */
+
+/* Cabeçalho da página de pedidos */
+.orders-hero {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 24px;
+    padding: 22px;
+    margin: 22px 0;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.04);
+}
+
+.orders-hero .payment-title {
+    margin: 10px 0 6px !important;
+    text-align: left !important;
+}
+
+.orders-hero .payment-subtitle {
+    color: var(--text-light);
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 760px;
+}
+
+.orders-hero .mini-badge {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(46, 204, 113, 0.12);
+    color: var(--primary-dark);
+    border: 1px solid rgba(46, 204, 113, 0.22);
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* Ações rápidas do pedido */
+.orders-hero .quick-links,
+.orders-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.orders-hero .btn-primary-link,
+.orders-hero .btn-secondary-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 900;
+    transition: 0.2s ease;
+    padding: 12px 16px;
+}
+
+.orders-hero .btn-primary-link {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.orders-hero .btn-secondary-link {
+    background: #ffffff;
+    color: var(--primary-dark);
+    border: 1px solid rgba(46, 204, 113, 0.35);
+}
+
+.orders-hero .btn-primary-link:hover,
+.orders-hero .btn-secondary-link:hover {
+    transform: translateY(-1px);
+}
+
+/* Cards de resumo do pedido */
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin: 20px 0;
+}
+
+.orders-grid .info-card {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+.orders-grid .info-card h3 {
+    color: #07152b;
+    margin-bottom: 8px;
+}
+
+.orders-grid .info-card p {
+    color: #667575;
+    line-height: 1.5;
+    font-weight: 700;
+}
+
+.orders-grid .dashboard-stat {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--primary-dark);
+}
+
+.orders-grid .status-pill {
+    display: inline-flex;
+    width: fit-content;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f0fdf4;
+    color: var(--primary-dark);
+    border: 1px solid rgba(46, 204, 113, 0.25);
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+/* Linha do tempo de rastreamento */
+.timeline {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.03);
+}
+
+.timeline-step {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 14px;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 34px;
+    bottom: 0;
+    width: 2px;
+    background: #dbe7e2;
+}
+
+.timeline-step h3 {
+    color: #07152b;
+    font-size: 17px;
+    margin-bottom: 5px;
+}
+
+.timeline-step p {
+    color: #667575;
+    line-height: 1.5;
+    font-weight: 700;
+}
+
+.timeline-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #dbe7e2;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    font-weight: 900;
+    z-index: 1;
+}
+
+.timeline-step.done .timeline-dot,
+.timeline-step.active .timeline-dot {
+    background: var(--primary);
+}
+
+.timeline-step.active h3 {
+    color: var(--primary-dark);
+}
+
+.timeline-step.active .timeline-dot {
+    box-shadow: 0 0 0 6px rgba(46, 204, 113, 0.14);
+}
+
+/* Responsividade exclusiva da página de pedidos */
+@media (max-width: 900px) {
+    .orders-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .orders-hero {
+        padding: 18px;
+    }
+
+    .orders-hero .quick-links {
+        flex-direction: column;
+    }
+
+    .orders-hero .btn-primary-link,
+    .orders-hero .btn-secondary-link {
+        width: 100%;
+    }
+}
