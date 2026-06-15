@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopWise - Cupons e Cashback</title>
+    <link rel="stylesheet" href="../styles/feed.css">
+    
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </div>
+                <a href="feedproduto.html" aria-label="Ir para a página inicial"><img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"></a>
+            </div>
+            <nav class="sidebar-nav" aria-label="Menu principal">
+                <a href="feedproduto.html" class="nav-item" aria-label="Página Inicial"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Início</span></a>
+                <a href="AlertaPreco.html" class="nav-item" aria-label="Seus Alertas"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span>Alertas</span></a>
+                <a href="perfil.html" class="nav-item" aria-label="Seu Perfil"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Perfil</span></a>
+                <a href="cupons.html" class="nav-item active" aria-label="Seu Cashback"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>Cashback</span></a>
+                <a href="pedidos.html" class="nav-item" aria-label="Seus Pedidos"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span>Pedidos</span></a>
+            </nav>
+        </aside>
+        <div class="main-content">
+            <header class="navbar" role="banner">
+                <div class="nav-container"><div class="nav-top">
+                    <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>
+                    <a href="feedproduto.html" class="mobile-logo-area"><img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"></a>
+                    <div class="location">📍 Floriano, PI - 64800-000</div>
+                    <a href="carrinho.html" class="cart-icon" aria-label="Ir para o carrinho"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cart-badge">3</span></a>
+                </div></div>
+            </header>
+            <main class="page-container" role="main">
+<section class="coupons-hero">
+    <span class="mini-badge">Cupons e cashback</span>
+    <h1 class="section-title payment-title">Economize ainda mais</h1>
+    <p class="payment-subtitle">Acompanhe cupons disponíveis, cashback estimado e benefícios aplicáveis à sua cesta.</p>
+</section>
+<section class="coupon-grid">
+    <article class="info-card"><h3>SHOPWISE10</h3><p>10% de desconto na primeira compra demonstrativa.</p><a href="carrinho.html" class="btn-card-link">Usar no carrinho</a></article>
+    <article class="info-card"><h3>ECONOMIA5</h3><p>R$ 5,00 de desconto em compras acima de R$ 50,00.</p><a href="carrinho.html" class="btn-card-link">Aplicar cupom</a></article>
+    <article class="info-card"><h3>Cashback ativo</h3><div class="dashboard-stat">R$ 6,80</div><p>Valor estimado para usar em compras futuras.</p></article>
+</section>
+</main>
+        </div>
+    </div>
+    <script src="../utils/ui-feedback.js"></script>
+</body>
+</html>
