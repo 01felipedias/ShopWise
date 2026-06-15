@@ -1,0 +1,191 @@
+/* ========================================================
+   CSS EXCLUSIVO - TELA DE AVALIAÇÃO (SHOPWISE)
+   Arquivo usado por: pages/avaliacao.html
+   Mantém apenas os estilos próprios da avaliação.
+   ======================================================== */
+
+.avaliacao-hero {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(255, 255, 255, 0.92));
+    border: 1px solid #dbe7e2;
+    border-radius: 24px;
+    padding: 28px;
+    margin: 28px 0 22px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+}
+
+.avaliacao-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(46, 204, 113, 0.14);
+    color: var(--primary-dark);
+    border: 1px solid rgba(46, 204, 113, 0.24);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.avaliacao-title {
+    font-size: 32px;
+    line-height: 1.1;
+    color: #07152b;
+    font-weight: 900;
+    margin: 0 0 8px;
+}
+
+.avaliacao-subtitle {
+    color: #667575;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 700;
+    max-width: 760px;
+}
+
+.avaliacao-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin: 20px 0;
+}
+
+.avaliacao-card,
+.avaliacao-form {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.avaliacao-card:hover,
+.avaliacao-form:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 14px 30px rgba(46, 204, 113, 0.12);
+}
+
+.avaliacao-card h3,
+.avaliacao-form h3 {
+    color: #07152b;
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.avaliacao-card p,
+.avaliacao-form p {
+    color: #667575;
+    line-height: 1.5;
+    font-weight: 700;
+}
+
+.avaliacao-stars {
+    display: flex;
+    gap: 6px;
+    font-size: 30px;
+    color: #f2b01e;
+    margin: 10px 0;
+    line-height: 1;
+}
+
+.avaliacao-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    background: rgba(46, 204, 113, 0.12);
+    color: var(--primary-dark);
+    border: 1px solid rgba(46, 204, 113, 0.25);
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.avaliacao-form {
+    margin: 20px 0 40px;
+}
+
+.avaliacao-label {
+    display: block;
+    color: #333333;
+    font-size: 13px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.avaliacao-textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text-main);
+    background: #ffffff;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.avaliacao-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.avaliacao-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 900;
+    padding: 13px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.avaliacao-submit:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(46, 204, 113, 0.22);
+}
+
+@media (max-width: 900px) {
+    .avaliacao-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .avaliacao-title {
+        font-size: 26px;
+    }
+
+    .avaliacao-hero {
+        padding: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .avaliacao-card,
+    .avaliacao-form,
+    .avaliacao-submit,
+    .avaliacao-textarea {
+        transition: none;
+    }
+
+    .avaliacao-card:hover,
+    .avaliacao-form:hover,
+    .avaliacao-submit:hover {
+        transform: none;
+    }
+}
