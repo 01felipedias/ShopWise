@@ -8,6 +8,7 @@
     
     <link rel="stylesheet" href="../styles/feed.css">
 </head>
+
 <body>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -17,36 +18,62 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
                 </div>
+
                 <a href="#" aria-label="Ir para a página inicial">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                    <img 
+                        src="../assets/img/logoshopwise.png" 
+                        alt="ShopWise" 
+                        class="sidebar-full-logo" 
+                        onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"
+                    >
                 </a>
             </div>
 
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" aria-label="Página Inicial">
-                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
                     <span>Início</span>
                 </a>
                 
-                <a href="#" class="nav-item" aria-label="Seus Alertas">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <a href="AlertaPreco.html" class="nav-item" aria-label="Seus Alertas">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
                     <span>Alertas</span>
                 </a>
 
                 <a href="#" class="nav-item" aria-label="Seu Perfil">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
                     <span>Perfil</span>
                 </a>
 
                 <a href="#" class="nav-item" aria-label="Seu Cashback">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
                     <span>Cashback</span>
                 </a>
 
                 <a href="#" class="nav-item" aria-label="Seus Pedidos">
-                    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
                     <span>Pedidos</span>
                 </a>
             </nav>
@@ -58,21 +85,36 @@
                 <div class="nav-container">
                     <div class="nav-top">
                         <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
                         </div>
 
                         <a href="#" class="mobile-logo-area">
-                            <img src="../assets/img/logoshopwise.png" alt="ShopWise" style="max-height: 35px;" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                            <img 
+                                src="../assets/img/logoshopwise.png" 
+                                alt="ShopWise" 
+                                class="mobile-logo-img"
+                                onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"
+                            >
                         </a>
 
                         <div class="search-wrapper">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
                             <input type="text" id="searchInput" placeholder="Pesquise feijão, leite..." aria-label="Campo de pesquisa">
                         </div>
 
                         <div class="nav-actions">
                             <div class="location" role="button" tabindex="0">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
                                 Floriano, PI - 64800...
                             </div>
                             
@@ -89,54 +131,200 @@
                 </div>
             </header>
 
-            <nav class="categories-bar" aria-label="Categorias de produtos">
-                <div class="categories-container" id="categoryContainer">
-                    <button class="cat-btn active" data-categoria="todos">Todos</button>
-                    <button class="cat-btn" data-categoria="descontos">Descontos</button>
-                    <button class="cat-btn" data-categoria="mercearia">Mercearia</button>
-                    <button class="cat-btn" data-categoria="laticinios">Laticínios</button>
-                    <button class="cat-btn" data-categoria="bebidas">Bebidas</button>
-                    <button class="cat-btn" data-categoria="limpeza">Limpeza</button>
-                </div>
-            </nav>
-
             <main class="page-container" role="main">
                 
-                <section class="banner" aria-labelledby="banner-title">
-                    <div class="banner-content">
-                        <span class="banner-badge">💰 ECONOMIZE EM SUAS COMPRAS</span>
-                        <h1 id="banner-title">Compare preços entre os principais mercados</h1>
-                        <p>Encontre o menor preço em segundos e economize até 30% nas suas compras diárias.</p>
-                        <button class="banner-btn">Comparar Agora</button>
-                    </div>
+                <section class="hero-shopwise" aria-label="Resumo da busca ShopWise">
+
+                    <section class="banner" aria-labelledby="banner-title">
+                        <div class="banner-content">
+                            <span class="banner-badge">💰 BUSQUE, COMPARE E ECONOMIZE</span>
+
+                            <h1 id="banner-title">
+                                Encontre o menor preço em segundos
+                            </h1>
+
+                            <p>
+                                Pesquise produtos, filtre por categoria e descubra em qual supermercado
+                                vale mais a pena comprar.
+                            </p>
+                        </div>
                     </section>
 
-                <section class="stats" aria-label="Estatísticas">
-                    <div class="stat-card">
-                        <h3>+3.500</h3>
-                        <span>Produtos monitorados</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>+250</h3>
-                        <span>Ofertas ativas hoje</span>
-                    </div>
-                    <div class="stat-card">
-                        <h3>R$ 87</h3>
-                        <span>Economia média/compra</span>
-                    </div>
-                </section>
-
-                <h2 class="section-title">Supermercados em Destaque</h2>
-                <section class="stores-section" aria-label="Supermercados de Floriano">
-                    <div class="stores-carousel" id="storesCarousel">
+                    <section class="stats" aria-label="Estatísticas">
+                        <div class="stat-card">
+                            <h3>10</h3>
+                            <span>Produtos cadastrados</span>
                         </div>
+
+                        <div class="stat-card">
+                            <h3>10</h3>
+                            <span>Ofertas ativas</span>
+                        </div>
+
+                        <div class="stat-card">
+                            <h3>R$ 4,40</h3>
+                            <span>Maior economia</span>
+                        </div>
+                    </section>
+
                 </section>
 
-                <h2 class="section-title">Ofertas Recentes</h2>
-                <section class="product-grid" id="productGrid" aria-live="polite">
+                <section class="feed-section-header">
+                    <h2>Supermercados em destaque</h2>
+                    <p>Clique em um mercado para ver os produtos dele.</p>
                 </section>
+
+                <section class="stores-section" aria-label="Supermercados de Floriano">
+                    <div class="stores-carousel" id="storesCarousel"></div>
+                </section>
+
+                <section class="feed-section-header offers-title">
+                    <h2>Ofertas recentes</h2>
+                    <p>Use a busca e os filtros para encontrar mais rápido.</p>
+                </section>
+
+                <section class="offers-filter-panel" aria-label="Filtros de produtos">
+                    <div class="categories-container" id="categoryContainer">
+                        <button class="cat-btn active" type="button" data-categoria="todos">
+                            Todos <span class="cat-count">0</span>
+                        </button>
+
+                        <button class="cat-btn" type="button" data-categoria="descontos">
+                            Descontos <span class="cat-count">0</span>
+                        </button>
+
+                        <button class="cat-btn" type="button" data-categoria="mercearia">
+                            Mercearia <span class="cat-count">0</span>
+                        </button>
+
+                        <button class="cat-btn" type="button" data-categoria="laticinios">
+                            Laticínios <span class="cat-count">0</span>
+                        </button>
+
+                        <button class="cat-btn" type="button" data-categoria="bebidas">
+                            Bebidas <span class="cat-count">0</span>
+                        </button>
+
+                        <button class="cat-btn" type="button" data-categoria="limpeza">
+                            Limpeza <span class="cat-count">0</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="results-toolbar" aria-live="polite">
+                    <div class="results-info-area">
+                        <strong id="resultInfo">Carregando produtos...</strong>
+                        <span id="activeFilterText">Filtro ativo: Todos</span>
+                    </div>
+
+                    <div class="results-actions">
+                        <label for="sortSelect">Ordenar por:</label>
+
+                        <select id="sortSelect">
+                            <option value="menor-preco">Menor preço</option>
+                            <option value="maior-preco">Maior preço</option>
+                            <option value="maior-desconto">Maior desconto</option>
+                            <option value="nome">Nome A-Z</option>
+                        </select>
+
+                        <button class="btn-clear-filters" id="clearFiltersBtn" type="button">
+                            Limpar filtros
+                        </button>
+                    </div>
+                </section>
+
+                <section class="product-grid" id="productGrid" aria-live="polite"></section>
 
             </main>
+
+            <footer class="shopwise-footer">
+                <div class="footer-container">
+
+                    <div class="footer-brand">
+                        <a href="#" class="footer-logo" aria-label="ShopWise">
+                            <img 
+                                src="../assets/shopwise_sem_fundo.png" 
+                                alt="ShopWise" 
+                                class="footer-logo-img"
+                                onerror="this.onerror=null; this.src='https://placehold.co/170x55/ffffff/00b978?text=ShopWise';"
+                            >
+                        </a>
+
+                        <p>
+                            O comparador de preços mais inteligente do Piauí.
+                            Feito em Floriano por estudantes do IFPI.
+                        </p>
+
+                        <div class="footer-socials" aria-label="Redes sociais">
+                            <a href="#" aria-label="Twitter">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M22 4.01c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.89-2.37 8.59 8.59 0 0 1-2.72 1.04A4.27 4.27 0 0 0 11.42 7.25c0 .34.04.67.11.98A12.1 12.1 0 0 1 2.74 3.78a4.26 4.26 0 0 0 1.32 5.7 4.2 4.2 0 0 1-1.94-.53v.05a4.27 4.27 0 0 0 3.42 4.18 4.3 4.3 0 0 1-1.93.07 4.28 4.28 0 0 0 3.99 2.97A8.58 8.58 0 0 1 2.3 18.05c-.34 0-.68-.02-1.01-.06A12.1 12.1 0 0 0 7.86 20c7.88 0 12.19-6.53 12.19-12.19v-.55A8.7 8.7 0 0 0 22 4.01z"></path>
+                                </svg>
+                            </a>
+
+                            <a href="#" aria-label="Instagram">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                                    <circle cx="12" cy="12" r="4"></circle>
+                                    <circle cx="17.5" cy="6.5" r="1"></circle>
+                                </svg>
+                            </a>
+
+                            <a href="#" aria-label="LinkedIn">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                    <rect x="2" y="9" width="4" height="12"></rect>
+                                    <circle cx="4" cy="4" r="2"></circle>
+                                </svg>
+                            </a>
+
+                            <a href="#" aria-label="GitHub">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3>Produto</h3>
+                        <a href="#">Recursos</a>
+                        <a href="#">Cupons</a>
+                        <a href="#">Alertas</a>
+                        <a href="#">API</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3>Empresa</h3>
+                        <a href="#">Sobre</a>
+                        <a href="#">Carreiras</a>
+                        <a href="#">Imprensa</a>
+                        <a href="#">Blog</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3>Suporte</h3>
+                        <a href="#">Central de Ajuda</a>
+                        <a href="#">Contato</a>
+                        <a href="#">Status</a>
+                        <a href="#">Comunidade</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Privacidade</a>
+                        <a href="#">Termos</a>
+                        <a href="#">Cookies</a>
+                        <a href="#">LGPD</a>
+                    </div>
+
+                </div>
+
+                <div class="footer-bottom">
+                    <p>© 2026 ShopWise Inc. Todos os direitos reservados.</p>
+                    <p>Engenharia de Software · IFPI Campus Floriano</p>
+                </div>
+            </footer>
         </div>
     </div>
 
@@ -148,42 +336,205 @@
             { id: 4, nome: "Jorge Batista", img: "../assets/jorge-batista.png", desconto: "Novo" }
         ];
 
-        function renderizarLojas() {
-            const container = document.getElementById('storesCarousel');
-            container.innerHTML = lojasFloriano.map(loja => `
-                <a href="#" class="store-item" title="${loja.nome}">
-                    <div class="store-logo">
-                        <img src="${loja.img}" alt="${loja.nome}" onerror="this.onerror=null; this.src='https://placehold.co/100x100/eeeeee/333333?text=Loja';">
-                        <span class="store-discount-tag">${loja.desconto}</span>
-                    </div>
-                    <span class="store-name">${loja.nome}</span>
-                </a>
-            `).join('');
-        }
-
         const dadosProdutos = [
-            { id: 1, nome: "Feijão Carioca tipo 1 Kicaldo 1kg", preco: "6,49", precoOriginal: "8,99", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/feijao-kicaldo.png" }, { id: 2, nome: "Feijão Preto Fugini 250g", preco: "3,49", precoOriginal: "5,00", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/feijao-fugini.png" }, { id: 3, nome: "Leite UHT Integral Ninho 1L", preco: "4,99", precoOriginal: "6,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/leite-ninho.png" }, { id: 4, nome: "Queijo Mussarela Fatiado Itambé 150g", preco: "9,99", precoOriginal: "12,90", mercado: "Q", mercadoClass: "market-q", categoria: "laticinios", img: "../assets/queijo-itambe.png" }, { id: 5, nome: "Iogurte Desnatado YoPRO 160g", preco: "8,99", precoOriginal: "11,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/iogurte-yopro.png" }, { id: 6, nome: "Flocão de Milho Nutrivita 500g", preco: "2,19", precoOriginal: "3,20", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/flocao-bsb.png" }, { id: 7, nome: "Sabão em Pó Omo Lavagem Perfeita 800g", preco: "14,50", precoOriginal: "18,90", mercado: "Mix", mercadoClass: "market-mix", categoria: "limpeza", img: "../assets/sabao-omo.png" }, { id: 8, nome: "Café Tradicional 3 Corações 250g", preco: "9,89", precoOriginal: "13,99", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/cafe-3coracoes.png" }, { id: 9, nome: "Refrigerante Coca-Cola 2L", preco: "8,49", precoOriginal: "10,99", mercado: "Q", mercadoClass: "market-q", categoria: "bebidas", img: "../assets/coca-cola.png" }, { id: 10, nome: "Detergente Líquido Ypê Neutro 500ml", preco: "2,29", precoOriginal: "3,50", mercado: "Q", mercadoClass: "market-q", categoria: "limpeza", img: "../assets/detergente-ype.png" }
+            { id: 1, nome: "Feijão Carioca tipo 1 Kicaldo 1kg", preco: "6,49", precoOriginal: "8,99", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/feijao-kicaldo.png" },
+            { id: 2, nome: "Feijão Preto Fugini 250g", preco: "3,49", precoOriginal: "5,00", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/feijao-fugini.png" },
+            { id: 3, nome: "Leite UHT Integral Ninho 1L", preco: "4,99", precoOriginal: "6,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/leite-ninho.png" },
+            { id: 4, nome: "Queijo Mussarela Fatiado Itambé 150g", preco: "9,99", precoOriginal: "12,90", mercado: "Q", mercadoClass: "market-q", categoria: "laticinios", img: "../assets/queijo-itambe.png" },
+            { id: 5, nome: "Iogurte Desnatado YoPRO 160g", preco: "8,99", precoOriginal: "11,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/iogurte-yopro.png" },
+            { id: 6, nome: "Flocão de Milho Nutrivita 500g", preco: "2,19", precoOriginal: "3,20", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/flocao-bsb.png" },
+            { id: 7, nome: "Sabão em Pó Omo Lavagem Perfeita 800g", preco: "14,50", precoOriginal: "18,90", mercado: "Mix", mercadoClass: "market-mix", categoria: "limpeza", img: "../assets/sabao-omo.png" },
+            { id: 8, nome: "Café Tradicional 3 Corações 250g", preco: "9,89", precoOriginal: "13,99", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/cafe-3coracoes.png" },
+            { id: 9, nome: "Refrigerante Coca-Cola 2L", preco: "8,49", precoOriginal: "10,99", mercado: "Q", mercadoClass: "market-q", categoria: "bebidas", img: "../assets/coca-cola.png" },
+            { id: 10, nome: "Detergente Líquido Ypê Neutro 500ml", preco: "2,29", precoOriginal: "3,50", mercado: "Q", mercadoClass: "market-q", categoria: "limpeza", img: "../assets/detergente-ype.png" }
         ];
 
-        function criarHtmlProduto(produto) {
-            const logoMercado = produto.mercado === 'Mix' 
-                ? '../assets/mix.png' 
-                : '../assets/quaresma.png';
+        const nomesCategorias = {
+            todos: "Todos",
+            descontos: "Descontos",
+            mercearia: "Mercearia",
+            laticinios: "Laticínios",
+            bebidas: "Bebidas",
+            limpeza: "Limpeza"
+        };
 
-            const precoAtual = parseFloat(produto.preco.replace(',', '.'));
-            const precoOriginal = parseFloat(produto.precoOriginal.replace(',', '.'));
-            
-            const valorEconomizado = precoOriginal - precoAtual;
-            const economiaFormatada = valorEconomizado.toFixed(2).replace('.', ',');
-            const porcentagemDesconto = Math.round((valorEconomizado / precoOriginal) * 100);
+        const estadoBusca = {
+            categoria: "todos",
+            termo: "",
+            ordenacao: "menor-preco"
+        };
+
+        let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+        function precoParaNumero(valor) {
+            return Number(String(valor).replace(",", "."));
+        }
+
+        function normalizarTexto(texto) {
+            return String(texto)
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim();
+        }
+
+        function obterNomeMercado(produto) {
+            return produto.mercado === "Mix" ? "Mix Mateus" : "Super Quaresma";
+        }
+
+        function calcularEconomia(produto) {
+            return precoParaNumero(produto.precoOriginal) - precoParaNumero(produto.preco);
+        }
+
+        function calcularDesconto(produto) {
+            const precoAtual = precoParaNumero(produto.preco);
+            const precoOriginal = precoParaNumero(produto.precoOriginal);
+
+            if (!precoOriginal || precoOriginal <= precoAtual) {
+                return 0;
+            }
+
+            return Math.round(((precoOriginal - precoAtual) / precoOriginal) * 100);
+        }
+
+        function formatarEconomia(valor) {
+            return valor.toFixed(2).replace(".", ",");
+        }
+
+        function filtrarProdutos() {
+            const termoNormalizado = normalizarTexto(estadoBusca.termo);
+
+            const produtosFiltrados = dadosProdutos.filter((produto) => {
+                const nomeProduto = normalizarTexto(produto.nome);
+                const categoriaProduto = normalizarTexto(produto.categoria);
+                const mercadoProduto = normalizarTexto(obterNomeMercado(produto));
+                const desconto = calcularDesconto(produto);
+
+                const correspondeTermo =
+                    termoNormalizado === "" ||
+                    nomeProduto.includes(termoNormalizado) ||
+                    categoriaProduto.includes(termoNormalizado) ||
+                    mercadoProduto.includes(termoNormalizado);
+
+                const correspondeCategoria =
+                    estadoBusca.categoria === "todos" ||
+                    produto.categoria === estadoBusca.categoria ||
+                    (estadoBusca.categoria === "descontos" && desconto > 0);
+
+                return correspondeTermo && correspondeCategoria;
+            });
+
+            return ordenarProdutos(produtosFiltrados);
+        }
+
+        function ordenarProdutos(lista) {
+            const listaOrdenada = [...lista];
+
+            switch (estadoBusca.ordenacao) {
+                case "menor-preco":
+                    listaOrdenada.sort((a, b) => precoParaNumero(a.preco) - precoParaNumero(b.preco));
+                    break;
+
+                case "maior-preco":
+                    listaOrdenada.sort((a, b) => precoParaNumero(b.preco) - precoParaNumero(a.preco));
+                    break;
+
+                case "maior-desconto":
+                    listaOrdenada.sort((a, b) => calcularDesconto(b) - calcularDesconto(a));
+                    break;
+
+                case "nome":
+                    listaOrdenada.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+                    break;
+
+                default:
+                    listaOrdenada.sort((a, b) => precoParaNumero(a.preco) - precoParaNumero(b.preco));
+            }
+
+            return listaOrdenada;
+        }
+
+        function atualizarContadoresCategorias() {
+            document.querySelectorAll("#categoryContainer .cat-btn").forEach((botao) => {
+                const categoria = botao.dataset.categoria;
+                const contador = botao.querySelector(".cat-count");
+
+                if (!contador) return;
+
+                let total = 0;
+
+                if (categoria === "todos") {
+                    total = dadosProdutos.length;
+                } else if (categoria === "descontos") {
+                    total = dadosProdutos.filter((produto) => calcularDesconto(produto) > 0).length;
+                } else {
+                    total = dadosProdutos.filter((produto) => produto.categoria === categoria).length;
+                }
+
+                contador.textContent = total;
+            });
+        }
+
+        function atualizarResumoBusca(total) {
+            const resultInfo = document.getElementById("resultInfo");
+            const activeFilterText = document.getElementById("activeFilterText");
+
+            if (!resultInfo || !activeFilterText) return;
+
+            resultInfo.textContent = total === 1
+                ? "1 produto encontrado"
+                : `${total} produtos encontrados`;
+
+            const categoria = nomesCategorias[estadoBusca.categoria] || "Todos";
+            const termo = estadoBusca.termo.trim();
+
+            activeFilterText.textContent = termo
+                ? `Filtro ativo: ${categoria} • Busca: "${termo}"`
+                : `Filtro ativo: ${categoria}`;
+        }
+
+        function renderizarLojas() {
+            const container = document.getElementById("storesCarousel");
+
+            if (!container) return;
+
+            container.innerHTML = lojasFloriano.map((loja) => `
+                <a href="#" class="store-item" title="${loja.nome}" data-loja="${loja.nome}">
+                    <div class="store-logo">
+                        <img 
+                            src="${loja.img}" 
+                            alt="${loja.nome}" 
+                            onerror="this.onerror=null; this.src='https://placehold.co/100x100/e8faf2/00b978?text=Loja';"
+                        >
+                    </div>
+
+                    <div class="store-text">
+                        <span class="store-name">${loja.nome}</span>
+                        <span class="store-offer">${loja.desconto}</span>
+                    </div>
+                </a>
+            `).join("");
+        }
+
+        function criarHtmlProduto(produto) {
+            const logoMercado = produto.mercado === "Mix"
+                ? "../assets/mix.png"
+                : "../assets/quaresma.png";
+
+            const economiaFormatada = formatarEconomia(calcularEconomia(produto));
+            const porcentagemDesconto = calcularDesconto(produto);
 
             return `
                 <article class="product-card">
                     <div class="product-image-wrapper">
-                        <img src="${produto.img}" alt="${produto.nome}" onerror="this.onerror=null; this.src='https://placehold.co/300x300/f4f7f6/777777?text=Sem+Imagem';">
+                        <img 
+                            src="${produto.img}" 
+                            alt="${produto.nome}" 
+                            onerror="this.onerror=null; this.src='https://placehold.co/300x300/f4f7f6/777777?text=Sem+Imagem';"
+                        >
                     </div>
+
                     <div class="product-info">
-                        
                         <div class="price-header">
                             <span class="original-price">R$ ${produto.precoOriginal}</span>
                             <span class="discount-badge">-${porcentagemDesconto}%</span>
@@ -191,19 +542,31 @@
 
                         <div class="price-row">
                             <span class="price">R$ ${produto.preco}</span>
-                            <div class="market-logo" title="${produto.mercado}">
-                                <img src="${logoMercado}" alt="Logo ${produto.mercado}">
+
+                            <div class="market-logo" title="${obterNomeMercado(produto)}">
+                                <img 
+                                    src="${logoMercado}" 
+                                    alt="Logo ${obterNomeMercado(produto)}" 
+                                    onerror="this.style.display='none'"
+                                >
                             </div>
                         </div>
 
                         <div class="savings-text">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
                             Economiza R$ ${economiaFormatada}
                         </div>
 
                         <h3 class="product-name">${produto.nome}</h3>
-                        <button class="btn-add" onclick="adicionarCarrinho(${produto.id})">Adicionar</button>
-                        <button class="btn-comparar" onclick="openModal()">
+
+                        <button class="btn-add" type="button" onclick="adicionarCarrinho(${produto.id})">
+                            Adicionar
+                        </button>
+
+                        <button class="btn-comparar" type="button" onclick="openModal()">
                             📊 Comparar preços
                         </button>
                     </div>
@@ -211,351 +574,518 @@
             `;
         }
 
-        function renderizarProdutos(lista) {
-            const grid = document.getElementById('productGrid');
+        function renderizarProdutos() {
+            const grid = document.getElementById("productGrid");
+            const lista = filtrarProdutos();
+
+            if (!grid) return;
+
+            atualizarResumoBusca(lista.length);
+
             if (lista.length === 0) {
-                grid.innerHTML = `<div class="empty-state"><h2>Nenhum produto encontrado</h2><p>Tente ajustar a sua pesquisa.</p></div>`;
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h2>Nenhum produto encontrado</h2>
+                        <p>Tente ajustar a pesquisa, trocar a categoria ou limpar os filtros.</p>
+                        <button class="btn-clear-filters" type="button" onclick="limparFiltros()">
+                            Limpar filtros
+                        </button>
+                    </div>
+                `;
                 return;
             }
-            grid.innerHTML = lista.map(criarHtmlProduto).join('');
+
+            grid.innerHTML = lista.map(criarHtmlProduto).join("");
         }
-
-        const desktopMenuToggle = document.getElementById('desktopMenuToggle');
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const mainContent = document.querySelector('.main-content');
-
-        function toggleMenu() {
-            if (window.innerWidth >= 768) {
-                sidebar.classList.toggle('pinned');
-                mainContent.classList.toggle('sidebar-pinned');
-            } else {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
-            }
-        }
-
-        if (desktopMenuToggle) desktopMenuToggle.addEventListener('click', toggleMenu);
-        if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderizarLojas();
-            renderizarProdutos(dadosProdutos);
-
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const cat = this.getAttribute('data-categoria');
-                    document.getElementById('searchInput').value = ''; 
-                    
-                    if (cat === 'todos') renderizarProdutos(dadosProdutos);
-                    else if (cat === 'descontos') renderizarProdutos(dadosProdutos.filter(p => parseFloat(p.preco.replace(',','.')) < 5));
-                    else renderizarProdutos(dadosProdutos.filter(p => p.categoria === cat));
-                });
-            });
-
-            document.getElementById('searchInput').addEventListener('input', function(e) {
-                const termo = e.target.value.toLowerCase();
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector('[data-categoria="todos"]').classList.add('active');
-                renderizarProdutos(dadosProdutos.filter(p => p.nome.toLowerCase().includes(termo) || p.categoria.toLowerCase().includes(termo)));
-            });
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                    this.classList.add('active');
-                    if(window.innerWidth < 768) toggleMenu();
-                });
-            });
-        });
-        // CARRINHO
-        let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-
-        atualizarBadgeCarrinho();
 
         function adicionarCarrinho(idProduto) {
+            const produto = dadosProdutos.find((item) => item.id === idProduto);
 
-            const produto = dadosProdutos.find(
-                p => p.id === idProduto
-            );
+            if (!produto) return;
 
-            const itemExistente = carrinho.find(
-                item => item.id === idProduto
-            );
+            const itemExistente = carrinho.find((item) => item.id === idProduto);
 
-            if(itemExistente){
+            if (itemExistente) {
                 itemExistente.quantidade++;
-            }else{
+            } else {
                 carrinho.push({
                     ...produto,
                     quantidade: 1
                 });
             }
 
-            localStorage.setItem(
-                "carrinho",
-                JSON.stringify(carrinho)
-            );
-
+            localStorage.setItem("carrinho", JSON.stringify(carrinho));
             atualizarBadgeCarrinho();
         }
 
-        function atualizarBadgeCarrinho(){
-
+        function atualizarBadgeCarrinho() {
             const badge = document.querySelector(".cart-badge");
 
-            if(!badge) return;
+            if (!badge) return;
 
-            const total = carrinho.reduce(
-                (acc,item) => acc + item.quantidade,
-                0
-            );
+            const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
 
             badge.textContent = total;
         }
+
+        function limparFiltros() {
+            estadoBusca.categoria = "todos";
+            estadoBusca.termo = "";
+            estadoBusca.ordenacao = "menor-preco";
+
+            const searchInput = document.getElementById("searchInput");
+            const sortSelect = document.getElementById("sortSelect");
+
+            if (searchInput) searchInput.value = "";
+            if (sortSelect) sortSelect.value = "menor-preco";
+
+            document.querySelectorAll("#categoryContainer .cat-btn").forEach((botao) => {
+                botao.classList.toggle("active", botao.dataset.categoria === "todos");
+            });
+
+            document.querySelectorAll(".store-item").forEach((loja) => {
+                loja.classList.remove("active");
+            });
+
+            renderizarProdutos();
+        }
+
+        function configurarFiltros() {
+            const categoryContainer = document.getElementById("categoryContainer");
+            const searchInput = document.getElementById("searchInput");
+            const sortSelect = document.getElementById("sortSelect");
+            const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+            const storesCarousel = document.getElementById("storesCarousel");
+
+            if (categoryContainer) {
+                categoryContainer.querySelectorAll(".cat-btn").forEach((botao) => {
+                    botao.addEventListener("click", function () {
+                        categoryContainer.querySelectorAll(".cat-btn").forEach((item) => {
+                            item.classList.remove("active");
+                        });
+
+                        this.classList.add("active");
+                        estadoBusca.categoria = this.dataset.categoria || "todos";
+
+                        renderizarProdutos();
+                    });
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener("input", function (event) {
+                    estadoBusca.termo = event.target.value;
+
+                    document.querySelectorAll(".store-item").forEach((loja) => {
+                        loja.classList.remove("active");
+                    });
+
+                    renderizarProdutos();
+                });
+            }
+
+            if (sortSelect) {
+                sortSelect.addEventListener("change", function () {
+                    estadoBusca.ordenacao = this.value;
+                    renderizarProdutos();
+                });
+            }
+
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener("click", limparFiltros);
+            }
+
+            if (storesCarousel) {
+                storesCarousel.addEventListener("click", function (event) {
+                    const loja = event.target.closest(".store-item");
+
+                    if (!loja) return;
+
+                    event.preventDefault();
+
+                    document.querySelectorAll(".store-item").forEach((item) => {
+                        item.classList.remove("active");
+                    });
+
+                    loja.classList.add("active");
+
+                    estadoBusca.termo = loja.dataset.loja || "";
+
+                    if (searchInput) {
+                        searchInput.value = estadoBusca.termo;
+                    }
+
+                    renderizarProdutos();
+                });
+            }
+        }
+
+        function configurarSidebar() {
+            const desktopMenuToggle = document.getElementById("desktopMenuToggle");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mainContent = document.querySelector(".main-content");
+
+            function toggleMenu() {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.toggle("pinned");
+                    mainContent.classList.toggle("sidebar-pinned");
+                } else {
+                    sidebar.classList.toggle("open");
+                    overlay.classList.toggle("active");
+                }
+            }
+
+            if (desktopMenuToggle) {
+                desktopMenuToggle.addEventListener("click", toggleMenu);
+            }
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener("click", toggleMenu);
+            }
+
+            if (overlay) {
+                overlay.addEventListener("click", toggleMenu);
+            }
+
+            document.querySelectorAll(".nav-item").forEach((item) => {
+                item.addEventListener("click", function (event) {
+                    if (this.getAttribute("href") !== "#") {
+                        return; 
+                    }
+                    event.preventDefault();
+
+                    document.querySelectorAll(".nav-item").forEach((nav) => {
+                        nav.classList.remove("active");
+                    });
+
+                    this.classList.add("active");
+
+                    if (window.innerWidth < 768) {
+                        toggleMenu();
+                    }
+                });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderizarLojas();
+            atualizarContadoresCategorias();
+            atualizarBadgeCarrinho();
+            configurarFiltros();
+            configurarSidebar();
+            renderizarProdutos();
+        });
     </script>
 
-<!-- MODAL COMPARAÇÃO DE PREÇOS -->
+    <!-- MODAL COMPARAÇÃO DE PREÇOS -->
     <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-      <div class="modal" id="modal">
+        <div class="modal" id="modal">
 
-        <div class="modal-header">
-          <div class="modal-product-thumb">
-            <img src="../assets/feijao-kicaldo.png" alt="Feijão Kicaldo 1kg">
-          </div>
-          <div class="modal-header-info">
-            <h2>Feijão Carioca Kicaldo 1kg</h2>
-            <p>Comparando preços em 4 supermercados</p>
-          </div>
-          <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-header">
+                <div class="modal-product-thumb">
+                    <img src="../assets/feijao-kicaldo.png" alt="Feijão Kicaldo 1kg">
+                </div>
+
+                <div class="modal-header-info">
+                    <h2>Feijão Carioca Kicaldo 1kg</h2>
+                    <p>Comparando preços em 4 supermercados</p>
+                </div>
+
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="best-pick-banner">
+                    <div class="best-pick-icon">🏆</div>
+
+                    <div class="best-pick-info">
+                        <h4>Melhor opção: Super Quaresma</h4>
+                        <p>Você economiza R$ 2,50 em relação ao mais caro</p>
+                    </div>
+
+                    <div class="best-pick-price">
+                        <strong>R$ 6,49</strong>
+                        <span>melhor preço</span>
+                    </div>
+                </div>
+
+                <div class="modal-tabs">
+                    <button class="tab-btn active" onclick="switchTab('precos', this)">💰 Preços</button>
+                    <button class="tab-btn" onclick="switchTab('grafico', this)">📊 Gráfico</button>
+                    <button class="tab-btn" onclick="switchTab('distancia', this)">📍 Distância</button>
+                </div>
+
+                <div class="tab-panel active" id="tab-precos">
+                    <div class="supermarket-list">
+
+                        <div class="supermarket-row best">
+                            <div class="best-tag">✓ Melhor preço</div>
+
+                            <div class="sm-logo">
+                                <span class="modal-market-text modal-logo-super-q">SUPER<br>Q</span>
+                            </div>
+
+                            <div class="sm-info">
+                                <h4>Super Quaresma</h4>
+
+                                <div class="sm-distance">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    1,2 km de você
+                                </div>
+
+                                <div class="price-bar-wrapper">
+                                    <div class="price-bar-track">
+                                        <div class="price-bar-fill price-bar-72"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sm-price-area">
+                                <div class="sm-price best-price">R$ 6,49</div>
+                                <div class="sm-savings">💚 Mais barato</div>
+                            </div>
+                        </div>
+
+                        <div class="supermarket-row">
+                            <div class="sm-logo">
+                                <span class="modal-market-text modal-logo-mix">MIX<br>MAT.</span>
+                            </div>
+
+                            <div class="sm-info">
+                                <h4>Mix Mateus</h4>
+
+                                <div class="sm-distance">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    2,5 km de você
+                                </div>
+
+                                <div class="price-bar-wrapper">
+                                    <div class="price-bar-track">
+                                        <div class="price-bar-fill expensive price-bar-82"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sm-price-area">
+                                <div class="sm-price">R$ 7,39</div>
+                                <div class="sm-higher">+ R$ 0,90 mais caro</div>
+                            </div>
+                        </div>
+
+                        <div class="supermarket-row">
+                            <div class="sm-logo">
+                                <span class="modal-market-text modal-logo-carvalho">CAR<br>VLH</span>
+                            </div>
+
+                            <div class="sm-info">
+                                <h4>Carvalho</h4>
+
+                                <div class="sm-distance">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    3,8 km de você
+                                </div>
+
+                                <div class="price-bar-wrapper">
+                                    <div class="price-bar-track">
+                                        <div class="price-bar-fill expensive price-bar-88"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sm-price-area">
+                                <div class="sm-price">R$ 7,99</div>
+                                <div class="sm-higher">+ R$ 1,50 mais caro</div>
+                            </div>
+                        </div>
+
+                        <div class="supermarket-row">
+                            <div class="sm-logo">
+                                <span class="modal-market-text modal-logo-jorge">JRG<br>BAT</span>
+                            </div>
+
+                            <div class="sm-info">
+                                <h4>Jorge Batista</h4>
+
+                                <div class="sm-distance">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    5,1 km de você
+                                </div>
+
+                                <div class="price-bar-wrapper">
+                                    <div class="price-bar-track">
+                                        <div class="price-bar-fill most-expensive price-bar-100"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sm-price-area">
+                                <div class="sm-price">R$ 8,99</div>
+                                <div class="sm-higher">+ R$ 2,50 mais caro</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="tab-grafico">
+                    <p class="chart-title">Comparativo visual de preços — Feijão Carioca Kicaldo 1kg</p>
+
+                    <div class="bar-chart">
+                        <div class="bar-group">
+                            <div class="bar-value">R$ 6,49</div>
+                            <div class="bar best-bar chart-bar-zero" id="chartBar1"></div>
+                            <div class="bar-label">Super Quaresma</div>
+                        </div>
+
+                        <div class="bar-group">
+                            <div class="bar-value">R$ 7,39</div>
+                            <div class="bar mid-bar chart-bar-zero" id="chartBar2"></div>
+                            <div class="bar-label">Mix Mateus</div>
+                        </div>
+
+                        <div class="bar-group">
+                            <div class="bar-value">R$ 7,99</div>
+                            <div class="bar mid-bar chart-bar-zero" id="chartBar3"></div>
+                            <div class="bar-label">Carvalho</div>
+                        </div>
+
+                        <div class="bar-group">
+                            <div class="bar-value">R$ 8,99</div>
+                            <div class="bar high-bar chart-bar-zero" id="chartBar4"></div>
+                            <div class="bar-label">Jorge Batista</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-legend">
+                        <div class="chart-legend-item">
+                            <div class="chart-legend-color legend-best"></div>
+                            Melhor preço
+                        </div>
+
+                        <div class="chart-legend-item">
+                            <div class="chart-legend-color legend-mid"></div>
+                            Intermediário
+                        </div>
+
+                        <div class="chart-legend-item">
+                            <div class="chart-legend-color legend-high"></div>
+                            Mais caro
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="tab-distancia">
+                    <div class="map-placeholder">
+                        <svg class="map-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2ECC71" stroke-width="1.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+
+                        <p>
+                            Supermercados próximos à sua localização<br>
+                            <strong>Floriano, PI</strong>
+                        </p>
+                    </div>
+
+                    <div class="distance-list">
+                        <div class="distance-row">
+                            <div class="distance-dot distance-dot-best"></div>
+
+                            <div class="sm-info">
+                                <h4>Super Quaresma</h4>
+                                <span>R. das Flores, 150 — Centro</span>
+                            </div>
+
+                            <div class="distance-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                1,2 km
+                            </div>
+                        </div>
+
+                        <div class="distance-row">
+                            <div class="distance-dot distance-dot-mid"></div>
+
+                            <div class="sm-info">
+                                <h4>Mix Mateus</h4>
+                                <span>Av. Principal, 580 — Bairro Novo</span>
+                            </div>
+
+                            <div class="distance-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                2,5 km
+                            </div>
+                        </div>
+
+                        <div class="distance-row">
+                            <div class="distance-dot distance-dot-warning"></div>
+
+                            <div class="sm-info">
+                                <h4>Carvalho</h4>
+                                <span>R. do Comércio, 44 — Centro</span>
+                            </div>
+
+                            <div class="distance-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                3,8 km
+                            </div>
+                        </div>
+
+                        <div class="distance-row">
+                            <div class="distance-dot distance-dot-high"></div>
+
+                            <div class="sm-info">
+                                <h4>Jorge Batista</h4>
+                                <span>Av. Principal, 900 — Floriano</span>
+                            </div>
+
+                            <div class="distance-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                5,1 km
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-add-modal" onclick="addToCart()">
+                    🛒 Adicionar ao carrinho — R$ 6,49
+                </button>
+
+                <button class="btn-secondary-modal" onclick="closeModal()">
+                    Fechar
+                </button>
+            </div>
+
         </div>
-
-        <div class="modal-body">
-
-          <div class="best-pick-banner">
-            <div class="best-pick-icon">🏆</div>
-            <div class="best-pick-info">
-              <h4>Melhor opção: Super Quaresma</h4>
-              <p>Você economiza R$ 2,50 em relação ao mais caro</p>
-            </div>
-            <div class="best-pick-price">
-              <strong>R$ 6,49</strong>
-              <span>melhor preço</span>
-            </div>
-          </div>
-
-          <div class="modal-tabs">
-            <button class="tab-btn active" onclick="switchTab('precos', this)">💰 Preços</button>
-            <button class="tab-btn" onclick="switchTab('grafico', this)">📊 Gráfico</button>
-            <button class="tab-btn" onclick="switchTab('distancia', this)">📍 Distância</button>
-          </div>
-
-          <div class="tab-panel active" id="tab-precos">
-            <div class="supermarket-list">
-
-              <div class="supermarket-row best">
-                <div class="best-tag">✓ Melhor preço</div>
-                <div class="sm-logo">
-                  <span style="color:#e74c3c;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">SUPER<br>Q</span>
-                </div>
-                <div class="sm-info">
-                  <h4>Super Quaresma</h4>
-                  <div class="sm-distance">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    1,2 km de você
-                  </div>
-                  <div class="price-bar-wrapper">
-                    <div class="price-bar-track">
-                      <div class="price-bar-fill" style="width:72%"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="sm-price-area">
-                  <div class="sm-price best-price">R$ 6,49</div>
-                  <div class="sm-savings">💚 Mais barato</div>
-                </div>
-              </div>
-
-              <div class="supermarket-row">
-                <div class="sm-logo">
-                  <span style="color:#1a1a6e;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">MIX<br>MAT.</span>
-                </div>
-                <div class="sm-info">
-                  <h4>Mix Mateus</h4>
-                  <div class="sm-distance">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    2,5 km de você
-                  </div>
-                  <div class="price-bar-wrapper">
-                    <div class="price-bar-track">
-                      <div class="price-bar-fill expensive" style="width:82%"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="sm-price-area">
-                  <div class="sm-price">R$ 7,39</div>
-                  <div class="sm-higher">+ R$ 0,90 mais caro</div>
-                </div>
-              </div>
-
-              <div class="supermarket-row">
-                <div class="sm-logo">
-                  <span style="color:#006400;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">CAR<br>VLH</span>
-                </div>
-                <div class="sm-info">
-                  <h4>Carvalho</h4>
-                  <div class="sm-distance">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    3,8 km de você
-                  </div>
-                  <div class="price-bar-wrapper">
-                    <div class="price-bar-track">
-                      <div class="price-bar-fill expensive" style="width:88%"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="sm-price-area">
-                  <div class="sm-price">R$ 7,99</div>
-                  <div class="sm-higher">+ R$ 1,50 mais caro</div>
-                </div>
-              </div>
-
-              <div class="supermarket-row">
-                <div class="sm-logo">
-                  <span style="color:#cc0000;font-size:9px;font-weight:900;text-align:center;line-height:1.1;">JRG<br>BAT</span>
-                </div>
-                <div class="sm-info">
-                  <h4>Jorge Batista</h4>
-                  <div class="sm-distance">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    5,1 km de você
-                  </div>
-                  <div class="price-bar-wrapper">
-                    <div class="price-bar-track">
-                      <div class="price-bar-fill most-expensive" style="width:100%"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="sm-price-area">
-                  <div class="sm-price">R$ 8,99</div>
-                  <div class="sm-higher">+ R$ 2,50 mais caro</div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="tab-panel" id="tab-grafico">
-            <p class="chart-title">Comparativo visual de preços — Feijão Carioca Kicaldo 1kg</p>
-            <div class="bar-chart">
-              <div class="bar-group">
-                <div class="bar-value">R$ 6,49</div>
-                <div class="bar best-bar" id="chartBar1" style="height:0px"></div>
-                <div class="bar-label">Super Quaresma</div>
-              </div>
-              <div class="bar-group">
-                <div class="bar-value">R$ 7,39</div>
-                <div class="bar mid-bar" id="chartBar2" style="height:0px"></div>
-                <div class="bar-label">Mix Mateus</div>
-              </div>
-              <div class="bar-group">
-                <div class="bar-value">R$ 7,99</div>
-                <div class="bar mid-bar" id="chartBar3" style="height:0px"></div>
-                <div class="bar-label">Carvalho</div>
-              </div>
-              <div class="bar-group">
-                <div class="bar-value">R$ 8,99</div>
-                <div class="bar high-bar" id="chartBar4" style="height:0px"></div>
-                <div class="bar-label">Jorge Batista</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;">
-              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#777;">
-                <div style="width:12px;height:12px;border-radius:3px;background:#2ECC71;"></div> Melhor preço
-              </div>
-              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#777;">
-                <div style="width:12px;height:12px;border-radius:3px;background:#f39c12;"></div> Intermediário
-              </div>
-              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#777;">
-                <div style="width:12px;height:12px;border-radius:3px;background:#e74c3c;"></div> Mais caro
-              </div>
-            </div>
-          </div>
-
-          <div class="tab-panel" id="tab-distancia">
-            <div class="map-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2ECC71" stroke-width="1.5" style="margin-bottom:10px;">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              <p>Supermercados próximos à sua localização<br>
-              <strong style="color:#333;">Fortaleza, CE</strong></p>
-            </div>
-            <div class="distance-list">
-              <div class="distance-row">
-                <div class="distance-dot" style="background:#2ECC71;"></div>
-                <div class="sm-info">
-                  <h4>Super Quaresma</h4>
-                  <span style="font-size:12px;color:#777;">R. das Flores, 150 — Centro</span>
-                </div>
-                <div class="distance-badge">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  1,2 km
-                </div>
-              </div>
-              <div class="distance-row">
-                <div class="distance-dot" style="background:#f39c12;"></div>
-                <div class="sm-info">
-                  <h4>Mix Mateus</h4>
-                  <span style="font-size:12px;color:#777;">Av. Principal, 580 — Bairro Novo</span>
-                </div>
-                <div class="distance-badge">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  2,5 km
-                </div>
-              </div>
-              <div class="distance-row">
-                <div class="distance-dot" style="background:#e67e22;"></div>
-                <div class="sm-info">
-                  <h4>Carvalho</h4>
-                  <span style="font-size:12px;color:#777;">R. do Comércio, 44 — Aldeota</span>
-                </div>
-                <div class="distance-badge">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  3,8 km
-                </div>
-              </div>
-              <div class="distance-row">
-                <div class="distance-dot" style="background:#e74c3c;"></div>
-                <div class="sm-info">
-                  <h4>Jorge Batista</h4>
-                  <span style="font-size:12px;color:#777;">Av. Bezerra de Menezes, 900 — Fátima</span>
-                </div>
-                <div class="distance-badge">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  5,1 km
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="modal-footer">
-          <button class="btn-add-modal" onclick="addToCart()">
-            🛒 Adicionar ao carrinho — R$ 6,49
-          </button>
-          <button class="btn-secondary-modal" onclick="closeModal()">
-            Fechar
-          </button>
-        </div>
-
-      </div>
     </div>
 
     <script src="../utils/modal.js"></script>

@@ -1,0 +1,326 @@
+/* ==========================================================================
+   ESTILOS EXCLUSIVOS - PÁGINAS DE ALERTA DE PREÇO (SHOPWISE)
+   ========================================================================== */
+
+/* --- GRID DE ALERTAS (Pag.AlertaPreco.html) --- */
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+    padding-bottom: 40px;
+}
+
+.alert-card-item {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.alert-card-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(46, 204, 113, 0.12);
+    border-color: var(--primary);
+}
+
+.alert-card-body {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.alert-product-img {
+    width: 85px;
+    height: 85px;
+    background: #f8fbfa;
+    border-radius: 14px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #f0f5f3;
+}
+
+.alert-product-img img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.alert-product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.alert-product-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #07152b;
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+
+.alert-product-weight {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.alert-current-price {
+    font-size: 14px;
+    color: #667575;
+    font-weight: 700;
+}
+
+.alert-current-price del {
+    color: var(--danger);
+    font-weight: 800;
+}
+
+.alert-price-section {
+    margin-top: 10px;
+    border-top: 1px dashed #e2eee9;
+    padding-top: 10px;
+}
+
+.alert-price-title {
+    font-size: 12px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.alert-target-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary-dark);
+}
+
+.alert-card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-alert-adjust, 
+.btn-alert-delete {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-alert-adjust {
+    background: #f8fbfa;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn-alert-adjust:hover {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.btn-alert-delete {
+    background: #ffffff;
+    color: var(--danger);
+    border: 1px solid #f2d6d4;
+}
+
+.btn-alert-delete:hover {
+    background: var(--danger);
+    color: #ffffff;
+    border-color: var(--danger);
+}
+
+
+/* --- TELA CONFIGURAR / AJUSTAR ALERTA (Ajustaralerta.html) --- */
+.alert-config-box {
+    max-width: 750px;
+    margin: 20px auto;
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.03);
+    display: flex;
+    gap: 30px;
+}
+
+@media (max-width: 680px) {
+    .alert-config-box {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+}
+
+.config-image-container {
+    width: 180px;
+    height: 180px;
+    background: #f8fbfa;
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #eef5f2;
+}
+
+.config-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.config-form-details {
+    flex: 1;
+    width: 100%;
+}
+
+.config-product-name {
+    font-size: 22px;
+    font-weight: 900;
+    color: #07152b;
+    margin-bottom: 6px;
+}
+
+.config-product-badge {
+    font-size: 12px;
+    color: var(--primary-dark);
+    background: rgba(46, 204, 113, 0.12);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.config-current-price-large {
+    font-size: 26px;
+    font-weight: 900;
+    color: #333;
+}
+
+.config-price-subtitle {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.config-input-group {
+    margin-bottom: 20px;
+}
+
+.config-input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 800;
+    color: #07152b;
+    margin-bottom: 8px;
+}
+
+.quantity-stepper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.quantity-stepper button {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #dbe7e2;
+    background: #ffffff;
+    border-radius: 50%;
+    font-size: 16px;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-stepper button:hover {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
+
+.quantity-value-display {
+    font-size: 18px;
+    font-weight: 900;
+    color: #07152b;
+}
+
+.price-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dbe7e2;
+    border-radius: 14px;
+    padding: 0 16px;
+    background: #ffffff;
+    max-width: 220px;
+    transition: box-shadow 0.2s ease;
+}
+
+.price-input-wrapper:focus-within {
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    border-color: var(--primary);
+}
+
+.price-currency-prefix {
+    font-size: 16px;
+    font-weight: 800;
+    color: #667575;
+    margin-right: 8px;
+}
+
+.price-input-wrapper input {
+    border: none;
+    outline: none;
+    padding: 14px 0;
+    width: 100%;
+    font-size: 17px;
+    font-weight: 800;
+    color: #07152b;
+}
+
+.config-estimate-box {
+    background: #fffdeb;
+    border: 1px solid #fcf3b6;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 14px;
+    color: #6b5900;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.config-estimate-box .highlight {
+    font-size: 19px;
+    font-weight: 900;
+    color: #e67e22;
+}

@@ -3,80 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopWise - Finalizar Compra</title>
-    
-    <!-- Puxa o CSS global do grupo -->
-    <link rel="stylesheet" href="../styles/feed.css"> 
-    
-    <!-- Puxa o seu CSS exclusivo do checkout -->
+    <title>ShopWise - Efetuar Pagamento</title>
+
+    <!-- CSS global do sistema -->
+    <link rel="stylesheet" href="../styles/feed.css">
+
+    <!-- CSS exclusivo do checkout/pagamento -->
     <link rel="stylesheet" href="../styles/checkout.css">
 </head>
 <body>
-    <!-- Layout Principal -->
     <div class="app-layout">
-        
-        <!-- BARRA LATERAL (Padrão Oficial SVG) -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <h2 style="color: white; font-size: 24px; font-weight: 800; margin-left: 15px;">ShopWise</h2>
+                <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </div>
+                <a href="#" aria-label="Ir para a página inicial">
+                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                </a>
             </div>
+
             <nav class="sidebar-nav">
-                <a href="feedproduto.html" class="nav-item">
+                <a href="feedproduto.html" class="nav-item active" aria-label="Página Inicial">
                     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     <span>Início</span>
                 </a>
-                <a href="#" class="nav-item">
+
+                <a href="#" class="nav-item" aria-label="Seus Alertas">
                     <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                     <span>Alertas</span>
                 </a>
-                <a href="#" class="nav-item">
+
+                <a href="#" class="nav-item" aria-label="Seu Perfil">
                     <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     <span>Perfil</span>
                 </a>
-                <a href="#" class="nav-item">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 16 14"></polyline></svg>
+
+                <a href="#" class="nav-item" aria-label="Seu Cashback">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     <span>Cashback</span>
                 </a>
-                <a href="carrinho.html" class="nav-item active">
+
+                <a href="#" class="nav-item" aria-label="Seus Pedidos">
                     <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                     <span>Pedidos</span>
                 </a>
             </nav>
         </aside>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-content">
-            
-            <!-- HEADER SUPERIOR -->
             <header class="navbar">
                 <div class="nav-container">
-                    <div class="nav-top">
-                        <div class="location">
-                            📍 Floriano, PI - 64800-000
-                        </div>
+                    <div class="cart-navbar">
+                        <div></div>
+
+                        <h2 class="cart-title">
+                            Realizar Pedido
+                        </h2>
+
+                        <a href="carrinho.html" class="cart-close-btn" aria-label="Voltar ao carrinho">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </header>
 
-            <!-- CONTEÚDO DO CHECKOUT -->
             <div class="page-container">
-                <h2 class="section-title">Finalizar Compra</h2>
-                
+                <div class="checkout-page-header">
+                    <div>
+                        <h2 class="section-title payment-title">Efetuar Pagamento</h2>
+                        <p class="payment-subtitle">Revise o pedido, escolha a forma de pagamento e finalize sua compra com segurança.</p>
+                    </div>
+                </div>
+
+                <div class="checkout-progress" aria-label="Progresso da compra">
+                    <div class="progress-step done">
+                        <span>1</span>
+                        <strong>Carrinho</strong>
+                    </div>
+                    <div class="progress-line done"></div>
+                    <div class="progress-step done">
+                        <span>2</span>
+                        <strong>Entrega</strong>
+                    </div>
+                    <div class="progress-line active"></div>
+                    <div class="progress-step active">
+                        <span>3</span>
+                        <strong>Pagamento</strong>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">
+                        <span>4</span>
+                        <strong>Confirmação</strong>
+                    </div>
+                </div>
+
                 <div class="checkout-grid">
-                    <!-- Coluna da Esquerda: Dados -->
                     <div class="checkout-form">
-                        
-                        <div class="checkout-card">
-                            <h3>Método de Recebimento</h3>
+                        <div class="checkout-card checkout-step-card">
+                            <div class="checkout-section-heading">
+                                <span class="section-number">1</span>
+                                <div>
+                                    <h3>Como você quer receber?</h3>
+                                    <p>Escolha entre entrega em casa ou retirada no supermercado.</p>
+                                </div>
+                            </div>
+
                             <div class="delivery-options">
                                 <label class="option-card">
                                     <input type="radio" name="deliveryMethod" value="delivery" checked onchange="toggleAddressConfig()">
                                     <div class="option-content">
                                         <h4>Receber em Casa</h4>
-                                        <p>Entrega rápida (Até 2h)</p>
+                                        <p>Entrega rápida em até 2h</p>
                                     </div>
                                 </label>
-                                
+
                                 <label class="option-card">
                                     <input type="radio" name="deliveryMethod" value="pickup" onchange="toggleAddressConfig()">
                                     <div class="option-content">
@@ -87,84 +131,330 @@
                             </div>
                         </div>
 
-                        <!-- CARTÃO 1: Endereço de Entrega -->
-                        <div class="checkout-card" id="addressCard">
-                            <h3>Endereço de Entrega</h3>
+                        <div class="checkout-card checkout-step-card" id="addressCard">
+                            <div class="checkout-section-heading">
+                                <span class="section-number">2</span>
+                                <div>
+                                    <h3>Endereço de entrega</h3>
+                                    <p>Confira onde o pedido será entregue.</p>
+                                </div>
+                            </div>
                             <div class="checkout-input-group">
-                                <input type="text" class="checkout-input" placeholder="Rua, Número, Bairro" value="Rua Defala Attem, 123 - Centro">
+                                <label for="deliveryAddress" class="checkout-label">Endereço completo</label>
+                                <input id="deliveryAddress" type="text" class="checkout-input" placeholder="Rua, número, bairro" value="Rua Defala Attem, 123 - Centro">
                             </div>
                         </div>
 
-                        <!-- CARTÃO 2: Endereço do Mercado -->
-                        <div class="checkout-card" id="pickupCard" style="display: none; background: #f0fdf4; border-color: #2ECC71;">
-                            <h3 style="color: #27ae60; border-bottom-color: #cce8d6;">Endereço de Retirada</h3>
+                        <div class="checkout-card checkout-step-card pickup-card" id="pickupCard" hidden>
+                            <div class="checkout-section-heading">
+                                <span class="section-number">2</span>
+                                <div>
+                                    <h3>Endereço de retirada</h3>
+                                    <p>Retire seu pedido diretamente no mercado selecionado.</p>
+                                </div>
+                            </div>
+                            <p class="pickup-market-name"><strong>Super Quaresma</strong></p>
+                            <p>Avenida Bucar Neto, Centro - Floriano, PI</p>
+                            <span>Apresente o número do pedido no balcão de atendimento.</span>
+                        </div>
+
+                        <div class="checkout-card checkout-step-card optional-card">
+                            <div class="checkout-section-heading subtle-heading">
+                                <span class="section-number optional">+</span>
+                                <div>
+                                    <h3>Observações do pedido</h3>
+                                    <p>Opcional: envie instruções para o mercado ou entregador.</p>
+                                </div>
+                            </div>
                             <div class="checkout-input-group">
-                                <p style="font-size: 15px; color: #333; margin: 0; line-height: 1.5;">
-                                    <strong>Super Quaresma</strong><br>
-                                    Avenida Bucar Neto, Centro - Floriano, PI<br>
-                                    <span style="font-size: 13px; color: #666;">Apresente o número do pedido no balcão de atendimento.</span>
-                                </p>
+                                <label for="orderNotes" class="checkout-label">Instruções para o mercado ou entregador</label>
+                                <textarea id="orderNotes" class="checkout-input checkout-textarea" placeholder="Ex: tomate mais verde, não buzinar, entregar na portaria..."></textarea>
                             </div>
                         </div>
 
-                        <div class="checkout-card">
-                            <h3>Pagamento</h3>
-                            <div class="checkout-input-group">
-                                <select class="checkout-select">
-                                    <option value="pix">PIX (Aprovação Imediata)</option>
-                                    <option value="credito">Cartão de Crédito</option>
-                                    <option value="debito">Cartão de Débito (Na entrega)</option>
-                                </select>
+                        <div class="checkout-card payment-card">
+                            <div class="payment-card-header">
+                                <div class="checkout-section-heading compact-heading">
+                                    <span class="section-number">3</span>
+                                    <div>
+                                        <h3>Forma de pagamento</h3>
+                                        <p>Escolha o método e veja apenas os campos necessários.</p>
+                                    </div>
+                                </div>
+                                <span class="secure-badge">🔒 Ambiente seguro</span>
+                            </div>
+
+                            <div class="payment-methods" role="radiogroup" aria-label="Método de pagamento">
+                                <label class="payment-method active" data-payment-card="pix">
+                                    <input type="radio" name="paymentMethod" value="pix" checked>
+                                    <span class="payment-icon">⚡</span>
+                                    <strong>PIX</strong>
+                                    <small>⚡ Aprovação imediata</small>
+                                </label>
+
+                                <label class="payment-method" data-payment-card="credito">
+                                    <input type="radio" name="paymentMethod" value="credito">
+                                    <span class="payment-icon">💳</span>
+                                    <strong>Crédito</strong>
+                                    <small>💳 Até 3x sem juros</small>
+                                </label>
+
+                                <label class="payment-method" data-payment-card="debito" data-no-installments="true">
+                                    <input type="radio" name="paymentMethod" value="debito">
+                                    <span class="payment-icon">💳</span>
+                                    <strong>Débito</strong>
+                                    <small>💳 À vista no cartão</small>
+                                </label>
+
+                                <label class="payment-method" data-payment-card="entrega">
+                                    <input type="radio" name="paymentMethod" value="entrega">
+                                    <span class="payment-icon">💵</span>
+                                    <strong>Na entrega</strong>
+                                    <small>💵 Pagar ao receber</small>
+                                </label>
+                            </div>
+
+                            <div class="payment-panel active" id="pixPanel">
+                                <div class="pix-area">
+                                    <div class="pix-qrcode" aria-label="QR Code PIX demonstrativo">
+                                        <div class="qr-grid"></div>
+                                    </div>
+
+                                    <div class="pix-info">
+                                        <h4>Pagamento via PIX</h4>
+                                        <p>Use o código abaixo para simular o pagamento na apresentação do sistema.</p>
+                                        <div class="pix-timer" id="pixTimer" aria-live="polite">Código válido por 10:00</div>
+
+                                        <label for="pixCode" class="checkout-label">Código copia e cola</label>
+                                        <div class="pix-copy-row">
+                                            <input id="pixCode" class="checkout-input" type="text" readonly value="00020126360014BR.GOV.BCB.PIX0114SHOPWISE-DEMO520400005303986540522.975802BR5925SHOPWISE SUPERMERCADOS6008FLORIANO62070503***6304ABCD">
+                                            <button type="button" class="btn-copy-pix" onclick="copyPixCode()">Copiar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="payment-panel" id="cardPanel" hidden>
+                                <div class="card-security-alert">
+                                    <strong>Segurança:</strong> os dados são usados apenas para simular a tokenização do gateway. Não armazene cartão real no navegador.
+                                </div>
+
+                                <div class="card-form-grid">
+                                    <div class="checkout-input-group card-full">
+                                        <label for="cardName" class="checkout-label">Nome impresso no cartão</label>
+                                        <input id="cardName" class="checkout-input card-required" type="text" placeholder="Ex: HELBER LHAWKYM">
+                                    </div>
+
+                                    <div class="checkout-input-group card-full">
+                                        <label for="cardNumber" class="checkout-label">Número do cartão</label>
+                                        <input id="cardNumber" class="checkout-input card-required" type="text" inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000">
+                                    </div>
+
+                                    <div class="checkout-input-group">
+                                        <label for="cardExpiry" class="checkout-label">Validade</label>
+                                        <input id="cardExpiry" class="checkout-input card-required" type="text" inputmode="numeric" maxlength="5" placeholder="MM/AA">
+                                    </div>
+
+                                    <div class="checkout-input-group">
+                                        <label for="cardCvv" class="checkout-label">CVV</label>
+                                        <input id="cardCvv" class="checkout-input card-required" type="password" inputmode="numeric" maxlength="4" placeholder="123">
+                                    </div>
+
+                                    <div class="checkout-input-group card-full credit-only-field" id="installmentGroup" hidden>
+                                        <label for="installments" class="checkout-label">Parcelamento</label>
+                                        <select id="installments" class="checkout-select">
+                                            <option value="1">1x de R$ 22,97 sem juros</option>
+                                            <option value="2">2x de R$ 11,49 sem juros</option>
+                                            <option value="3">3x de R$ 7,66 sem juros</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="debit-info-box card-full" id="debitInfo" hidden>
+                                        <strong>Débito à vista</strong>
+                                        <p>O valor total será cobrado em uma única transação. Cartão de débito não permite parcelamento.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="payment-panel delivery-payment-panel" id="deliveryPaymentPanel" hidden>
+                                <div class="delivery-payment-box">
+                                    <strong>Pagamento na entrega</strong>
+                                    <p>Seu pedido será enviado ao supermercado e o pagamento será realizado no momento da entrega, em dinheiro ou maquininha.</p>
+                                    <span>Nenhum dado de cartão será solicitado nesta opção.</span>
+                                </div>
+                            </div>
+
+                            <div class="gateway-status" id="gatewayStatus" aria-live="polite">
+                                Gateway ShopWise Pay pronto para processar a transação.
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- Coluna da Direita: Resumo -->
-                    <div class="checkout-summary">
-                        <div class="checkout-card">
-                            <h3>Resumo do Pedido</h3>
-                            
-                            <div class="summary-list">
-                                <div class="summary-item">
-                                    <span>Feijão Carioca Kicaldo (x2)</span>
-                                    <span>R$ 12,98</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span>Leite UHT Ninho 1L (x1)</span>
-                                    <span>R$ 4,99</span>
+                    <aside class="checkout-summary">
+                        <div class="checkout-card summary-card-sticky">
+                            <div class="summary-title-row">
+                                <div class="checkout-section-heading compact-heading">
+                                    <span class="section-number">4</span>
+                                    <div>
+                                        <h3>Resumo do pedido</h3>
+                                        <p>Confira tudo antes de confirmar.</p>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="market-summary-box">
+                                <strong>Super Quaresma</strong>
+                                <span id="marketDeliveryInfo">Entrega em até 2h • Taxa R$ 5,00</span>
+                            </div>
+
+                            <div class="checkout-review-list" aria-label="Resumo da entrega e pagamento">
+                                <div>
+                                    <span>Recebimento</span>
+                                    <strong id="summaryDeliveryMethod">Entrega em casa</strong>
+                                </div>
+                                <div>
+                                    <span>Tempo estimado</span>
+                                    <strong id="summaryDeliveryTime">Até 2h</strong>
+                                </div>
+                                <div>
+                                    <span>Pagamento</span>
+                                    <strong id="summaryPaymentMethod">PIX</strong>
+                                </div>
+                            </div>
+
+                            <hr class="summary-divider">
+
+                            <div class="summary-list" id="checkoutPedidos"></div>
 
                             <hr class="summary-divider">
 
                             <div class="summary-list">
                                 <div class="summary-item">
                                     <span>Subtotal dos produtos</span>
-                                    <span>R$ 17,97</span>
+                                    <span id="subtotalValue"></span>
                                 </div>
                                 <div class="summary-item" id="deliveryFeeLine">
                                     <span>Taxa de Entrega</span>
-                                    <span>R$ 5,00</span>
+                                    <span id="deliveryFeeValue"></span>
                                 </div>
+                                <div class="summary-item discount-line">
+                                    <span>Desconto/Cashback</span>
+                                    <span id="discountValue"></span>
+                                </div>
+                            </div>
+
+                            <div class="checkout-coupon-box">
+                                <label for="couponCode" class="checkout-label">Cupom de desconto</label>
+                                <div class="coupon-row">
+                                    <input id="couponCode" class="checkout-input" type="text" placeholder="Ex: SHOPWISE10">
+                                    <button type="button" class="btn-apply-coupon" onclick="applyCoupon()">Aplicar</button>
+                                </div>
+                                <button type="button" class="btn-view-coupons" onclick="openCouponModal()">
+                                    Ver cupons
+                                </button>
+                                <small id="couponFeedback">Dica: use SHOPWISE10 para simular 10% de desconto.</small>
                             </div>
 
                             <hr class="summary-divider">
 
                             <div class="summary-total-line">
                                 <span>Total</span>
-                                <span id="finalTotal">R$ 22,97</span>
+                                <span id="finalTotal"></span>
                             </div>
 
-                            <button class="btn-finalizar" onclick="finalizarPedido()">Confirmar Pedido</button>
+                            <div class="summary-secure-box">
+                                <span>🔐</span>
+                                <p>Transação protegida. Crédito permite parcelamento; débito é à vista; pagamento na entrega não solicita cartão.</p>
+                            </div>
+
+                            <button class="btn-finalizar" id="payButton" type="button" onclick="finalizarPedido()">
+                                Gerar pagamento PIX - R$ 22,97
+                            </button>
                         </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Script da página -->
+    <div class="mobile-checkout-bar" aria-label="Resumo fixo do checkout">
+        <div>
+            <span>Total</span>
+            <strong id="mobileTotal">R$ 22,97</strong>
+        </div>
+        <button type="button" id="mobilePayButton" onclick="finalizarPedido()">Gerar pagamento PIX</button>
+    </div>
+
+    <div class="payment-modal-overlay" id="paymentModal" aria-hidden="true">
+        <div class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button type="button" class="modal-close-btn" onclick="closePaymentModal()" aria-label="Fechar comprovante">×</button>
+
+            <div class="receipt-status" id="receiptStatusIcon">✓</div>
+            <h2 id="modalTitle">Pagamento aprovado!</h2>
+            <p id="modalSubtitle">Seu pedido foi confirmado e enviado ao supermercado.</p>
+
+            <div class="receipt-box">
+                <div class="receipt-row">
+                    <span>Número do pedido</span>
+                    <strong id="receiptOrderNumber">SW-000000</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Transação</span>
+                    <strong id="receiptTransaction">TX-000000</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Método</span>
+                    <strong id="receiptMethod">PIX</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Valor</span>
+                    <strong id="receiptTotal">R$ 22,97</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Data/Hora</span>
+                    <strong id="receiptDate">--/--/---- --:--</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Status</span>
+                    <strong id="receiptStatusText">Pagamento Confirmado</strong>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="window.print()">Imprimir comprovante</button>
+                <a href="pedidos.html" class="btn-primary-link">Acompanhar pedido</a>
+            </div>
+        </div>
+    </div>
+    <div class="coupon-modal-overlay" id="couponModal" aria-hidden="true">
+        <div class="coupon-modal" role="dialog" aria-modal="true" aria-labelledby="couponModalTitle">
+            <button type="button" class="coupon-modal-close" onclick="closeCouponModal()" aria-label="Fechar cupons">
+                &times;
+            </button>
+
+            <h2 id="couponModalTitle">Cupons disponíveis</h2>
+            <p>Escolha um cupom para aplicar no seu pedido.</p>
+
+            <div class="coupon-list">
+                <div class="coupon-card">
+                    <div>
+                        <strong>SHOPWISE10</strong>
+                        <span>10% de desconto nos produtos do carrinho.</span>
+                    </div>
+                    <button type="button" onclick="selectCoupon('SHOPWISE10')">Usar</button>
+                </div>
+
+                <div class="coupon-card">
+                    <div>
+                        <strong>ECONOMIA5</strong>
+                        <span>5% de desconto na sua compra.</span>
+                    </div>
+                    <button type="button" onclick="selectCoupon('ECONOMIA5')">Usar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../utils/checkout.js"></script>
 </body>
 </html>
