@@ -1,0 +1,145 @@
+/* ==================================================
+   BLINDAGEM SHOP-17: MANTER PRODUTOS 
+   Prefixo exclusivo: .mp-
+================================================== */
+
+.mp-container {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif; /* Padrão do ShopWise */
+}
+
+.mp-header {
+    margin-bottom: 2rem;
+}
+
+.mp-title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.mp-subtitle {
+    color: #666;
+    font-size: 1rem;
+}
+
+.mp-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.mp-mt-4 {
+    margin-top: 2rem;
+}
+
+.mp-card-title {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #2ECC71;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.mp-form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.mp-input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.mp-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 0.5rem;
+}
+
+.mp-input {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.mp-input:focus {
+    outline: none;
+    border-color: #2ECC71;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.mp-form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.mp-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mp-btn-salvar {
+    background-color: #2ECC71;
+    color: white;
+}
+
+.mp-btn-salvar:hover {
+    background-color: #27ae60;
+}
+
+.mp-btn-cancelar {
+    background-color: #f1f2f6;
+    color: #555;
+}
+
+.mp-btn-cancelar:hover {
+    background-color: #dfe4ea;
+}
+
+/* Tabela */
+.mp-table-responsive {
+    overflow-x: auto;
+}
+
+.mp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mp-table th, .mp-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.mp-table th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+}
+
+.mp-action-link {
+    color: #e74c3c;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+}

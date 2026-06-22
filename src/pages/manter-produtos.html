@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Produtos - ShopWise Lojista</title>
+    
+    <link rel="stylesheet" href="../styles/feed.css">
+    
+    <link rel="stylesheet" href="../styles/manter-produtos.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <a href="#">
+                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item" aria-label="Visão Geral">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Visão Geral</span>
+                </a>
+                
+                <a href="manter-produtos.html" class="nav-item active" aria-label="Meus Produtos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span>Meus Produtos</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Pedidos Recebidos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span>Pedidos</span>
+                </a>
+
+                <a href="#" class="nav-item" aria-label="Perfil da Loja">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Perfil da Loja</span>
+                </a>
+
+                <a href="login.html" class="nav-item" aria-label="Sair" style="margin-top: auto;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Sair</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <div class="mp-container">
+                
+                <header class="mp-header">
+                    <h1 class="mp-title">Gerenciar Produtos</h1>
+                    <p class="mp-subtitle">Cadastre e atualize o estoque do seu supermercado no ShopWise.</p>
+                </header>
+
+                <section class="mp-card">
+                    <h2 class="mp-card-title">Novo Produto</h2>
+                    <form id="mpFormProduto" class="mp-form">
+                        
+                        <div class="mp-form-row">
+                            <div class="mp-input-group">
+                                <label for="mpNome" class="mp-label">Nome do Produto *</label>
+                                <input type="text" id="mpNome" class="mp-input" placeholder="Ex: Feijão Carioca Kicaldo 1kg" required>
+                            </div>
+                            
+                            <div class="mp-input-group">
+                                <label for="mpCategoria" class="mp-label">Categoria *</label>
+                                <select id="mpCategoria" class="mp-input" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="mercearia">Mercearia</option>
+                                    <option value="laticinios">Laticínios</option>
+                                    <option value="bebidas">Bebidas</option>
+                                    <option value="limpeza">Limpeza</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mp-form-row">
+                            <div class="mp-input-group">
+                                <label for="mpPreco" class="mp-label">Preço Atual (R$) *</label>
+                                <input type="number" id="mpPreco" class="mp-input" step="0.01" placeholder="Ex: 6.49" required>
+                            </div>
+
+                            <div class="mp-input-group">
+                                <label for="mpEstoque" class="mp-label">Estoque (unidades) *</label>
+                                <input type="number" id="mpEstoque" class="mp-input" placeholder="Ex: 150" required>
+                            </div>
+                        </div>
+
+                        <div class="mp-input-group">
+                            <label for="mpDescricao" class="mp-label">Descrição Breve</label>
+                            <textarea id="mpDescricao" class="mp-input" rows="2" placeholder="Ex: Feijão carioca tipo 1."></textarea>
+                        </div>
+
+                        <div class="mp-form-actions">
+                            <button type="submit" class="mp-btn mp-btn-salvar">Cadastrar Produto</button>
+                            <button type="reset" class="mp-btn mp-btn-cancelar">Limpar</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="mp-card mp-mt-4">
+                    <h2 class="mp-card-title">Estoque Atual</h2>
+                    <div class="mp-table-responsive">
+                        <table class="mp-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mpTabelaProdutos">
+                                </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/manter-produtos.js"></script>
+</body>
+</html>
