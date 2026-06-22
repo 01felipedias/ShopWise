@@ -306,6 +306,63 @@ body {
     border-radius: 10px;
 }
 
+/* ================= TOPO PADRONIZADO DAS PAGINAS ================= */
+.standard-navbar .nav-top {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+}
+
+.standard-navbar .menu-icon {
+    grid-column: 1;
+    justify-self: start;
+}
+
+.standard-navbar .mobile-logo-area {
+    display: none;
+}
+
+.standard-navbar .page-navbar-title,
+.standard-navbar .profile-page-title,
+.standard-navbar .results-info-area {
+    grid-column: 2;
+    justify-self: center;
+    text-align: center;
+}
+
+.standard-navbar .page-navbar-title,
+.standard-navbar .profile-page-title,
+.standard-navbar .results-info-area .cart-title {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 900;
+    margin: 0;
+}
+
+.standard-navbar .nav-actions,
+.standard-navbar .location {
+    grid-column: 3;
+    justify-self: end;
+}
+
+.standard-navbar .nav-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.standard-navbar .cart-icon {
+    display: none;
+}
+
+.standard-navbar .search-wrapper {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(680px, 100%);
+    max-width: 680px;
+    margin: 2px 0 0;
+}
+
 /* ================= CATEGORIAS ================= */
 .categories-bar {
     background: var(--white);
@@ -2404,3 +2461,41 @@ button:disabled {
 
 button.btn-primary-link, button.btn-secondary-link{border:0;cursor:pointer;font-family:inherit;}
 button.btn-secondary-link{border:1px solid rgba(46,204,113,.35);}
+
+@media (max-width: 767px) {
+    .standard-navbar .nav-top {
+        grid-template-columns: 40px 1fr auto;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+
+    .standard-navbar .page-navbar-title,
+    .standard-navbar .profile-page-title,
+    .standard-navbar .results-info-area {
+        grid-column: 2;
+    }
+
+    .standard-navbar .page-navbar-title,
+    .standard-navbar .profile-page-title,
+    .standard-navbar .results-info-area .cart-title {
+        font-size: 19px;
+        line-height: 1.2;
+    }
+
+    .standard-navbar .nav-actions,
+    .standard-navbar .location {
+        grid-column: 3;
+        width: auto;
+        margin-top: 0;
+        justify-self: end;
+        justify-content: flex-end;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .standard-navbar .search-wrapper {
+        grid-column: 1 / -1;
+        order: initial;
+        width: 100%;
+    }
+}
