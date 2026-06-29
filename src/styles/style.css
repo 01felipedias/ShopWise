@@ -356,7 +356,7 @@ input {
     transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
 }
 
-.btn-verde:active,
+.btn-verde:active
 .btn-branco:active,
 .btn-azul:active {
     transform: scale(.98);

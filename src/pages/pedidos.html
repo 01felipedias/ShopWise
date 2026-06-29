@@ -38,7 +38,6 @@
                     <a href="feedproduto.html" class="mobile-logo-area">
                         <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                     </a>
-                    <strong class="page-navbar-title">Acompanhar Pedidos</strong>
                     <div class="location">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -60,7 +59,7 @@
                     <h1 class="section-title payment-title">Pedido SW-482913</h1>
                     <p class="payment-subtitle">Acompanhe cada etapa após o pagamento: confirmação, separação no mercado, entrega e avaliação.</p>
                     <div class="quick-links">
-                        <button class="btn-primary-link" onclick="abrirPedido(1)">📋 Acompanhar pedido</button>
+                        <button class="btn-primary-link" onclick="abrirAcompanhamento(1)">📋 Acompanhar pedido</button>
                         <a href="feedproduto.html" class="btn-secondary-link">Comprar novamente</a>
                     </div>
                 </section>
@@ -75,77 +74,88 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL PEDIDO ══════ -->
-    <div class="modal-overlay" id="modalPedidoOverlay" onclick="fecharPedidoOverlay(event)">
+    <!-- ══════ MODAL ACOMPANHAMENTO DO CLIENTE ══════ -->
+    <div class="modal-overlay" id="modalAcompOverlay" onclick="fecharAcompOverlay(event)">
       <div class="modal-pedido">
 
         <div class="modal-ped-header">
-          <div class="modal-ped-icon">📋</div>
+          <div class="modal-ped-icon">🛍️</div>
           <div>
-            <h2 id="pedTitulo">Pedido #00124</h2>
-            <p id="pedSubtitulo">João Silva • Recebido às 14:32</p>
+            <h2 id="acompTitulo">Pedido SW-482913</h2>
+            <p id="acompSubtitulo">Realizado às 14:32 • Super Quaresma</p>
           </div>
-          <button class="modal-close-ped" onclick="fecharPedido()">✕</button>
+          <button class="modal-close-ped" onclick="fecharAcomp()">✕</button>
         </div>
 
         <div class="modal-ped-body">
 
+          <!-- Stepper somente leitura -->
           <div>
-            <p class="secao-titulo">Status do pedido</p>
-            <div class="stepper" id="stepper">
-              <div class="step" id="step-0">
-                <div class="step-circle">📥</div>
-                <div class="step-label">Recebido</div>
-              </div>
-              <div class="step" id="step-1">
-                <div class="step-circle">📦</div>
-                <div class="step-label">Em separação</div>
-              </div>
-              <div class="step" id="step-2">
-                <div class="step-circle">🚚</div>
-                <div class="step-label">Saiu p/ entrega</div>
-              </div>
-              <div class="step" id="step-3">
+            <p class="secao-titulo">Onde está seu pedido</p>
+            <div class="stepper" id="acompStepper">
+              <div class="step" id="acomp-step-0">
                 <div class="step-circle">✅</div>
+                <div class="step-label">Pedido confirmado</div>
+              </div>
+              <div class="step" id="acomp-step-1">
+                <div class="step-circle">📦</div>
+                <div class="step-label">Separando produtos</div>
+              </div>
+              <div class="step" id="acomp-step-2">
+                <div class="step-circle">🚚</div>
+                <div class="step-label">Saiu para entrega</div>
+              </div>
+              <div class="step" id="acomp-step-3">
+                <div class="step-circle">🏠</div>
                 <div class="step-label">Entregue</div>
               </div>
-              <div class="stepper-progress" id="stepperProgress"></div>
+              <div class="stepper-progress" id="acompProgress"></div>
             </div>
           </div>
 
-          <div class="status-actions">
-            <h3 id="acaoTitulo">O que deseja fazer?</h3>
-            <div class="acoes-btns">
-              <button class="btn-acao btn-avancar" id="btnAvancar" onclick="avancarStatus()">▶ Avançar status</button>
-              <button class="btn-acao btn-cancelar" id="btnCancelar" onclick="cancelarPedido()">✕ Cancelar pedido</button>
+          <!-- Mensagem de status atual -->
+          <div style="background:#f0fdf7; border:1px solid #2ECC71; border-radius:12px; padding:16px 20px; display:flex; align-items:center; gap:14px;">
+            <div style="font-size:28px;" id="acompStatusIcone">📦</div>
+            <div>
+              <div style="font-weight:800; font-size:15px; color:#27ae60;" id="acompStatusLabel">Mercado separando seus produtos</div>
+              <div style="font-size:13px; color:#555; margin-top:3px;" id="acompStatusDesc">Seu pedido está sendo preparado com cuidado. Previsão de entrega: <strong>45 minutos</strong>.</div>
             </div>
           </div>
 
-          <div id="secaoItens">
-            <p class="secao-titulo">Itens do pedido</p>
-            <div class="itens-lista" id="itensList"></div>
-            <div class="progresso-separacao" id="progressoSep" style="display:none">
-              <span id="sepTexto">0 de 3 separados</span>
-              <div class="prog-track"><div class="prog-fill" id="sepFill" style="width:0%"></div></div>
-            </div>
-          </div>
-
+          <!-- Itens do pedido (somente leitura) -->
           <div>
-            <p class="secao-titulo">Cliente</p>
+            <p class="secao-titulo">Itens do seu pedido</p>
+            <div class="itens-lista" id="acompItensList"></div>
+          </div>
+
+          <!-- Endereço de entrega -->
+          <div>
+            <p class="secao-titulo">Entrega em</p>
             <div class="cliente-card">
-              <div class="cliente-avatar" id="clienteAvatar">J</div>
+              <div class="cliente-avatar" style="background:#3498db;">📍</div>
               <div class="cliente-info">
-                <h4 id="clienteNome">João Silva</h4>
-                <p id="clienteEndereco">Rua das Palmeiras, 45 — Centro<br>📱 (89) 99999-1234</p>
+                <h4 id="acompEndereco">Rua das Palmeiras, 45 — Centro</h4>
+                <p id="acompMercado" style="color:#777; font-size:13px; margin-top:4px;">Super Quaresma • R. das Flores, 150</p>
               </div>
-              <button class="btn-notificar" id="btnNotificar" onclick="notificarCliente()">🔔 Notificar cliente</button>
             </div>
+          </div>
+
+          <!-- Total -->
+          <div style="background:#f4f7f6; border:1px solid #e1e1e1; border-radius:12px; padding:16px 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:15px; font-weight:700; color:#333;">Total pago</span>
+              <span style="font-size:22px; font-weight:900; color:#27ae60;" id="acompTotal">R$ 22,97</span>
+            </div>
+            <div style="font-size:12px; color:#777; margin-top:4px;" id="acompPagamento">PIX aprovado pelo ShopWise Pay Demo.</div>
           </div>
 
         </div>
 
         <div class="modal-ped-footer">
-          <button class="btn-fechar-ped" onclick="fecharPedido()">Fechar</button>
+          <button class="btn-fechar-ped" onclick="fecharAcomp()">Fechar</button>
+          <a href="feedproduto.html" class="btn-add-modal" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px;">
+            🛒 Comprar novamente
+          </a>
         </div>
 
       </div>
@@ -155,6 +165,6 @@
     <div class="toast" id="toast"></div>
 
     <script src="../utils/ui-feedback.js"></script>
-    <script src="../utils/pedidos.js"></script>
+    <script src="../utils/acompanhar-pedido.js"></script>
 </body>
 </html>

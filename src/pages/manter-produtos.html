@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Produtos - ShopWise Lojista</title>
-    
     <link rel="stylesheet" href="../styles/feed.css">
-    
     <link rel="stylesheet" href="../styles/manter-produtos.css">
 </head>
 <body>
@@ -87,6 +85,12 @@
                         <h3>Sincronização via API / ERP</h3>
                         <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Conecte com seu sistema de gestão para atualização automática.</p>
                     </div>
+
+                    <div class="mp-opcao-card" id="btnPedidos" onclick="abrirPedido(1)" style="cursor:pointer;">
+                        <div class="mp-opcao-icone">📋</div>
+                        <h3>Acompanhar Pedidos</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Gerencie e atualize o status dos pedidos recebidos.</p>
+                    </div>
                 </div>
 
                 <!-- TELA DA API (Escondida por padrão) -->
@@ -99,7 +103,7 @@
                     <button class="mp-btn mp-btn-cancelar">Ver Documentação</button>
                 </section>
 
-                <!-- TELA DE CADASTRO MANUAL (Agora com ID sessaoManual) -->
+                <!-- TELA DE CADASTRO MANUAL -->
                 <section class="mp-card" id="sessaoManual">
                     <h2 class="mp-card-title">Novo Produto</h2>
                     <form id="mpFormProduto" class="mp-form">
@@ -171,6 +175,86 @@
         </div>
     </div>
 
+    <!-- ══════ MODAL PEDIDO ══════ -->
+    <div class="modal-overlay" id="modalPedidoOverlay" onclick="fecharPedidoOverlay(event)">
+      <div class="modal-pedido">
+
+        <div class="modal-ped-header">
+          <div class="modal-ped-icon">📋</div>
+          <div>
+            <h2 id="pedTitulo">Pedido #00124</h2>
+            <p id="pedSubtitulo">João Silva • Recebido às 14:32</p>
+          </div>
+          <button class="modal-close-ped" onclick="fecharPedido()">✕</button>
+        </div>
+
+        <div class="modal-ped-body">
+
+          <div>
+            <p class="secao-titulo">Status do pedido</p>
+            <div class="stepper" id="stepper">
+              <div class="step" id="step-0">
+                <div class="step-circle">📥</div>
+                <div class="step-label">Recebido</div>
+              </div>
+              <div class="step" id="step-1">
+                <div class="step-circle">📦</div>
+                <div class="step-label">Em separação</div>
+              </div>
+              <div class="step" id="step-2">
+                <div class="step-circle">🚚</div>
+                <div class="step-label">Saiu p/ entrega</div>
+              </div>
+              <div class="step" id="step-3">
+                <div class="step-circle">✅</div>
+                <div class="step-label">Entregue</div>
+              </div>
+              <div class="stepper-progress" id="stepperProgress"></div>
+            </div>
+          </div>
+
+          <div class="status-actions">
+            <h3 id="acaoTitulo">O que deseja fazer?</h3>
+            <div class="acoes-btns">
+              <button class="btn-acao btn-avancar" id="btnAvancar" onclick="avancarStatus()">▶ Avançar status</button>
+              <button class="btn-acao btn-cancelar" id="btnCancelar" onclick="cancelarPedido()">✕ Cancelar pedido</button>
+            </div>
+          </div>
+
+          <div id="secaoItens">
+            <p class="secao-titulo">Itens do pedido</p>
+            <div class="itens-lista" id="itensList"></div>
+            <div class="progresso-separacao" id="progressoSep" style="display:none">
+              <span id="sepTexto">0 de 3 separados</span>
+              <div class="prog-track"><div class="prog-fill" id="sepFill" style="width:0%"></div></div>
+            </div>
+          </div>
+
+          <div>
+            <p class="secao-titulo">Cliente</p>
+            <div class="cliente-card">
+              <div class="cliente-avatar" id="clienteAvatar">J</div>
+              <div class="cliente-info">
+                <h4 id="clienteNome">João Silva</h4>
+                <p id="clienteEndereco">Rua das Palmeiras, 45 — Centro<br>📱 (89) 99999-1234</p>
+              </div>
+              <button class="btn-notificar" id="btnNotificar" onclick="notificarCliente()">🔔 Notificar cliente</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-ped-footer">
+          <button class="btn-fechar-ped" onclick="fecharPedido()">Fechar</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
     <script src="../utils/manter-produtos.js"></script>
+    <script src="../utils/pedidos.js"></script>
 </body>
 </html>
