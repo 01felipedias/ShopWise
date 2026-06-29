@@ -74,7 +74,33 @@
                     <p class="mp-subtitle">Cadastre e atualize o estoque do seu supermercado no ShopWise.</p>
                 </header>
 
-                <section class="mp-card">
+                <!-- ESCOLHA DE MÉTODO DE INTEGRAÇÃO -->
+                <div class="mp-opcoes-cadastro">
+                    <div class="mp-opcao-card active" id="btnManual">
+                        <div class="mp-opcao-icone">✍️</div>
+                        <h3>Cadastro Manual</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Adicione produtos um a um pelo sistema.</p>
+                    </div>
+                    
+                    <div class="mp-opcao-card" id="btnApi">
+                        <div class="mp-opcao-icone">🔄</div>
+                        <h3>Sincronização via API / ERP</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Conecte com seu sistema de gestão para atualização automática.</p>
+                    </div>
+                </div>
+
+                <!-- TELA DA API (Escondida por padrão) -->
+                <section class="mp-card" id="sessaoApi" style="display: none; text-align: center; padding: 4rem 2rem;">
+                    <h2 class="mp-card-title" style="border: none;">Conecte seu ERP ao ShopWise</h2>
+                    <p style="color: #666; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        Gere sua chave de acesso seguro (Token API) para automatizar a atualização de preços e o controle de estoque em tempo real direto do seu sistema de gestão.
+                    </p>
+                    <button class="mp-btn mp-btn-salvar" onclick="alert('Chave API gerada com sucesso: SHPW-984J-293K-M291. As instruções foram enviadas para o seu e-mail comercial.')">Gerar Chave de API</button>
+                    <button class="mp-btn mp-btn-cancelar">Ver Documentação</button>
+                </section>
+
+                <!-- TELA DE CADASTRO MANUAL (Agora com ID sessaoManual) -->
+                <section class="mp-card" id="sessaoManual">
                     <h2 class="mp-card-title">Novo Produto</h2>
                     <form id="mpFormProduto" class="mp-form">
                         
@@ -120,6 +146,7 @@
                     </form>
                 </section>
 
+                <!-- TABELA DE PRODUTOS -->
                 <section class="mp-card mp-mt-4">
                     <h2 class="mp-card-title">Estoque Atual</h2>
                     <div class="mp-table-responsive">
@@ -134,7 +161,8 @@
                                 </tr>
                             </thead>
                             <tbody id="mpTabelaProdutos">
-                                </tbody>
+                                <!-- Preenchido via JS -->
+                            </tbody>
                         </table>
                     </div>
                 </section>

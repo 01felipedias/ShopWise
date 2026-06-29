@@ -1,0 +1,6 @@
+/* Blindagem LS - Login Supermercado */
+.ls-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+/* Reutilizamos a estrutura do card-login do sistema para manter o padrão */

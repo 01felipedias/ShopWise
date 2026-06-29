@@ -5,11 +5,41 @@
 (function() {
     console.log("Módulo Manter Produtos Lojista ativo.");
 
+    // Elementos do formulário e tabela
     const formProduto = document.getElementById('mpFormProduto');
     const tabelaProdutos = document.getElementById('mpTabelaProdutos');
     
-    // Chave exclusiva para o LocalStorage do Lojista (evita conflito com o carrinho de compras)
+    // Elementos da escolha Manual vs API
+    const btnManual = document.getElementById('btnManual');
+    const btnApi = document.getElementById('btnApi');
+    const sessaoManual = document.getElementById('sessaoManual');
+    const sessaoApi = document.getElementById('sessaoApi');
+    
+    // Chave exclusiva para o LocalStorage do Lojista (evita conflito com o carrinho)
     const LS_KEY = 'shopwise_lojista_produtos';
+
+    // ==========================================
+    // LÓGICA DE NAVEGAÇÃO (MANUAL VS API)
+    // ==========================================
+    if(btnManual && btnApi && sessaoManual && sessaoApi) {
+        btnManual.addEventListener('click', () => {
+            btnManual.classList.add('active');
+            btnApi.classList.remove('active');
+            sessaoManual.style.display = 'block'; // Mostra o formulário manual
+            sessaoApi.style.display = 'none';     // Esconde a tela de API
+        });
+
+        btnApi.addEventListener('click', () => {
+            btnApi.classList.add('active');
+            btnManual.classList.remove('active');
+            sessaoApi.style.display = 'block';    // Mostra a tela de API
+            sessaoManual.style.display = 'none';  // Esconde o formulário manual
+        });
+    }
+
+    // ==========================================
+    // LÓGICA DE CADASTRO E ESTOQUE
+    // ==========================================
 
     // Função para buscar produtos salvos
     function getProdutos() {
@@ -24,6 +54,8 @@
     // Função para desenhar a tabela na tela
     function renderizarTabela() {
         const produtos = getProdutos();
+        if (!tabelaProdutos) return; // Proteção extra
+
         tabelaProdutos.innerHTML = ''; // Limpa a tabela antes de desenhar
 
         if (produtos.length === 0) {
@@ -49,7 +81,7 @@
         });
     }
 
-    // Evento de clique no botão de Cadastrar
+    // Evento de clique no botão de Cadastrar (Modo Manual)
     if(formProduto) {
         formProduto.addEventListener('submit', function(event) {
             event.preventDefault(); // Evita que a página pisque/recarregue
@@ -91,7 +123,7 @@
         });
     }
 
-    // Função exposta para o botão de Excluir funcionar (caso ele cadastre errado)
+    // Função exposta (fora da bolha de forma controlada) para o botão de Excluir funcionar
     window.removerProdutoMp = function(id) {
         if(confirm("Tem certeza que deseja remover este produto do estoque?")) {
             let produtos = getProdutos();
@@ -101,7 +133,7 @@
         }
     };
 
-    // Assim que a página abre, ele já mostra o que tem salvo
+    // Assim que a página abre, ele já renderiza a tabela com o que tem salvo
     renderizarTabela();
 
 })();
