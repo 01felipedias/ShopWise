@@ -1,0 +1,119 @@
+:root { --primary: #2ECC71; --primary-dark: #27ae60; }
+
+/* ══════ BANNER SLIDE ══════ */
+.banner-moldura {
+  background-color: #2ECC71;
+  border-radius: 14px;
+  padding: 12px;
+  height: 100%;
+  display: block;
+}
+
+.banner-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 260px;
+  display: block;
+}
+.banner-track {
+  display: flex;
+  height: 100%;
+  transition: transform .6s cubic-bezier(.65,0,.35,1);
+}
+
+.banner-slide {
+  min-width: 100%;
+  height: 100%;
+}
+
+.banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Setas */
+.banner-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.35);
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s;
+  z-index: 5;
+}
+.banner-arrow:hover { background: rgba(0,0,0,.55); }
+.banner-arrow.prev { left: 16px; }
+.banner-arrow.next { right: 16px; }
+
+/* Bolinhas */
+.banner-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+}
+
+.banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.5);
+  border: none;
+  cursor: pointer;
+  transition: all .3s;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+.banner-dot.active {
+  background: white;
+  width: 24px;
+  border-radius: 10px;
+}
+
+/* Ajuste de encaixe do slide dentro do hero ShopWise */
+.hero-shopwise {
+  align-items: stretch;
+}
+
+.banner {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.banner-content {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 767px) {
+  .banner-slider { min-height: 220px; }
+  .banner-arrow { width: 34px; height: 34px; font-size: 16px; }
+}
+
+
+.hero-shopwise {
+  background-color: #2ECC71;
+  border-radius: 16px;
+  padding: 16px;
+}

@@ -7,6 +7,7 @@
     <title>ShopWise - Feed de Produtos</title>
     
     <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="../styles/baners.css">
 </head>
 
 <body>
@@ -137,25 +138,33 @@
 
                     <section class="banner" aria-labelledby="banner-title">
                         <div class="banner-content">
-                            <span class="banner-badge">💰 BUSQUE, COMPARE E ECONOMIZE</span>
+                            <div class="banner-moldura">
 
-                            <h1 id="banner-title">
-                                Encontre o menor preço em segundos
-                            </h1>
-
-                            <p>
-                                Pesquise produtos, filtre por categoria e descubra em qual supermercado
-                                vale mais a pena comprar.
-                            </p>
+                                <div class="banner-slider" id="bannerSlider">
+                                    <div class="banner-track" id="bannerTrack">
+                                
+                                        <div class="banner-slide">
+                                            <img src="../assets/promoçãoq.png" alt="Promoção Super Quaresma - Descontos Semanais">
+                                        </div>
+                                
+                                        <div class="banner-slide">
+                                            <img src="../assets/promoçãom.png" alt="Promoção Mix Mateus - Natal do Coração">
+                                        </div>
+                                
+                                    </div>
+                                
+                                    <button class="banner-arrow prev" onclick="bannerAnterior()" aria-label="Banner anterior">‹</button>
+                                    <button class="banner-arrow next" onclick="bannerProximo()" aria-label="Próximo banner">›</button>
+                                
+                                    <div class="banner-dots" id="bannerDots"></div>
+                                </div>
+                            
+                            </div> 
                         </div>
+
                     </section>
 
                     <section class="stats" aria-label="Estatísticas">
-                        <div class="stat-card">
-                            <h3>10</h3>
-                            <span>Produtos cadastrados</span>
-                        </div>
-
                         <div class="stat-card">
                             <h3>10</h3>
                             <span>Ofertas ativas</span>
@@ -1089,5 +1098,6 @@
     </div>
 
     <script src="../utils/modal.js"></script>
+    <script src="../utils/baners.js"></script>
 </body>
 </html>
