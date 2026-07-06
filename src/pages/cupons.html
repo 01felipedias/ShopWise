@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Cupons e Cashback</title>
     <link rel="stylesheet" href="../styles/feed.css">
-    
+    <link rel="stylesheet" href="../styles/cupons.css">
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -41,20 +41,98 @@
                     <a href="carrinho.html" class="cart-icon" aria-label="Ir para o carrinho"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cart-badge">3</span></a>
                 </div></div>
             </header>
+
             <main class="page-container" role="main">
-<section class="coupons-hero">
-    <span class="mini-badge">Cupons e cashback</span>
-    <h1 class="section-title payment-title">Economize ainda mais</h1>
-    <p class="payment-subtitle">Acompanhe cupons disponíveis, cashback estimado e benefícios aplicáveis à sua cesta.</p>
-</section>
-<section class="coupon-grid">
-    <article class="info-card"><h3>SHOPWISE10</h3><p>10% de desconto na primeira compra demonstrativa.</p><a href="carrinho.html" class="btn-card-link">Usar no carrinho</a></article>
-    <article class="info-card"><h3>ECONOMIA5</h3><p>R$ 5,00 de desconto em compras acima de R$ 50,00.</p><a href="carrinho.html" class="btn-card-link">Aplicar cupom</a></article>
-    <article class="info-card"><h3>Cashback ativo</h3><div class="dashboard-stat">R$ 6,80</div><p>Valor estimado para usar em compras futuras.</p></article>
-</section>
-</main>
+
+                <section class="cashback-overview-strip" aria-label="Seu cashback acumulado">
+                    <div class="cashback-overview-card highlight">
+                        <span class="overview-label">Cashback ativo</span>
+                        <div class="dashboard-stat">R$ 6,80</div>
+                        <p>Valor estimado para usar em compras futuras.</p>
+                    </div>
+                    <div class="cashback-overview-card">
+                        <span class="overview-label">Mercados parceiros</span>
+                        <div class="dashboard-stat" id="totalMercados">0</div>
+                        <p>Com cupons ou cashback disponíveis agora.</p>
+                    </div>
+                    <div class="cashback-overview-card">
+                        <span class="overview-label">Cupons disponíveis</span>
+                        <div class="dashboard-stat" id="totalCupons">0</div>
+                        <p>Prontos para usar no seu próximo pedido.</p>
+                    </div>
+                </section>
+
+                <section class="feed-section-header compact">
+                    <h2>Supermercados parceiros</h2>
+                    <p>Busque, filtre e ordene para achar o melhor cashback pra você.</p>
+                </section>
+
+                <section class="market-coupons-toolbar" aria-label="Buscar e filtrar mercados">
+                    <div class="search-wrapper market-search-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="marketSearchInput" placeholder="Busque por supermercado..." aria-label="Buscar supermercado">
+                    </div>
+
+                    <div class="market-filter-group" id="marketFilterGroup" role="group" aria-label="Filtrar mercados">
+                        <button class="cat-btn active" type="button" data-filtro="todos">Todos</button>
+                        <button class="cat-btn" type="button" data-filtro="com-cashback">Com cashback</button>
+                        <button class="cat-btn" type="button" data-filtro="sem-cashback">Sem cashback</button>
+                    </div>
+
+                    <div class="market-sort-group">
+                        <label for="marketSortSelect">Ordenar por:</label>
+                        <select id="marketSortSelect">
+                            <option value="relevantes">Mais relevantes</option>
+                            <option value="maior-cashback">Maior cashback</option>
+                            <option value="mais-cupons">Mais cupons</option>
+                            <option value="nome">Nome A-Z</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="market-coupon-grid" id="marketCouponGrid" aria-live="polite"></section>
+
+                <section class="feed-section-header compact">
+                    <h2>Cupons gerais da plataforma</h2>
+                    <p>Válidos em qualquer supermercado parceiro do ShopWise.</p>
+                </section>
+
+                <section class="coupon-grid">
+                    <article class="info-card"><h3>SHOPWISE10</h3><p>10% de desconto na primeira compra demonstrativa.</p><a href="carrinho.html" class="btn-card-link">Usar no carrinho</a></article>
+                    <article class="info-card"><h3>ECONOMIA5</h3><p>R$ 5,00 de desconto em compras acima de R$ 50,00.</p><a href="carrinho.html" class="btn-card-link">Aplicar cupom</a></article>
+                </section>
+
+            </main>
         </div>
     </div>
     <script src="../utils/ui-feedback.js"></script>
+    <script src="../utils/cupons.js"></script>
+    <script>
+        function configurarSidebar() {
+            const desktopMenuToggle = document.getElementById("desktopMenuToggle");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mainContent = document.querySelector(".main-content");
+
+            function toggleMenu() {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.toggle("pinned");
+                    mainContent.classList.toggle("sidebar-pinned");
+                } else {
+                    sidebar.classList.toggle("open");
+                    overlay.classList.toggle("active");
+                }
+            }
+
+            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
+            if (overlay) overlay.addEventListener("click", toggleMenu);
+        }
+        document.addEventListener("DOMContentLoaded", configurarSidebar);
+    </script>
 </body>
 </html>
