@@ -1,10 +1,15 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cadastro ShopWise</title>
-    <link rel="stylesheet" href="../styles/style.css">
+
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 </head>
 
 <body>
@@ -12,8 +17,15 @@
 <div class="container">
 
     <section class="areaverde">
+
         <div class="areaverde-conteudo">
-            <img src="../assets/img/logoshopwise.png" alt="logo shopwise" style="margin-bottom: 20px;">
+
+            <img
+                src="{% static 'assets/img/logoshopwise.png' %}"
+                alt="Logo ShopWise"
+                style="margin-bottom: 20px;"
+            >
+
             <h1>Crie sua conta e aproveite benefícios exclusivos</h1>
 
             <p>
@@ -21,52 +33,205 @@
                 receber alertas, utilizar cupons e ganhar cashback
                 em suas compras.
             </p>
+
         </div>
+
     </section>
+
 
     <section class="form">
 
         <div class="card-login">
 
-            <h2>Bem vindo ao ShopWise!</h2>
-            <p class="subtitulo">Preencha os dados para continuar</p>
+            <h2>Bem-vindo ao ShopWise!</h2>
 
-            <form action="/cadastro" method="POST">
-                <div class="input-group">
-                    <input type="text" name="nome" placeholder="Digite seu nome" >
-                </div>
+            <p class="subtitulo">
+                Preencha os dados para continuar
+            </p>
 
-                <div class="input-group">
-                    <input type="text" name="cpf" placeholder="Digite seu CPF" >
-                </div>
+
+            <form id="formCadastroCliente">
 
                 <div class="input-group">
-                    <input type="email" name="email" placeholder="Digite seu email" >
+                    <input
+                        type="text"
+                        name="nome"
+                        placeholder="Digite seu nome"
+                        required
+                    >
                 </div>
 
-                <div class="input-group">
-                    <input type="text" name="cep" placeholder="Digite seu CEP" >
-                </div>
 
                 <div class="input-group">
-                    <input type="password" name="senha" placeholder="Digite sua senha" >
+                    <input
+                        type="text"
+                        name="cpf"
+                        placeholder="Digite seu CPF"
+                        required
+                    >
                 </div>
 
+
                 <div class="input-group">
-                    <input type="password" name="confirmasenha" placeholder="Confirme sua senha" >
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Digite seu email"
+                        required
+                    >
                 </div>
-                
-                <a href="feedproduto.html"><button type="submit" class="btn-verde">Cadastrar-se</button></a>
+
+
+                <div class="input-group">
+                    <input
+                        type="text"
+                        name="cep"
+                        placeholder="Digite seu CEP"
+                        required
+                    >
+                </div>
+
+
+                <div class="input-group">
+                    <input
+                        type="password"
+                        name="senha"
+                        placeholder="Digite sua senha"
+                        required
+                    >
+                </div>
+
+
+                <div class="input-group">
+                    <input
+                        type="password"
+                        name="confirmasenha"
+                        placeholder="Confirme sua senha"
+                        required
+                    >
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn-verde"
+                >
+                    Cadastrar-se
+                </button>
+
             </form>
-                
-                <div class="bottom-links">
-                    <a href="login.html">Já possui conta? Entrar</a>
-                </div>
+
+
+            <div class="bottom-links">
+
+                <a href="login.html">
+                    Já possui conta? Entrar
+                </a>
+
+            </div>
+
         </div>
 
     </section>
 
 </div>
 
+
+<script>
+
+const formCadastro = document.getElementById('formCadastroCliente');
+
+
+formCadastro.addEventListener('submit', async function(event) {
+
+    event.preventDefault();
+
+
+    const nome = formCadastro.elements['nome'].value.trim();
+    const cpf = formCadastro.elements['cpf'].value.trim();
+    const email = formCadastro.elements['email'].value.trim();
+    const cep = formCadastro.elements['cep'].value.trim();
+    const senha = formCadastro.elements['senha'].value;
+    const confirmaSenha =
+        formCadastro.elements['confirmasenha'].value;
+
+
+    if (senha !== confirmaSenha) {
+
+        alert('As senhas não coincidem.');
+        return;
+
+    }
+
+
+    const dadosCliente = {
+        nome: nome,
+        cpf: cpf,
+        email: email,
+        cep: cep,
+        senha: senha,
+        confirmasenha: confirmaSenha
+    };
+
+
+    try {
+
+        const resposta = await fetch('/api/clientes/', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(dadosCliente)
+
+        });
+
+
+        const dados = await resposta.json();
+
+
+        if (!resposta.ok) {
+
+            if (dados.email) {
+                alert('Este e-mail já está cadastrado.');
+                return;
+            }
+
+            if (dados.cpf) {
+                alert('Este CPF já está cadastrado.');
+                return;
+            }
+
+            alert(
+                dados.erro ||
+                'Não foi possível realizar o cadastro.'
+            );
+
+            return;
+        }
+
+
+        alert('Cadastro realizado com sucesso!');
+
+        window.location.href = 'login.html';
+
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert(
+            'Não foi possível conectar com o servidor.'
+        );
+
+    }
+
+});
+
+</script>
+
 </body>
+
 </html>

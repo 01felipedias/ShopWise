@@ -1,63 +1,208 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopWise</title>
-    <link rel="stylesheet" href="../styles/style.css">
+
+    <title>ShopWise - Login</title>
+
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 </head>
 
 <body>
+
 <div class="container">
 
     <section class="areaverde">
+
         <div class="areaverde-conteudo">
-            <img src="../assets/img/logoshopwise.png" alt="logo shopwise" style="margin-bottom: 20px;">
+
+            <img
+                src="{% static 'assets/img/logoshopwise.png' %}"
+                alt="Logo ShopWise"
+                style="margin-bottom: 20px;"
+            >
+
             <h1>Entre e aproveite benefícios exclusivos</h1>
+
             <p>
                 Aplique cupons, ganhe cashback, acompanhe a variação
                 de preço de um produto e receba alerta quando atingir
                 o valor desejado.
             </p>
+
         </div>
+
     </section>
+
 
     <section class="form">
 
         <div class="card-login">
 
             <h2>Bem-vindo de volta</h2>
-            <p class="subtitulo">Faça login para continuar</p>
-            <button class="btn-branco">
-                <img src="../assets/icones/google.png" alt="icon google">
+
+            <p class="subtitulo">
+                Faça login para continuar
+            </p>
+
+
+            <button class="btn-branco" type="button">
+                <img
+                    src="{% static 'assets/icones/google.png' %}"
+                    alt="Ícone Google"
+                >
                 Continuar com Google
             </button>
+
 
             <div class="divider">
                 <span>ou</span>
             </div>
 
-            <form action="feedproduto.html" method="POST">
-                <div class="input-group">
-                    <input type="email"name="email" placeholder="Digite seu email">
-                </div>
+
+            <form id="formLoginCliente">
 
                 <div class="input-group">
-                    <input type="password" name="senha" placeholder="Digite sua senha">
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Digite seu email"
+                        required
+                    >
+
                 </div>
+
+
+                <div class="input-group">
+
+                    <input
+                        type="password"
+                        name="senha"
+                        placeholder="Digite sua senha"
+                        required
+                    >
+
+                </div>
+
 
                 <div class="esqueci-senha">
-                    <a href="Senha.html ">Esqueceu sua senha?</a>
+
+                    <a href="Senha.html">
+                        Esqueceu sua senha?
+                    </a>
+
                 </div>
-                <button type="submit" class="btn-verde">Entrar</button></a>
+
+
+                <button
+                    type="submit"
+                    class="btn-verde"
+                >
+                    Entrar
+                </button>
+
             </form>
-        
+
+
             <div class="bottom-links">
-                <a href="cadastrousuario.html">Criar cadastro</a>
-                <a href="cadastromercado.html">Cadastrar Supermercado</a>
+
+                <a href="cadastrousuario.html">
+                    Criar cadastro
+                </a>
+
+                <a href="cadastromercado.html">
+                    Cadastrar Supermercado
+                </a>
+
             </div>
+
         </div>
+
     </section>
+
 </div>
+
+
+<script>
+
+const formLogin = document.getElementById('formLoginCliente');
+
+
+formLogin.addEventListener('submit', async function(event) {
+
+    event.preventDefault();
+
+
+    const email =
+        formLogin.elements['email'].value.trim();
+
+    const senha =
+        formLogin.elements['senha'].value;
+
+
+    try {
+
+        const resposta = await fetch('/api/login-cliente/', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                email: email,
+                senha: senha
+            })
+
+        });
+
+
+        const dados = await resposta.json();
+
+
+        if (!resposta.ok) {
+
+            alert(
+                dados.erro ||
+                'E-mail ou senha inválidos.'
+            );
+
+            return;
+        }
+
+
+        localStorage.setItem(
+            'shopwise_cliente',
+            JSON.stringify(dados.cliente)
+        );
+
+
+        alert('Login realizado com sucesso!');
+
+
+        window.location.href = 'feedproduto.html';
+
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert(
+            'Não foi possível conectar com o servidor.'
+        );
+
+    }
+
+});
+
+</script>
+
 </body>
+
 </html>

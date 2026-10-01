@@ -3,8 +3,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import get_object_or_404
 
-from .models import Supermercado, Produto
-from .serializers import SupermercadoSerializer, ProdutoSerializer
+from .models import Supermercado, Produto, Cliente
+from .serializers import (
+    SupermercadoSerializer,
+    ProdutoSerializer,
+    ClienteSerializer,
+)
 
 
 class SupermercadoList(APIView):
@@ -20,7 +24,7 @@ class SupermercadoList(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
 
@@ -35,6 +39,7 @@ class SupermercadoDetalhe(APIView):
 
     def put(self, request, pk):
         supermercado = get_object_or_404(Supermercado, pk=pk)
+
         serializer = SupermercadoSerializer(
             supermercado,
             data=request.data
@@ -81,15 +86,13 @@ class ProdutoList(APIView):
             )
 
         dados = request.data.copy()
-
-        # O supermercado vem da sessão, e não do navegador.
         dados['supermercado'] = supermercado_id
 
         serializer = ProdutoSerializer(data=dados)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
 
@@ -106,8 +109,6 @@ class ProdutoDetalhe(APIView):
                 status=401
             )
 
-        # Só permite acessar um produto pertencente
-        # ao supermercado atualmente autenticado.
         produto = get_object_or_404(
             Produto,
             pk=pk,
@@ -132,9 +133,6 @@ class ProdutoDetalhe(APIView):
             return erro
 
         dados = request.data.copy()
-
-        # Impede que alguém altere manualmente o supermercado
-        # ao qual o produto pertence.
         dados['supermercado'] = request.session['supermercado_id']
 
         serializer = ProdutoSerializer(
@@ -175,13 +173,15 @@ class LoginSupermercado(APIView):
             email_comercial__iexact=email
         ).first()
 
-        if not supermercado or not supermercado.verificar_senha(senha):
+        if (
+            not supermercado
+            or not supermercado.verificar_senha(senha)
+        ):
             return Response(
                 {'erro': 'E-mail ou senha inválidos.'},
                 status=401
             )
 
-        # Guarda no servidor qual supermercado fez login.
         request.session['supermercado_id'] = supermercado.id
 
         return Response({
@@ -190,5 +190,78 @@ class LoginSupermercado(APIView):
                 'id': supermercado.id,
                 'nome': supermercado.nome,
                 'email': supermercado.email_comercial
+            }
+        })
+
+
+class ClienteList(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        dados = request.data.copy()
+
+        senha = dados.get('senha')
+        confirma_senha = dados.pop('confirmasenha', None)
+
+        if not senha:
+            return Response(
+                {'erro': 'A senha é obrigatória.'},
+                status=400
+            )
+
+        if confirma_senha is not None and senha != confirma_senha:
+            return Response(
+                {'erro': 'As senhas não coincidem.'},
+                status=400
+            )
+
+        serializer = ClienteSerializer(data=dados)
+
+        if serializer.is_valid():
+            cliente = serializer.save()
+
+            return Response({
+                'mensagem': 'Cliente cadastrado com sucesso.',
+                'cliente': {
+                    'id': cliente.id,
+                    'nome': cliente.nome,
+                    'email': cliente.email
+                }
+            }, status=201)
+
+        return Response(serializer.errors, status=400)
+
+
+class LoginCliente(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        senha = request.data.get('senha')
+
+        if not email or not senha:
+            return Response(
+                {'erro': 'E-mail e senha são obrigatórios.'},
+                status=400
+            )
+
+        cliente = Cliente.objects.filter(
+            email__iexact=email
+        ).first()
+
+        if not cliente or not cliente.verificar_senha(senha):
+            return Response(
+                {'erro': 'E-mail ou senha inválidos.'},
+                status=401
+            )
+
+        request.session['cliente_id'] = cliente.id
+
+        return Response({
+            'mensagem': 'Login realizado com sucesso.',
+            'cliente': {
+                'id': cliente.id,
+                'nome': cliente.nome,
+                'email': cliente.email
             }
         })
