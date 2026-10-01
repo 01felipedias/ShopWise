@@ -1,139 +1,228 @@
 // ==================================================
-// BLINDAGEM SHOP-17: MANTER PRODUTOS
+// SHOPWISE - MANTER PRODUTOS
+// Integração com Django REST API
 // ==================================================
 
-(function() {
-    console.log("Módulo Manter Produtos Lojista ativo.");
+(function () {
+    console.log("Módulo Manter Produtos conectado à API.");
 
-    // Elementos do formulário e tabela
     const formProduto = document.getElementById('mpFormProduto');
     const tabelaProdutos = document.getElementById('mpTabelaProdutos');
-    
-    // Elementos da escolha Manual vs API
+
+    // Manual vs API
     const btnManual = document.getElementById('btnManual');
     const btnApi = document.getElementById('btnApi');
     const sessaoManual = document.getElementById('sessaoManual');
     const sessaoApi = document.getElementById('sessaoApi');
-    
-    // Chave exclusiva para o LocalStorage do Lojista (evita conflito com o carrinho)
-    const LS_KEY = 'shopwise_lojista_produtos';
 
     // ==========================================
-    // LÓGICA DE NAVEGAÇÃO (MANUAL VS API)
+    // NAVEGAÇÃO MANUAL VS API
     // ==========================================
-    if(btnManual && btnApi && sessaoManual && sessaoApi) {
+
+    if (btnManual && btnApi && sessaoManual && sessaoApi) {
+
         btnManual.addEventListener('click', () => {
             btnManual.classList.add('active');
             btnApi.classList.remove('active');
-            sessaoManual.style.display = 'block'; // Mostra o formulário manual
-            sessaoApi.style.display = 'none';     // Esconde a tela de API
+
+            sessaoManual.style.display = 'block';
+            sessaoApi.style.display = 'none';
         });
 
         btnApi.addEventListener('click', () => {
             btnApi.classList.add('active');
             btnManual.classList.remove('active');
-            sessaoApi.style.display = 'block';    // Mostra a tela de API
-            sessaoManual.style.display = 'none';  // Esconde o formulário manual
+
+            sessaoApi.style.display = 'block';
+            sessaoManual.style.display = 'none';
         });
     }
 
     // ==========================================
-    // LÓGICA DE CADASTRO E ESTOQUE
+    // LISTAR PRODUTOS DO BANCO
     // ==========================================
 
-    // Função para buscar produtos salvos
-    function getProdutos() {
-        return JSON.parse(localStorage.getItem(LS_KEY)) || [];
-    }
+    async function carregarProdutos() {
 
-    // Função para salvar produtos
-    function setProdutos(produtos) {
-        localStorage.setItem(LS_KEY, JSON.stringify(produtos));
-    }
+        if (!tabelaProdutos) return;
 
-    // Função para desenhar a tabela na tela
-    function renderizarTabela() {
-        const produtos = getProdutos();
-        if (!tabelaProdutos) return; // Proteção extra
+        try {
 
-        tabelaProdutos.innerHTML = ''; // Limpa a tabela antes de desenhar
+            const resposta = await fetch('/api/produtos/');
 
-        if (produtos.length === 0) {
-            tabelaProdutos.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #777; padding: 2rem;">Nenhum produto cadastrado no estoque ainda.</td></tr>';
-            return;
-        }
+            if (!resposta.ok) {
+                throw new Error('Erro ao buscar produtos.');
+            }
 
-        produtos.forEach(produto => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <strong>${produto.nome}</strong><br>
-                    <small style="color: #666;">${produto.descricao || 'Sem descrição'}</small>
-                </td>
-                <td style="text-transform: capitalize;">${produto.categoria}</td>
-                <td>R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}</td>
-                <td>${produto.estoque} un.</td>
-                <td>
-                    <a class="mp-action-link" onclick="window.removerProdutoMp(${produto.id})">Excluir</a>
-                </td>
+            const produtos = await resposta.json();
+
+            tabelaProdutos.innerHTML = '';
+
+            if (produtos.length === 0) {
+                tabelaProdutos.innerHTML = `
+                    <tr>
+                        <td colspan="5"
+                            style="text-align:center; color:#777; padding:2rem;">
+                            Nenhum produto cadastrado no estoque ainda.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            produtos.forEach(produto => {
+
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>
+                        <strong>${produto.nome}</strong><br>
+                        <small style="color:#666;">
+                            ${produto.descricao || 'Sem descrição'}
+                        </small>
+                    </td>
+
+                    <td style="text-transform:capitalize;">
+                        ${produto.categoria}
+                    </td>
+
+                    <td>
+                        R$ ${parseFloat(produto.preco)
+                            .toFixed(2)
+                            .replace('.', ',')}
+                    </td>
+
+                    <td>
+                        ${produto.estoque} un.
+                    </td>
+
+                    <td>
+                        <a class="mp-action-link"
+                           href="#"
+                           onclick="window.removerProdutoMp(${produto.id}); return false;">
+                            Excluir
+                        </a>
+                    </td>
+                `;
+
+                tabelaProdutos.appendChild(tr);
+            });
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            tabelaProdutos.innerHTML = `
+                <tr>
+                    <td colspan="5"
+                        style="text-align:center; color:red; padding:2rem;">
+                        Não foi possível carregar os produtos.
+                    </td>
+                </tr>
             `;
-            tabelaProdutos.appendChild(tr);
-        });
+        }
     }
 
-    // Evento de clique no botão de Cadastrar (Modo Manual)
-    if(formProduto) {
-        formProduto.addEventListener('submit', function(event) {
-            event.preventDefault(); // Evita que a página pisque/recarregue
+    // ==========================================
+    // CADASTRAR PRODUTO
+    // ==========================================
 
-            // 1. Captura os valores digitados
+    if (formProduto) {
+
+        formProduto.addEventListener('submit', async function (event) {
+
+            event.preventDefault();
+
             const nome = document.getElementById('mpNome').value.trim();
             const categoria = document.getElementById('mpCategoria').value;
             const preco = document.getElementById('mpPreco').value;
             const estoque = document.getElementById('mpEstoque').value;
             const descricao = document.getElementById('mpDescricao').value.trim();
 
-            // 2. Validação básica (SHOP-87)
-            if(!nome || !categoria || !preco || !estoque) {
+            if (!nome || !categoria || !preco || !estoque) {
                 alert("Por favor, preencha todos os campos obrigatórios (*).");
                 return;
             }
 
-            // 3. Cria o "pacote" do novo produto
             const novoProduto = {
-                id: Date.now(), // Cria um ID único matemático
                 nome: nome,
                 categoria: categoria,
                 preco: preco,
-                estoque: estoque,
+                estoque: parseInt(estoque),
                 descricao: descricao
             };
 
-            // 4. Salva no estoque
-            const produtos = getProdutos();
-            produtos.push(novoProduto);
-            setProdutos(produtos);
+            try {
 
-            // 5. Exibe Feedback (SHOP-90)
-            alert("✅ Produto cadastrado com sucesso no estoque!");
+                const resposta = await fetch('/api/produtos/', {
+                    method: 'POST',
 
-            // 6. Limpa os campos e atualiza a tabela na tela
-            formProduto.reset();
-            renderizarTabela();
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify(novoProduto)
+                });
+
+                if (!resposta.ok) {
+                    const erroApi = await resposta.json();
+                    console.error(erroApi);
+                    throw new Error('Erro ao cadastrar produto.');
+                }
+
+                alert("✅ Produto cadastrado com sucesso!");
+
+                formProduto.reset();
+
+                await carregarProdutos();
+
+            } catch (erro) {
+
+                console.error(erro);
+
+                alert("Não foi possível cadastrar o produto.");
+            }
         });
     }
 
-    // Função exposta (fora da bolha de forma controlada) para o botão de Excluir funcionar
-    window.removerProdutoMp = function(id) {
-        if(confirm("Tem certeza que deseja remover este produto do estoque?")) {
-            let produtos = getProdutos();
-            produtos = produtos.filter(p => p.id !== id); // Filtra tirando o produto excluído
-            setProdutos(produtos);
-            renderizarTabela(); // Atualiza a tela
+    // ==========================================
+    // EXCLUIR PRODUTO
+    // ==========================================
+
+    window.removerProdutoMp = async function (id) {
+
+        const confirmar = confirm(
+            "Tem certeza que deseja remover este produto do estoque?"
+        );
+
+        if (!confirmar) return;
+
+        try {
+
+            const resposta = await fetch(`/api/produtos/${id}/`, {
+                method: 'DELETE'
+            });
+
+            if (!resposta.ok) {
+                throw new Error('Erro ao excluir produto.');
+            }
+
+            alert("Produto excluído com sucesso!");
+
+            await carregarProdutos();
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            alert("Não foi possível excluir o produto.");
         }
     };
 
-    // Assim que a página abre, ele já renderiza a tabela com o que tem salvo
-    renderizarTabela();
+    // ==========================================
+    // CARREGAR AO ABRIR A PÁGINA
+    // ==========================================
+
+    carregarProdutos();
 
 })();

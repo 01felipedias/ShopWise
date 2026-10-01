@@ -1,3 +1,10 @@
 # Ignorar arquivos de ambiente locais
 .env.development
 .env.production
+
+# Banco de dados local do Django
+db.sqlite3
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc

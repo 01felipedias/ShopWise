@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Supermercado ShopWise</title>
 
-    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 </head>
 
 <body>
 
     <header class="header-cadastro">
-        <img src="../assets//img/logoshopwise.png" alt="Logo ShopWise">
+        <img src="{% static 'assets/img/logoshopwise.png' %}" alt="Logo ShopWise">
     </header>
 
     <main class="form-mercado">
@@ -23,7 +24,7 @@
                 Preencha os dados da sua loja para continuar
             </p>
 
-            <form onsubmit="event.preventDefault(); window.location.href='manter-produtos.html';">
+           <form id="form-supermercado">
 
                 <h3>Informações da Loja</h3>
 
@@ -88,4 +89,38 @@
     </main>
 
 </body>
+<script>
+    const form = document.getElementById('form-supermercado');
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const nome = form.elements['nomeloja'].value;
+        const endereco = form.elements['endereco'].value;
+
+        try {
+            const resposta = await fetch('/api/supermercados/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nome: nome,
+                    endereco: endereco
+                })
+            });
+
+            if (resposta.ok) {
+                alert('Supermercado cadastrado com sucesso!');
+                window.location.href = 'manter-produtos.html';
+            } else {
+                alert('Erro ao cadastrar supermercado.');
+            }
+
+        } catch (erro) {
+            console.error(erro);
+            alert('Não foi possível conectar com a API.');
+        }
+    });
+</script>
 </html>

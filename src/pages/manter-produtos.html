@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Produtos - ShopWise Lojista</title>
     <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/manter-produtos.css">
+    <link rel="stylesheet" href="{% static 'styles/manter-produtos.css' %}">
 </head>
 <body>
 
@@ -176,7 +177,7 @@
     </div>
 
     <!-- ══════ MODAL PEDIDO ══════ -->
-    <div class="modal-overlay" id="modalPedidoOverlay" onclick="fecharPedidoOverlay(event)">
+    <div class="modal-overlay" id="modalPedidoOverlay" onclick="fecharPedidoOverlay(event)" style="display: none;">
       <div class="modal-pedido">
 
         <div class="modal-ped-header">
@@ -254,7 +255,7 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <script src="../utils/manter-produtos.js"></script>
-    <script src="../utils/pedidos.js"></script>
+    <script src="{% static 'utils/manter-produtos.js' %}"></script>
+    <!-- <script src="{% static 'utils/pedidos.js' %}"></script> -->
 </body>
 </html>
