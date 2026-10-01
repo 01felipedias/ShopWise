@@ -48,7 +48,18 @@
 
         try {
 
-            const resposta = await fetch('/api/produtos/');
+            const supermercadoLogado = JSON.parse(
+                localStorage.getItem('shopwise_supermercado')
+            );
+
+            if (!supermercadoLogado) {
+                window.location.href = 'login-supermercado.html';
+                return;
+            }
+
+            const resposta = await fetch(
+                `/api/produtos/?supermercado=${supermercadoLogado.id}`
+            );
 
             if (!resposta.ok) {
                 throw new Error('Erro ao buscar produtos.');
@@ -144,14 +155,24 @@
                 return;
             }
 
+            const supermercadoLogado = JSON.parse(
+                localStorage.getItem('shopwise_supermercado')
+            );
+
+            if (!supermercadoLogado) {
+                alert('Você precisa fazer login como supermercado.');
+                window.location.href = 'login-supermercado.html';
+                return;
+            }
+
             const novoProduto = {
+                supermercado: supermercadoLogado.id,
                 nome: nome,
                 categoria: categoria,
                 preco: preco,
                 estoque: parseInt(estoque),
                 descricao: descricao
             };
-
             try {
 
                 const resposta = await fetch('/api/produtos/', {
