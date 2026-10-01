@@ -29,7 +29,7 @@
                 <h3>Informações da Loja</h3>
 
                 <div class="input-group">
-                    <input name="nome responsavel" type="text" placeholder="Nome do responsável" >
+                    <input name="responsavel" type="text" placeholder="Nome do responsável">
                 </div>
 
                 <div class="input-group">
@@ -95,8 +95,21 @@
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        const nome = form.elements['nomeloja'].value;
-        const endereco = form.elements['endereco'].value;
+        const dadosSupermercado = {
+            nome: form.elements['nomeloja'].value,
+            responsavel: form.elements['responsavel'].value,
+            cnpj: form.elements['cnpj'].value,
+            razao_social: form.elements['razaosocial'].value,
+            email_comercial: form.elements['emailcomercial'].value,
+            telefone: form.elements['telefone'].value,
+            cep: form.elements['cep'].value,
+            estado: form.elements['estado'].value,
+            cidade: form.elements['cidade'].value,
+            bairro: form.elements['bairro'].value,
+            endereco: form.elements['endereco'].value,
+            numero: form.elements['numloja'].value,
+            complemento: form.elements['complemento'].value
+        };
 
         try {
             const resposta = await fetch('/api/supermercados/', {
@@ -104,10 +117,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    nome: nome,
-                    endereco: endereco
-                })
+                body: JSON.stringify(dadosSupermercado)
             });
 
             if (resposta.ok) {
