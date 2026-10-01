@@ -53,18 +53,34 @@ class ProdutoList(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        supermercado_id = request.query_params.get('supermercado')
+        supermercado_id = request.session.get('supermercado_id')
 
-        produtos = Produto.objects.all()
+        if not supermercado_id:
+            return Response(
+                {'erro': 'Supermercado não autenticado.'},
+                status=401
+            )
 
-        if supermercado_id:
-            produtos = produtos.filter(supermercado_id=supermercado_id)
+        produtos = Produto.objects.filter(
+            supermercado_id=supermercado_id
+        )
 
         serializer = ProdutoSerializer(produtos, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = ProdutoSerializer(data=request.data)
+        supermercado_id = request.session.get('supermercado_id')
+
+        if not supermercado_id:
+            return Response(
+                {'erro': 'Supermercado não autenticado.'},
+                status=401
+            )
+
+        dados = request.data.copy()
+        dados['supermercado'] = supermercado_id
+
+        serializer = ProdutoSerializer(data=dados)
 
         if serializer.is_valid():
             serializer.save()
@@ -119,6 +135,8 @@ class LoginSupermercado(APIView):
                 {'erro': 'E-mail ou senha inválidos.'},
                 status=401
             )
+
+        request.session['supermercado_id'] = supermercado.id
 
         return Response({
             'mensagem': 'Login realizado com sucesso.',
