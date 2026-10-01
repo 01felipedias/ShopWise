@@ -7,6 +7,7 @@ from produtos.views import (
     SupermercadoDetalhe,
     ProdutoList,
     ProdutoDetalhe,
+    LoginSupermercado,
 )
 
 
@@ -16,6 +17,10 @@ def inicio(request):
 
 def cadastro_mercado(request):
     return render(request, 'cadastromercado.html')
+
+
+def login_supermercado(request):
+    return render(request, 'login-supermercado.html')
 
 
 def manter_produtos(request):
@@ -29,6 +34,7 @@ urlpatterns = [
     path('', inicio, name='inicio'),
     path('cadastromercado.html', cadastro_mercado, name='cadastro_mercado'),
     path('manter-produtos.html', manter_produtos, name='manter_produtos'),
+    path('login-supermercado.html', login_supermercado, name='login_supermercado'),
 
     # API
     path('api/supermercados/', SupermercadoList.as_view()),
@@ -36,4 +42,5 @@ urlpatterns = [
 
     path('api/produtos/', ProdutoList.as_view()),
     path('api/produtos/<int:pk>/', ProdutoDetalhe.as_view()),
+    path('api/login-supermercado/', LoginSupermercado.as_view()),
 ]

@@ -53,7 +53,13 @@ class ProdutoList(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        supermercado_id = request.query_params.get('supermercado')
+
         produtos = Produto.objects.all()
+
+        if supermercado_id:
+            produtos = produtos.filter(supermercado_id=supermercado_id)
+
         serializer = ProdutoSerializer(produtos, many=True)
         return Response(serializer.data)
 
@@ -89,3 +95,36 @@ class ProdutoDetalhe(APIView):
         produto = get_object_or_404(Produto, pk=pk)
         produto.delete()
         return Response(status=204)
+
+
+class LoginSupermercado(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        senha = request.data.get('senha')
+
+        if not email or not senha:
+            return Response(
+                {'erro': 'E-mail e senha são obrigatórios.'},
+                status=400
+            )
+
+        supermercado = Supermercado.objects.filter(
+            email_comercial__iexact=email
+        ).first()
+
+        if not supermercado or not supermercado.verificar_senha(senha):
+            return Response(
+                {'erro': 'E-mail ou senha inválidos.'},
+                status=401
+            )
+
+        return Response({
+            'mensagem': 'Login realizado com sucesso.',
+            'supermercado': {
+                'id': supermercado.id,
+                'nome': supermercado.nome,
+                'email': supermercado.email_comercial
+            }
+        })
