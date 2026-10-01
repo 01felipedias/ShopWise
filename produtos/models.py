@@ -49,3 +49,21 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+class Cliente(models.Model):
+    nome = models.CharField(max_length=150)
+    cpf = models.CharField(max_length=14, unique=True)
+    email = models.EmailField(unique=True)
+    cep = models.CharField(max_length=10)
+    senha = models.CharField(max_length=128)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def set_senha(self, senha):
+        self.senha = make_password(senha)
+
+    def verificar_senha(self, senha):
+        return check_password(senha, self.senha)
+
+    def __str__(self):
+        return self.nome

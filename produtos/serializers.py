@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Supermercado, Produto
+
+from .models import Supermercado, Produto, Cliente
 
 
 class SupermercadoSerializer(serializers.ModelSerializer):
@@ -25,3 +26,20 @@ class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Produto
         fields = '__all__'
+
+
+class ClienteSerializer(serializers.ModelSerializer):
+    senha = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+    def create(self, validated_data):
+        senha = validated_data.pop('senha')
+
+        cliente = Cliente(**validated_data)
+        cliente.set_senha(senha)
+        cliente.save()
+
+        return cliente
