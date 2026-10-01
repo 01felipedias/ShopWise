@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Produtos - ShopWise Lojista</title>
-    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/manter-produtos.css' %}">
 </head>
 <body>
@@ -15,7 +15,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <a href="#">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                   <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo">
                 </a>
             </div>
 
