@@ -38,6 +38,7 @@
                     <a href="feedproduto.html" class="mobile-logo-area">
                         <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                     </a>
+                    <strong class="page-navbar-title">Meus Pedidos</strong>
                     <div class="location">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -56,18 +57,23 @@
 
                 <section class="orders-hero">
                     <span class="mini-badge">Rastreamento em tempo real</span>
-                    <h1 class="section-title payment-title">Pedido SW-482913</h1>
-                    <p class="payment-subtitle">Acompanhe cada etapa após o pagamento: confirmação, separação no mercado, entrega e avaliação.</p>
-                    <div class="quick-links">
-                        <button class="btn-primary-link" onclick="abrirAcompanhamento(1)">📋 Acompanhar pedido</button>
-                        <a href="feedproduto.html" class="btn-secondary-link">Comprar novamente</a>
-                    </div>
+                    <h1 class="section-title payment-title">Meus pedidos</h1>
+                    <p class="payment-subtitle">Acompanhe pedidos em andamento, avalie os que chegaram e reveja seu histórico completo.</p>
                 </section>
 
-                <section class="orders-grid">
-                    <article class="info-card"><h3>Status atual</h3><span class="status-pill">Mercado separando produtos</span><p>Previsão de entrega: 45 minutos.</p></article>
-                    <article class="info-card"><h3>Mercado</h3><p>Super Quaresma<br>R. das Flores, 150 — Centro</p></article>
-                    <article class="info-card"><h3>Total pago</h3><div class="dashboard-stat">R$ 22,97</div><p>PIX aprovado pelo ShopWise Pay Demo.</p></article>
+                <section class="orders-status-group" aria-label="Pedidos em andamento">
+                    <h2 class="orders-status-title">Pedidos em andamento</h2>
+                    <div class="orders-list" id="listaAndamento"></div>
+                </section>
+
+                <section class="orders-status-group" aria-label="Pedidos entregues aguardando avaliação">
+                    <h2 class="orders-status-title">Pedidos entregues</h2>
+                    <div class="orders-list" id="listaEntregue"></div>
+                </section>
+
+                <section class="orders-status-group" aria-label="Pedidos finalizados">
+                    <h2 class="orders-status-title">Pedidos finalizados</h2>
+                    <div class="orders-list" id="listaFinalizado"></div>
                 </section>
 
             </main>
@@ -166,5 +172,29 @@
 
     <script src="../utils/ui-feedback.js"></script>
     <script src="../utils/acompanhar-pedido.js"></script>
+    <script>
+        function configurarSidebar() {
+            const desktopMenuToggle = document.getElementById("desktopMenuToggle");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mainContent = document.querySelector(".main-content");
+
+            function toggleMenu() {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.toggle("pinned");
+                    mainContent.classList.toggle("sidebar-pinned");
+                } else {
+                    sidebar.classList.toggle("open");
+                    overlay.classList.toggle("active");
+                }
+            }
+
+            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
+            if (overlay) overlay.addEventListener("click", toggleMenu);
+        }
+        document.addEventListener("DOMContentLoaded", configurarSidebar);
+    </script>
 </body>
 </html>

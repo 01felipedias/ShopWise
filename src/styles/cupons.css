@@ -1,0 +1,239 @@
+/* ========================================================
+   CSS EXCLUSIVO - CUPONS E CASHBACK (SHOPWISE)
+   Prefixo exclusivo: .market-, .cashback-overview-
+   ======================================================== */
+
+/* --- Cards de resumo (cashback total, mercados, cupons) --- */
+.cashback-overview-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin: 20px 0;
+}
+
+.cashback-overview-card {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+.cashback-overview-card.highlight {
+    background: #f0fdf4;
+    border-color: rgba(46, 204, 113, 0.34);
+}
+
+.overview-label {
+    display: block;
+    color: #667575;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.cashback-overview-card p {
+    color: #667575;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* --- Barra de busca / filtro / ordenação --- */
+.market-coupons-toolbar {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 22px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.04);
+}
+
+.market-search-wrapper {
+    flex: 1;
+    min-width: 220px;
+    border: 1px solid #dbe7e2;
+}
+
+.market-filter-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.market-sort-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.market-sort-group label {
+    color: #667575;
+    font-size: 14px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.market-sort-group select {
+    min-width: 170px;
+    border: 1px solid #dbe7e2;
+    background: #ffffff;
+    color: #07152b;
+    padding: 12px 14px;
+    border-radius: 14px;
+    outline: none;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* --- Grid de mercados --- */
+.market-coupon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+    margin-bottom: 34px;
+}
+
+.market-coupon-card {
+    background: #ffffff;
+    border: 1px solid #dbe7e2;
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    animation: market-card-fade-up .4s ease both;
+}
+
+.market-coupon-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 14px 30px rgba(46, 204, 113, 0.12);
+}
+
+.market-coupon-logo {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    border-radius: 18px;
+    background: rgba(46, 204, 113, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.market-coupon-logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.market-coupon-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.market-coupon-info h3 {
+    color: #07152b;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.market-cashback-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.market-cashback-tag.positive {
+    background: rgba(46, 204, 113, 0.14);
+    color: var(--primary-dark);
+    border: 1px solid rgba(46, 204, 113, 0.25);
+}
+
+.market-cashback-tag.neutral {
+    background: #f2f4f3;
+    color: #777777;
+    border: 1px solid #e1e6e4;
+}
+
+.market-coupon-count {
+    color: #667575;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.market-coupon-arrow {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    background: #f8fbfa;
+    border: 1px solid #dbe7e2;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: 0.2s ease;
+}
+
+.market-coupon-card:hover .market-coupon-arrow {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+}
+
+.market-coupon-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px 20px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px dashed #dbe7e2;
+    color: #667575;
+    font-weight: 700;
+}
+
+@keyframes market-card-fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .market-coupon-card { animation: none; }
+    .market-coupon-card:hover { transform: none; }
+}
+
+@media (max-width: 900px) {
+    .cashback-overview-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .market-sort-group {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .market-sort-group select {
+        flex: 1;
+    }
+}
