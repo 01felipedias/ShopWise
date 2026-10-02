@@ -1450,3 +1450,537 @@ class LogoutCliente(APIView):
         return Response({
             'mensagem': 'Logout realizado com sucesso.'
         })
+
+
+class PedidosSupermercadoList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        supermercado_id = request.session.get(
+            'supermercado_id'
+        )
+
+        if not supermercado_id:
+            return Response(
+                {
+                    'erro':
+                    'Supermercado não autenticado.'
+                },
+                status=401
+            )
+
+        itens = (
+            ItemPedido.objects
+            .filter(
+                supermercado_id=supermercado_id
+            )
+            .select_related(
+                'pedido',
+                'pedido__cliente',
+                'produto',
+                'supermercado'
+            )
+            .order_by(
+                '-pedido__criado_em',
+                'id'
+            )
+        )
+
+        pedidos = {}
+
+        for item in itens:
+            pedido = item.pedido
+
+            if pedido.id not in pedidos:
+
+                pagamento_status = None
+
+                try:
+                    pagamento_status = (
+                        pedido.pagamento.status
+                    )
+                except Pagamento.DoesNotExist:
+                    pagamento_status = None
+
+                pedidos[pedido.id] = {
+                    'id': pedido.id,
+
+                    'cliente': {
+                        'id': pedido.cliente.id,
+                        'nome': pedido.cliente.nome,
+                        'email': pedido.cliente.email,
+                        'cep': pedido.cliente.cep,
+                    },
+
+                    'tipo_entrega':
+                        pedido.tipo_entrega,
+
+                    'endereco_entrega':
+                        pedido.endereco_entrega,
+
+                    'observacoes':
+                        pedido.observacoes,
+
+                    'forma_pagamento':
+                        pedido.forma_pagamento,
+
+                    'pagamento_status':
+                        pagamento_status,
+
+                    'status':
+                        pedido.status,
+
+                    'criado_em':
+                        pedido.criado_em,
+
+                    'itens': [],
+
+                    'subtotal_supermercado':
+                        Decimal('0.00'),
+                }
+
+            pedidos[pedido.id]['itens'].append({
+                'item_id': item.id,
+                'produto_id': item.produto_id,
+                'nome': item.nome_produto,
+                'preco_unitario': str(
+                    item.preco_unitario
+                ),
+                'quantidade': item.quantidade,
+                'subtotal': str(item.subtotal),
+            })
+
+            pedidos[pedido.id][
+                'subtotal_supermercado'
+            ] += item.subtotal
+
+        resultado = []
+
+        for pedido in pedidos.values():
+
+            pedido[
+                'subtotal_supermercado'
+            ] = str(
+                pedido[
+                    'subtotal_supermercado'
+                ]
+            )
+
+            resultado.append(pedido)
+
+        return Response(resultado)
+
+
+class StatusPedidoSupermercado(APIView):
+    permission_classes = [AllowAny]
+
+    def patch(self, request, pedido_id):
+        supermercado_id = request.session.get(
+            'supermercado_id'
+        )
+
+        if not supermercado_id:
+            return Response(
+                {
+                    'erro':
+                    'Supermercado não autenticado.'
+                },
+                status=401
+            )
+
+        pedido = get_object_or_404(
+            Pedido.objects.distinct(),
+            pk=pedido_id,
+            itens__supermercado_id=supermercado_id
+        )
+
+        novo_status = request.data.get(
+            'status'
+        )
+
+        status_permitidos = [
+            'confirmado',
+            'preparando',
+            'enviado',
+            'concluido',
+            'cancelado',
+        ]
+
+        if novo_status not in status_permitidos:
+            return Response(
+                {
+                    'erro':
+                    'Status de pedido inválido.'
+                },
+                status=400
+            )
+
+        if pedido.status == 'aguardando_pagamento':
+            return Response(
+                {
+                    'erro': (
+                        'O pagamento deste pedido '
+                        'ainda não foi confirmado.'
+                    )
+                },
+                status=400
+            )
+
+        if pedido.status in [
+            'concluido',
+            'cancelado'
+        ]:
+            return Response(
+                {
+                    'erro': (
+                        'Este pedido já foi finalizado '
+                        'e não pode ser alterado.'
+                    )
+                },
+                status=400
+            )
+
+        fluxo = {
+            'confirmado': 'preparando',
+            'preparando': 'enviado',
+            'enviado': 'concluido',
+        }
+
+        if novo_status != 'cancelado':
+
+            status_esperado = fluxo.get(
+                pedido.status
+            )
+
+            if novo_status != status_esperado:
+                return Response(
+                    {
+                        'erro': (
+                            'A alteração de status deve '
+                            'seguir a ordem: confirmado, '
+                            'preparando, enviado e concluído.'
+                        )
+                    },
+                    status=400
+                )
+
+        status_anterior = pedido.status
+
+        pedido.status = novo_status
+
+        pedido.save(
+            update_fields=['status']
+        )
+
+        return Response({
+            'mensagem':
+                'Status atualizado com sucesso.',
+            'pedido_id':
+                pedido.id,
+            'status_anterior':
+                status_anterior,
+            'status':
+                pedido.status,
+        })
+
+
+class PerfilSupermercado(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        supermercado_id = request.session.get(
+            'supermercado_id'
+        )
+
+        if not supermercado_id:
+            return Response(
+                {
+                    'erro':
+                    'Supermercado não autenticado.'
+                },
+                status=401
+            )
+
+        supermercado = get_object_or_404(
+            Supermercado,
+            pk=supermercado_id
+        )
+
+        produtos = Produto.objects.filter(
+            supermercado_id=supermercado_id
+        )
+
+        itens = (
+            ItemPedido.objects
+            .filter(
+                supermercado_id=supermercado_id
+            )
+            .select_related('pedido')
+        )
+
+        pedidos_recebidos = len({
+            item.pedido_id
+            for item in itens
+        })
+
+        pedidos_abertos = len({
+            item.pedido_id
+            for item in itens
+            if item.pedido.status in [
+                'confirmado',
+                'preparando',
+                'enviado',
+            ]
+        })
+
+        total_vendido = sum(
+            (
+                item.subtotal
+                for item in itens
+                if item.pedido.status == 'concluido'
+            ),
+            Decimal('0.00')
+        )
+
+        return Response({
+            'id': supermercado.id,
+            'nome': supermercado.nome,
+            'responsavel': supermercado.responsavel,
+            'cnpj': supermercado.cnpj,
+            'razao_social': supermercado.razao_social,
+            'email_comercial': supermercado.email_comercial,
+            'telefone': supermercado.telefone,
+
+            'cep': supermercado.cep,
+            'estado': supermercado.estado,
+            'cidade': supermercado.cidade,
+            'bairro': supermercado.bairro,
+            'endereco': supermercado.endereco,
+            'numero': supermercado.numero,
+            'complemento': supermercado.complemento,
+
+            'criado_em': supermercado.criado_em,
+
+            'estatisticas': {
+                'produtos': produtos.count(),
+                'pedidos_recebidos': pedidos_recebidos,
+                'pedidos_abertos': pedidos_abertos,
+                'total_vendido': str(total_vendido),
+            }
+        })
+
+    def put(self, request):
+        supermercado_id = request.session.get(
+            'supermercado_id'
+        )
+
+        if not supermercado_id:
+            return Response(
+                {
+                    'erro':
+                    'Supermercado não autenticado.'
+                },
+                status=401
+            )
+
+        supermercado = get_object_or_404(
+            Supermercado,
+            pk=supermercado_id
+        )
+
+        nome = str(
+            request.data.get(
+                'nome',
+                supermercado.nome
+            )
+        ).strip()
+
+        responsavel = str(
+            request.data.get(
+                'responsavel',
+                supermercado.responsavel
+            )
+        ).strip()
+
+        razao_social = str(
+            request.data.get(
+                'razao_social',
+                supermercado.razao_social
+            )
+        ).strip()
+
+        email = str(
+            request.data.get(
+                'email_comercial',
+                supermercado.email_comercial
+            )
+        ).strip().lower()
+
+        telefone = str(
+            request.data.get(
+                'telefone',
+                supermercado.telefone
+            )
+        ).strip()
+
+        cep = str(
+            request.data.get(
+                'cep',
+                supermercado.cep
+            )
+        ).strip()
+
+        estado = str(
+            request.data.get(
+                'estado',
+                supermercado.estado
+            )
+        ).strip()
+
+        cidade = str(
+            request.data.get(
+                'cidade',
+                supermercado.cidade
+            )
+        ).strip()
+
+        bairro = str(
+            request.data.get(
+                'bairro',
+                supermercado.bairro
+            )
+        ).strip()
+
+        endereco = str(
+            request.data.get(
+                'endereco',
+                supermercado.endereco
+            )
+        ).strip()
+
+        numero = str(
+            request.data.get(
+                'numero',
+                supermercado.numero
+            )
+        ).strip()
+
+        complemento = str(
+            request.data.get(
+                'complemento',
+                supermercado.complemento
+            )
+        ).strip()
+
+        if not nome:
+            return Response(
+                {
+                    'erro':
+                    'Informe o nome do supermercado.'
+                },
+                status=400
+            )
+
+        if not email:
+            return Response(
+                {
+                    'erro':
+                    'Informe o e-mail comercial.'
+                },
+                status=400
+            )
+
+        if not endereco:
+            return Response(
+                {
+                    'erro':
+                    'Informe o endereço.'
+                },
+                status=400
+            )
+
+        email_em_uso = (
+            Supermercado.objects
+            .filter(
+                email_comercial__iexact=email
+            )
+            .exclude(pk=supermercado.id)
+            .exists()
+        )
+
+        if email_em_uso:
+            return Response(
+                {
+                    'erro':
+                    'Este e-mail já está sendo usado por outro supermercado.'
+                },
+                status=400
+            )
+
+        supermercado.nome = nome
+        supermercado.responsavel = responsavel
+        supermercado.razao_social = razao_social
+        supermercado.email_comercial = email
+        supermercado.telefone = telefone
+
+        supermercado.cep = cep
+        supermercado.estado = estado
+        supermercado.cidade = cidade
+        supermercado.bairro = bairro
+        supermercado.endereco = endereco
+        supermercado.numero = numero
+        supermercado.complemento = complemento
+
+        supermercado.save(
+            update_fields=[
+                'nome',
+                'responsavel',
+                'razao_social',
+                'email_comercial',
+                'telefone',
+                'cep',
+                'estado',
+                'cidade',
+                'bairro',
+                'endereco',
+                'numero',
+                'complemento',
+            ]
+        )
+
+        return Response({
+            'mensagem':
+                'Perfil do supermercado atualizado com sucesso.',
+
+            'supermercado': {
+                'id': supermercado.id,
+                'nome': supermercado.nome,
+                'responsavel': supermercado.responsavel,
+                'cnpj': supermercado.cnpj,
+                'razao_social': supermercado.razao_social,
+                'email_comercial': supermercado.email_comercial,
+                'telefone': supermercado.telefone,
+                'cep': supermercado.cep,
+                'estado': supermercado.estado,
+                'cidade': supermercado.cidade,
+                'bairro': supermercado.bairro,
+                'endereco': supermercado.endereco,
+                'numero': supermercado.numero,
+                'complemento': supermercado.complemento,
+            }
+        })
+
+
+class LogoutSupermercado(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        request.session.pop(
+            'supermercado_id',
+            None
+        )
+
+        return Response({
+            'mensagem':
+                'Logout do supermercado realizado com sucesso.'
+        })

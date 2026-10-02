@@ -1,46 +1,165 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ShopWise Lojista</title>
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/login-supermercado.css' %}">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        ShopWise - Login do Lojista
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'styles/style.css' %}"
+    >
+
 </head>
+
+
 <body>
 
-    <header class="header-cadastro">
-        <img src="{% static 'assets/img/logoshopwise.png' %}" alt="Logo ShopWise">
-    </header>
 
-    <main class="form-mercado">
+<div class="container">
+
+
+    <!-- =========================
+         LADO VERDE
+    ========================== -->
+
+    <section class="areaverde">
+
+
+        <div class="areaverde-conteudo">
+
+
+            <img
+                src="{% static 'assets/img/logoshopwise.png' %}"
+                alt="Logo ShopWise"
+                style="margin-bottom: 20px;"
+            >
+
+
+            <h1>
+                Gerencie sua loja
+                de forma simples
+            </h1>
+
+
+            <p>
+                Cadastre produtos, atualize preços,
+                acompanhe pedidos e gerencie seu
+                supermercado dentro do ShopWise.
+            </p>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =========================
+         LOGIN DO LOJISTA
+    ========================== -->
+
+    <section class="form">
+
+
         <div class="card-login">
-            <h2>Login do Lojista</h2>
-            <p class="subtitulo">Acesse sua conta para gerenciar produtos</p>
+
+
+            <h2>
+                Login do Lojista
+            </h2>
+
+
+            <p class="subtitulo">
+                Acesse sua conta para
+                gerenciar seu supermercado
+            </p>
+
+
 
             <form id="lsLoginForm">
 
-                <div class="input-group">
-                    <input name="email" type="email" placeholder="E-mail comercial" required>
-                </div>
 
                 <div class="input-group">
-                    <input name="senha" type="password" placeholder="Senha" required>
+
+                    <input
+                        name="email"
+                        type="email"
+                        placeholder="Digite seu e-mail comercial"
+                        required
+                    >
+
                 </div>
-                
-                <button type="submit" class="btn-verde" style="width: 100%; margin-top: 1rem;">
+
+
+
+                <div class="input-group">
+
+                    <input
+                        name="senha"
+                        type="password"
+                        placeholder="Digite sua senha"
+                        required
+                    >
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="btn-verde"
+                >
                     Entrar
                 </button>
 
+
             </form>
 
-            <div class="bottom-links">
-                <a href="cadastromercado.html">Não tem conta? Cadastre seu supermercado</a>
-            </div>
-        </div>
-    </main>
 
-    <script src="{% static 'utils/login-supermercado.js' %}"></script>
+
+            <div class="bottom-links">
+
+
+                <a href="login.html">
+                    Voltar para o login do usuário
+                </a>
+
+
+                <a href="cadastromercado.html">
+                    Cadastrar Supermercado
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+
+
+<script
+    src="{% static 'utils/login-supermercado.js' %}"
+></script>
+
+
 </body>
+
 </html>

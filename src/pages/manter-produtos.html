@@ -87,7 +87,7 @@
                         <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Conecte com seu sistema de gestão para atualização automática.</p>
                     </div>
 
-                    <div class="mp-opcao-card" id="btnPedidos" onclick="abrirPedido(1)" style="cursor:pointer;">
+                    <div class="mp-opcao-card" id="btnPedidos" role="button" tabindex="0" style="cursor:pointer;">
                         <div class="mp-opcao-icone">📋</div>
                         <h3>Acompanhar Pedidos</h3>
                         <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Gerencie e atualize o status dos pedidos recebidos.</p>
@@ -106,7 +106,7 @@
 
                 <!-- TELA DE CADASTRO MANUAL -->
                 <section class="mp-card" id="sessaoManual">
-                    <h2 class="mp-card-title">Novo Produto</h2>
+                    <h2 class="mp-card-title" id="mpFormTitulo">Novo Produto</h2>
                     <form id="mpFormProduto" class="mp-form">
                         
                         <div class="mp-form-row">
@@ -145,8 +145,18 @@
                         </div>
 
                         <div class="mp-form-actions">
-                            <button type="submit" class="mp-btn mp-btn-salvar">Cadastrar Produto</button>
-                            <button type="reset" class="mp-btn mp-btn-cancelar">Limpar</button>
+                            <button type="submit" class="mp-btn mp-btn-salvar" id="mpBtnSalvar">
+                                Cadastrar Produto
+                            </button>
+                            <button type="reset" class="mp-btn mp-btn-cancelar" id="mpBtnLimpar">
+                                Limpar
+                            </button>
+                            <button type="button"
+                                    class="mp-btn mp-btn-cancelar"
+                                    id="mpBtnCancelarEdicao"
+                                    style="display:none;">
+                                Cancelar edição
+                            </button>
                         </div>
                     </form>
                 </section>

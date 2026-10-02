@@ -1,0 +1,1781 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Perfil da Loja - ShopWise Lojista
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'styles/feed.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'styles/manter-produtos.css' %}"
+    >
+
+    <style>
+        .perfil-resumo {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .perfil-estatistica {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 1.4rem;
+            box-shadow:
+                0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .perfil-estatistica-icone {
+            font-size: 1.7rem;
+            margin-bottom: .5rem;
+        }
+
+        .perfil-estatistica-titulo {
+            color: #666;
+            font-size: .9rem;
+            margin-bottom: .4rem;
+        }
+
+        .perfil-estatistica-valor {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .perfil-cabecalho-loja {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .perfil-avatar {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: #2ECC71;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 2rem;
+            font-weight: bold;
+
+            flex-shrink: 0;
+        }
+
+        .perfil-loja-nome {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .perfil-loja-email {
+            margin-top: .3rem;
+            color: #666;
+        }
+
+        .perfil-info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 1rem 1.5rem;
+        }
+
+        .perfil-campo {
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .perfil-campo-titulo {
+            display: block;
+            color: #777;
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: .35rem;
+        }
+
+        .perfil-campo-valor {
+            color: #333;
+            font-size: 1rem;
+            word-break: break-word;
+        }
+
+        .perfil-acoes {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .perfil-loading {
+            padding: 3rem;
+            text-align: center;
+            color: #666;
+        }
+
+        .perfil-erro {
+            padding: 1rem;
+            border-radius: 8px;
+            background: #fff3f3;
+            color: #b91c1c;
+            margin-bottom: 1rem;
+        }
+
+        .perfil-sucesso {
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f0fff4;
+            color: #18733b;
+            margin-bottom: 1rem;
+        }
+
+        #perfilMensagem {
+            display: none;
+        }
+
+        @media (
+            max-width: 900px
+        ) {
+            .perfil-resumo {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (
+            max-width: 650px
+        ) {
+            .perfil-resumo {
+                grid-template-columns: 1fr;
+            }
+
+            .perfil-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .perfil-cabecalho-loja {
+                align-items: flex-start;
+            }
+
+            .perfil-acoes {
+                flex-direction: column;
+            }
+
+            .perfil-acoes button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+        <aside
+            class="sidebar"
+            id="sidebar"
+        >
+
+            <div class="sidebar-logo">
+
+                <a href="#">
+                    <img
+                        src="{% static 'assets/img/logoshopwise.png' %}"
+                        alt="ShopWise"
+                        class="sidebar-full-logo"
+                    >
+                </a>
+
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a
+                    href="#"
+                    class="nav-item"
+                    aria-label="Visão Geral"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                        ></path>
+
+                        <polyline
+                            points="9 22 9 12 15 12 15 22"
+                        ></polyline>
+                    </svg>
+
+                    <span>
+                        Visão Geral
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="manter-produtos.html"
+                    class="nav-item"
+                    aria-label="Meus Produtos"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                        ></path>
+
+                        <polyline
+                            points="3.27 6.96 12 12.01 20.73 6.96"
+                        ></polyline>
+
+                        <line
+                            x1="12"
+                            y1="22.08"
+                            x2="12"
+                            y2="12"
+                        ></line>
+                    </svg>
+
+                    <span>
+                        Meus Produtos
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="manter-produtos.html"
+                    class="nav-item"
+                    aria-label="Pedidos Recebidos"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
+                        ></path>
+
+                        <line
+                            x1="3"
+                            y1="6"
+                            x2="21"
+                            y2="6"
+                        ></line>
+
+                        <path
+                            d="M16 10a4 4 0 0 1-8 0"
+                        ></path>
+                    </svg>
+
+                    <span>
+                        Pedidos
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="perfil-supermercado.html"
+                    class="nav-item active"
+                    aria-label="Perfil da Loja"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                        ></path>
+
+                        <circle
+                            cx="12"
+                            cy="7"
+                            r="4"
+                        ></circle>
+                    </svg>
+
+                    <span>
+                        Perfil da Loja
+                    </span>
+
+                </a>
+
+                <a
+                    href="#"
+                    class="nav-item"
+                    id="btnSairSupermercado"
+                    aria-label="Sair"
+                    style="margin-top:auto;"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+
+                    <span>Sair</span>
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- CONTEÚDO -->
+        <div class="main-content">
+
+            <div class="mp-container">
+
+                <header class="mp-header">
+
+                    <h1 class="mp-title">
+                        Perfil da Loja
+                    </h1>
+
+                    <p class="mp-subtitle">
+                        Consulte e atualize os dados
+                        do seu supermercado no ShopWise.
+                    </p>
+
+                </header>
+
+
+                <div
+                    id="perfilMensagem"
+                ></div>
+
+
+                <!-- ESTATÍSTICAS -->
+                <div
+                    class="perfil-resumo"
+                    id="perfilEstatisticas"
+                >
+
+                    <div class="perfil-estatistica">
+
+                        <div
+                            class="perfil-estatistica-icone"
+                        >
+                            📦
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-titulo"
+                        >
+                            Produtos cadastrados
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-valor"
+                            id="statProdutos"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="perfil-estatistica">
+
+                        <div
+                            class="perfil-estatistica-icone"
+                        >
+                            🧾
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-titulo"
+                        >
+                            Pedidos recebidos
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-valor"
+                            id="statPedidos"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="perfil-estatistica">
+
+                        <div
+                            class="perfil-estatistica-icone"
+                        >
+                            🚚
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-titulo"
+                        >
+                            Pedidos em andamento
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-valor"
+                            id="statAbertos"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+
+                    <div class="perfil-estatistica">
+
+                        <div
+                            class="perfil-estatistica-icone"
+                        >
+                            💰
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-titulo"
+                        >
+                            Total vendido
+                        </div>
+
+                        <div
+                            class="perfil-estatistica-valor"
+                            id="statVendido"
+                        >
+                            -
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DADOS DA LOJA -->
+                <section class="mp-card">
+
+                    <div
+                        class="perfil-loading"
+                        id="perfilLoading"
+                    >
+                        Carregando perfil...
+                    </div>
+
+
+                    <div
+                        id="perfilConteudo"
+                        style="display:none;"
+                    >
+
+                        <div
+                            class="perfil-cabecalho-loja"
+                        >
+
+                            <div
+                                class="perfil-avatar"
+                                id="perfilAvatar"
+                            >
+                                S
+                            </div>
+
+                            <div>
+
+                                <h2
+                                    class="perfil-loja-nome"
+                                    id="perfilNomeCabecalho"
+                                >
+                                    Loja
+                                </h2>
+
+                                <div
+                                    class="perfil-loja-email"
+                                    id="perfilEmailCabecalho"
+                                >
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <h2 class="mp-card-title">
+                            Dados da empresa
+                        </h2>
+
+
+                        <!-- MODO VISUALIZAÇÃO -->
+                        <div id="perfilVisualizacao">
+
+                            <div
+                                class="perfil-info-grid"
+                            >
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Nome da Loja
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewNome"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Responsável
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewResponsavel"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        CNPJ
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewCnpj"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Razão Social
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewRazao"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        E-mail Comercial
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewEmail"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Telefone
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewTelefone"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        CEP
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewCep"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Estado
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewEstado"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Cidade
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewCidade"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Bairro
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewBairro"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Endereço
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewEndereco"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Número
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewNumero"
+                                    ></span>
+                                </div>
+
+
+                                <div
+                                    class="perfil-campo"
+                                >
+                                    <span
+                                        class="perfil-campo-titulo"
+                                    >
+                                        Complemento
+                                    </span>
+
+                                    <span
+                                        class="perfil-campo-valor"
+                                        id="viewComplemento"
+                                    ></span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="perfil-acoes">
+
+                                <button
+                                    type="button"
+                                    class="
+                                        mp-btn
+                                        mp-btn-salvar
+                                    "
+                                    id="btnEditarPerfil"
+                                >
+                                    ✏️ Editar perfil
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FORMULÁRIO DE EDIÇÃO -->
+                        <form
+                            id="formPerfil"
+                            style="display:none;"
+                        >
+
+                            <div class="mp-form-row">
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilNome"
+                                    >
+                                        Nome da Loja *
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilNome"
+                                        type="text"
+                                        required
+                                    >
+                                </div>
+
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilResponsavel"
+                                    >
+                                        Responsável
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilResponsavel"
+                                        type="text"
+                                    >
+                                </div>
+
+                            </div>
+
+
+                            <div class="mp-form-row">
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                    >
+                                        CNPJ
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilCnpj"
+                                        type="text"
+                                        disabled
+                                    >
+                                </div>
+
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilRazao"
+                                    >
+                                        Razão Social
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilRazao"
+                                        type="text"
+                                    >
+                                </div>
+
+                            </div>
+
+
+                            <div class="mp-form-row">
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilEmail"
+                                    >
+                                        E-mail Comercial *
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilEmail"
+                                        type="email"
+                                        required
+                                    >
+                                </div>
+
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilTelefone"
+                                    >
+                                        Telefone
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilTelefone"
+                                        type="text"
+                                    >
+                                </div>
+
+                            </div>
+
+
+                            <h2
+                                class="mp-card-title"
+                                style="margin-top:1.5rem;"
+                            >
+                                Endereço
+                            </h2>
+
+
+                            <div class="mp-form-row">
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilCep"
+                                    >
+                                        CEP
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilCep"
+                                        type="text"
+                                    >
+                                </div>
+
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilEstado"
+                                    >
+                                        Estado
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilEstado"
+                                        type="text"
+                                    >
+                                </div>
+
+                            </div>
+
+
+                            <div class="mp-form-row">
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilCidade"
+                                    >
+                                        Cidade
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilCidade"
+                                        type="text"
+                                    >
+                                </div>
+
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilBairro"
+                                    >
+                                        Bairro
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilBairro"
+                                        type="text"
+                                    >
+                                </div>
+
+                            </div>
+
+
+                            <div class="mp-form-row">
+
+                                <div
+                                    class="mp-input-group"
+                                    style="flex:2;"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilEndereco"
+                                    >
+                                        Endereço *
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilEndereco"
+                                        type="text"
+                                        required
+                                    >
+                                </div>
+
+
+                                <div
+                                    class="mp-input-group"
+                                >
+                                    <label
+                                        class="mp-label"
+                                        for="perfilNumero"
+                                    >
+                                        Número
+                                    </label>
+
+                                    <input
+                                        class="mp-input"
+                                        id="perfilNumero"
+                                        type="text"
+                                    >
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="mp-input-group"
+                            >
+                                <label
+                                    class="mp-label"
+                                    for="perfilComplemento"
+                                >
+                                    Complemento
+                                </label>
+
+                                <input
+                                    class="mp-input"
+                                    id="perfilComplemento"
+                                    type="text"
+                                >
+                            </div>
+
+
+                            <div class="mp-form-actions">
+
+                                <button
+                                    type="button"
+                                    class="
+                                        mp-btn
+                                        mp-btn-cancelar
+                                    "
+                                    id="btnCancelarEdicao"
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="
+                                        mp-btn
+                                        mp-btn-salvar
+                                    "
+                                    id="btnSalvarPerfil"
+                                >
+                                    Salvar alterações
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let supermercadoPerfil = null;
+
+
+        function texto(valor) {
+            if (
+                valor === null ||
+                valor === undefined ||
+                String(valor).trim() === ''
+            ) {
+                return 'Não informado';
+            }
+
+            return String(valor);
+        }
+
+
+        function formatarDinheiro(valor) {
+
+            const numero =
+                Number(valor || 0);
+
+            return numero.toLocaleString(
+                'pt-BR',
+                {
+                    style: 'currency',
+                    currency: 'BRL'
+                }
+            );
+        }
+
+
+        function mostrarMensagem(
+            mensagem,
+            tipo = 'sucesso'
+        ) {
+
+            const elemento =
+                document.getElementById(
+                    'perfilMensagem'
+                );
+
+            elemento.textContent =
+                mensagem;
+
+            elemento.className =
+                tipo === 'erro'
+                    ? 'perfil-erro'
+                    : 'perfil-sucesso';
+
+            elemento.style.display =
+                'block';
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            setTimeout(
+                () => {
+                    elemento.style.display =
+                        'none';
+                },
+                4000
+            );
+        }
+
+
+        function preencherVisualizacao(
+            dados
+        ) {
+
+            document.getElementById(
+                'perfilNomeCabecalho'
+            ).textContent =
+                texto(dados.nome);
+
+
+            document.getElementById(
+                'perfilEmailCabecalho'
+            ).textContent =
+                texto(
+                    dados.email_comercial
+                );
+
+
+            const inicial =
+                String(
+                    dados.nome || 'S'
+                )
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+
+            document.getElementById(
+                'perfilAvatar'
+            ).textContent =
+                inicial || 'S';
+
+
+            document.getElementById(
+                'viewNome'
+            ).textContent =
+                texto(dados.nome);
+
+
+            document.getElementById(
+                'viewResponsavel'
+            ).textContent =
+                texto(
+                    dados.responsavel
+                );
+
+
+            document.getElementById(
+                'viewCnpj'
+            ).textContent =
+                texto(dados.cnpj);
+
+
+            document.getElementById(
+                'viewRazao'
+            ).textContent =
+                texto(
+                    dados.razao_social
+                );
+
+
+            document.getElementById(
+                'viewEmail'
+            ).textContent =
+                texto(
+                    dados.email_comercial
+                );
+
+
+            document.getElementById(
+                'viewTelefone'
+            ).textContent =
+                texto(dados.telefone);
+
+
+            document.getElementById(
+                'viewCep'
+            ).textContent =
+                texto(dados.cep);
+
+
+            document.getElementById(
+                'viewEstado'
+            ).textContent =
+                texto(dados.estado);
+
+
+            document.getElementById(
+                'viewCidade'
+            ).textContent =
+                texto(dados.cidade);
+
+
+            document.getElementById(
+                'viewBairro'
+            ).textContent =
+                texto(dados.bairro);
+
+
+            document.getElementById(
+                'viewEndereco'
+            ).textContent =
+                texto(dados.endereco);
+
+
+            document.getElementById(
+                'viewNumero'
+            ).textContent =
+                texto(dados.numero);
+
+
+            document.getElementById(
+                'viewComplemento'
+            ).textContent =
+                texto(
+                    dados.complemento
+                );
+
+
+            const estatisticas =
+                dados.estatisticas || {};
+
+
+            document.getElementById(
+                'statProdutos'
+            ).textContent =
+                estatisticas.produtos ?? 0;
+
+
+            document.getElementById(
+                'statPedidos'
+            ).textContent =
+                estatisticas
+                    .pedidos_recebidos ?? 0;
+
+
+            document.getElementById(
+                'statAbertos'
+            ).textContent =
+                estatisticas
+                    .pedidos_abertos ?? 0;
+
+
+            document.getElementById(
+                'statVendido'
+            ).textContent =
+                formatarDinheiro(
+                    estatisticas
+                        .total_vendido
+                );
+        }
+
+
+        function preencherFormulario(
+            dados
+        ) {
+
+            document.getElementById(
+                'perfilNome'
+            ).value =
+                dados.nome || '';
+
+
+            document.getElementById(
+                'perfilResponsavel'
+            ).value =
+                dados.responsavel || '';
+
+
+            document.getElementById(
+                'perfilCnpj'
+            ).value =
+                dados.cnpj || '';
+
+
+            document.getElementById(
+                'perfilRazao'
+            ).value =
+                dados.razao_social || '';
+
+
+            document.getElementById(
+                'perfilEmail'
+            ).value =
+                dados.email_comercial || '';
+
+
+            document.getElementById(
+                'perfilTelefone'
+            ).value =
+                dados.telefone || '';
+
+
+            document.getElementById(
+                'perfilCep'
+            ).value =
+                dados.cep || '';
+
+
+            document.getElementById(
+                'perfilEstado'
+            ).value =
+                dados.estado || '';
+
+
+            document.getElementById(
+                'perfilCidade'
+            ).value =
+                dados.cidade || '';
+
+
+            document.getElementById(
+                'perfilBairro'
+            ).value =
+                dados.bairro || '';
+
+
+            document.getElementById(
+                'perfilEndereco'
+            ).value =
+                dados.endereco || '';
+
+
+            document.getElementById(
+                'perfilNumero'
+            ).value =
+                dados.numero || '';
+
+
+            document.getElementById(
+                'perfilComplemento'
+            ).value =
+                dados.complemento || '';
+        }
+
+
+        async function carregarPerfil() {
+
+            try {
+
+                const resposta =
+                    await fetch(
+                        '/api/perfil-supermercado/'
+                    );
+
+
+                if (
+                    resposta.status === 401 ||
+                    resposta.status === 403
+                ) {
+
+                    window.location.href =
+                        'login-supermercado.html';
+
+                    return;
+                }
+
+
+                const dados =
+                    await resposta.json();
+
+
+                if (!resposta.ok) {
+
+                    throw new Error(
+                        dados.erro ||
+                        'Não foi possível carregar o perfil.'
+                    );
+                }
+
+
+                supermercadoPerfil =
+                    dados;
+
+
+                preencherVisualizacao(
+                    dados
+                );
+
+
+                preencherFormulario(
+                    dados
+                );
+
+
+                document.getElementById(
+                    'perfilLoading'
+                ).style.display =
+                    'none';
+
+
+                document.getElementById(
+                    'perfilConteudo'
+                ).style.display =
+                    'block';
+
+
+            } catch (erro) {
+
+                console.error(
+                    erro
+                );
+
+
+                document.getElementById(
+                    'perfilLoading'
+                ).innerHTML =
+                    `
+                    <div class="perfil-erro">
+                        ${
+                            erro.message ||
+                            'Erro ao carregar perfil.'
+                        }
+                    </div>
+                    `;
+            }
+        }
+
+
+        document.getElementById(
+            'btnEditarPerfil'
+        ).addEventListener(
+            'click',
+            function () {
+
+                preencherFormulario(
+                    supermercadoPerfil
+                );
+
+
+                document.getElementById(
+                    'perfilVisualizacao'
+                ).style.display =
+                    'none';
+
+
+                document.getElementById(
+                    'formPerfil'
+                ).style.display =
+                    'block';
+
+            }
+        );
+
+
+        document.getElementById(
+            'btnCancelarEdicao'
+        ).addEventListener(
+            'click',
+            function () {
+
+                preencherFormulario(
+                    supermercadoPerfil
+                );
+
+
+                document.getElementById(
+                    'formPerfil'
+                ).style.display =
+                    'none';
+
+
+                document.getElementById(
+                    'perfilVisualizacao'
+                ).style.display =
+                    'block';
+
+            }
+        );
+
+
+        document.getElementById(
+            'formPerfil'
+        ).addEventListener(
+            'submit',
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const btnSalvar =
+                    document.getElementById(
+                        'btnSalvarPerfil'
+                    );
+
+
+                const dados = {
+
+                    nome:
+                        document.getElementById(
+                            'perfilNome'
+                        ).value.trim(),
+
+                    responsavel:
+                        document.getElementById(
+                            'perfilResponsavel'
+                        ).value.trim(),
+
+                    razao_social:
+                        document.getElementById(
+                            'perfilRazao'
+                        ).value.trim(),
+
+                    email_comercial:
+                        document.getElementById(
+                            'perfilEmail'
+                        ).value.trim(),
+
+                    telefone:
+                        document.getElementById(
+                            'perfilTelefone'
+                        ).value.trim(),
+
+                    cep:
+                        document.getElementById(
+                            'perfilCep'
+                        ).value.trim(),
+
+                    estado:
+                        document.getElementById(
+                            'perfilEstado'
+                        ).value.trim(),
+
+                    cidade:
+                        document.getElementById(
+                            'perfilCidade'
+                        ).value.trim(),
+
+                    bairro:
+                        document.getElementById(
+                            'perfilBairro'
+                        ).value.trim(),
+
+                    endereco:
+                        document.getElementById(
+                            'perfilEndereco'
+                        ).value.trim(),
+
+                    numero:
+                        document.getElementById(
+                            'perfilNumero'
+                        ).value.trim(),
+
+                    complemento:
+                        document.getElementById(
+                            'perfilComplemento'
+                        ).value.trim()
+                };
+
+
+                try {
+
+                    btnSalvar.disabled =
+                        true;
+
+                    btnSalvar.textContent =
+                        'Salvando...';
+
+
+                    const resposta =
+                        await fetch(
+                            '/api/perfil-supermercado/',
+                            {
+                                method: 'PUT',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json'
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        dados
+                                    )
+                            }
+                        );
+
+
+                    const retorno =
+                        await resposta.json();
+
+
+                    if (
+                        resposta.status === 401 ||
+                        resposta.status === 403
+                    ) {
+
+                        window.location.href =
+                            'login-supermercado.html';
+
+                        return;
+                    }
+
+
+                    if (!resposta.ok) {
+
+                        throw new Error(
+                            retorno.erro ||
+                            'Não foi possível atualizar o perfil.'
+                        );
+                    }
+
+
+                    await carregarPerfil();
+
+
+                    document.getElementById(
+                        'formPerfil'
+                    ).style.display =
+                        'none';
+
+
+                    document.getElementById(
+                        'perfilVisualizacao'
+                    ).style.display =
+                        'block';
+
+
+                    mostrarMensagem(
+                        '✅ Perfil atualizado com sucesso!'
+                    );
+
+
+                } catch (erro) {
+
+                    console.error(
+                        erro
+                    );
+
+
+                    mostrarMensagem(
+                        erro.message ||
+                        'Erro ao atualizar perfil.',
+                        'erro'
+                    );
+
+
+                } finally {
+
+                    btnSalvar.disabled =
+                        false;
+
+                    btnSalvar.textContent =
+                        'Salvar alterações';
+                }
+            }
+        );
+
+        document.getElementById(
+            'btnSairSupermercado'
+        ).addEventListener(
+            'click',
+            async function (event) {
+
+                event.preventDefault();
+
+                const confirmar =
+                    confirm(
+                        'Deseja realmente sair da conta do supermercado?'
+                    );
+
+                if (!confirmar) {
+                    return;
+                }
+
+                try {
+
+                    const resposta =
+                        await fetch(
+                            '/api/logout-supermercado/',
+                            {
+                                method: 'POST'
+                            }
+                        );
+
+                    const dados =
+                        await resposta.json();
+
+                    if (!resposta.ok) {
+                        throw new Error(
+                            dados.erro ||
+                            'Não foi possível sair da conta.'
+                        );
+                    }
+
+                    localStorage.removeItem(
+                        'shopwise_supermercado'
+                    );
+
+                    window.location.href =
+                        'login-supermercado.html';
+
+                } catch (erro) {
+
+                    console.error(erro);
+
+                    alert(
+                        erro.message ||
+                        'Erro ao realizar logout.'
+                    );
+                }
+            }
+        );  
+         
+        carregarPerfil();
+
+    </script>
+
+</body>
+
+</html>

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 from produtos.views import (
     SupermercadoList,
@@ -20,6 +21,10 @@ from produtos.views import (
     AvaliacaoList,
     PerfilCliente,
     LogoutCliente,
+    PedidosSupermercadoList,
+    StatusPedidoSupermercado,
+    PerfilSupermercado,
+    LogoutSupermercado,
 )
 
 
@@ -173,6 +178,15 @@ urlpatterns = [
         'api/pedidos/<int:pedido_id>/status-pix/',
         StatusPagamentoPix.as_view()),
 
+    path(
+        'api/perfil-supermercado/',
+        PerfilSupermercado.as_view()),
+
+    path(
+        'api/logout-supermercado/',
+        LogoutSupermercado.as_view()
+    ),
+
 
 
     # =========================
@@ -224,4 +238,20 @@ urlpatterns = [
         'api/logout-cliente/',
         LogoutCliente.as_view()
     ),
+    path(
+        'api/pedidos-supermercado/',
+        PedidosSupermercadoList.as_view()
+    ),
+    path(
+        'api/pedidos-supermercado/<int:pedido_id>/status/',
+        StatusPedidoSupermercado.as_view()
+    ),
+
+    path(
+        'perfil-supermercado.html',
+        TemplateView.as_view(
+            template_name='perfil-supermercado.html')
+    ),
+
+
 ]
