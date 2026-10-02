@@ -11,6 +11,9 @@ from produtos.views import (
     ClienteList,
     LoginCliente,
     FeedProdutos,
+    PedidoList,
+    CupomList,
+    StatusPagamentoPix,
 )
 
 
@@ -121,6 +124,16 @@ urlpatterns = [
     ),
     path('api/feed/produtos/',
          FeedProdutos.as_view()),
+
+    path('api/pedidos/',
+         PedidoList.as_view()),
+
+    path('api/cupons/',
+         CupomList.as_view()),
+
+    path(
+        'api/pedidos/<int:pedido_id>/status-pix/',
+        StatusPagamentoPix.as_view()),
 
     # =========================
     # API - PRODUTOS

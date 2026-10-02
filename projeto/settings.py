@@ -11,9 +11,32 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_FILE = BASE_DIR / '.env.development'
+
+if ENV_FILE.exists():
+    with open(ENV_FILE, encoding='utf-8') as env_file:
+        for line in env_file:
+            line = line.strip()
+
+            if line and not line.startswith('#') and '=' in line:
+                chave, valor = line.split('=', 1)
+                os.environ.setdefault(chave.strip(), valor.strip())
+
+
+MERCADO_PAGO_ACCESS_TOKEN = os.getenv(
+    'MERCADO_PAGO_ACCESS_TOKEN',
+    ''
+)
+
+MERCADO_PAGO_PUBLIC_KEY = os.getenv(
+    'MERCADO_PAGO_PUBLIC_KEY',
+    ''
+)
 
 
 # Quick-start development settings - unsuitable for production

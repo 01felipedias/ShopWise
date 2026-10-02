@@ -217,20 +217,31 @@
 
                             <div class="payment-panel active" id="pixPanel">
                                 <div class="pix-area">
-                                    <div class="pix-qrcode" aria-label="QR Code PIX demonstrativo">
-                                        <div class="qr-grid"></div>
+                                    <div class="pix-qrcode" aria-label="QR Code PIX">
+                                        <img id="pixQrImage" alt="QR Code PIX" hidden
+                                             style="width:180px;height:180px;object-fit:contain;">
+                                        <div class="qr-grid" id="pixPlaceholder"></div>
                                     </div>
 
                                     <div class="pix-info">
                                         <h4>Pagamento via PIX</h4>
-                                        <p>Use o código abaixo para simular o pagamento na apresentação do sistema.</p>
-                                        <div class="pix-timer" id="pixTimer" aria-live="polite">Código válido por 10:00</div>
+                                        <p id="pixInstructions">
+                                            Clique em "Gerar pagamento PIX" para criar a cobrança de teste.
+                                        </p>
+                                        <div class="pix-timer" id="pixTimer" aria-live="polite">
+                                            PIX ainda não gerado
+                                        </div>
 
                                         <label for="pixCode" class="checkout-label">Código copia e cola</label>
                                         <div class="pix-copy-row">
-                                            <input id="pixCode" class="checkout-input" type="text" readonly value="00020126360014BR.GOV.BCB.PIX0114SHOPWISE-DEMO520400005303986540522.975802BR5925SHOPWISE SUPERMERCADOS6008FLORIANO62070503***6304ABCD">
+                                            <input id="pixCode" class="checkout-input" type="text" readonly
+                                                   value="" placeholder="O código aparecerá após gerar o PIX">
                                             <button type="button" class="btn-copy-pix" onclick="copyPixCode()">Copiar</button>
                                         </div>
+
+                                        <a id="pixTicketLink" href="#" target="_blank" rel="noopener" hidden>
+                                            Abrir cobrança PIX
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -286,7 +297,7 @@
                             </div>
 
                             <div class="gateway-status" id="gatewayStatus" aria-live="polite">
-                                Gateway ShopWise Pay pronto para processar a transação.
+                                Mercado Pago sandbox pronto para gerar a cobrança PIX de teste.
                             </div>
                         </div>
                     </div>
@@ -347,13 +358,13 @@
                             <div class="checkout-coupon-box">
                                 <label for="couponCode" class="checkout-label">Cupom de desconto</label>
                                 <div class="coupon-row">
-                                    <input id="couponCode" class="checkout-input" type="text" placeholder="Ex: SHOPWISE10">
+                                    <input id="couponCode" class="checkout-input" type="text" placeholder="Digite o código do cupom">
                                     <button type="button" class="btn-apply-coupon" onclick="applyCoupon()">Aplicar</button>
                                 </div>
                                 <button type="button" class="btn-view-coupons" onclick="openCouponModal()">
                                     Ver cupons
                                 </button>
-                                <small id="couponFeedback">Dica: use SHOPWISE10 para simular 10% de desconto.</small>
+                                <small id="couponFeedback">Consulte os cupons disponíveis para esta compra.</small>
                             </div>
 
                             <hr class="summary-divider">
@@ -436,30 +447,22 @@
             <h2 id="couponModalTitle">Cupons disponíveis</h2>
             <p>Escolha um cupom para aplicar no seu pedido.</p>
 
-            <div class="coupon-list">
-                <div class="coupon-card">
-                    <div>
-                        <strong>SHOPWISE10</strong>
-                        <span>10% de desconto nos produtos do carrinho.</span>
-                    </div>
-                    <button type="button" onclick="selectCoupon('SHOPWISE10')">Usar</button>
-                </div>
-
-                <div class="coupon-card">
-                    <div>
-                        <strong>ECONOMIA5</strong>
-                        <span>5% de desconto na sua compra.</span>
-                    </div>
-                    <button type="button" onclick="selectCoupon('ECONOMIA5')">Usar</button>
-                </div>
+            <div class="coupon-list" id="couponList">
+                <p>Carregando cupons disponíveis...</p>
             </div>
         </div>
     </div>
 
     <script>
 const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-let descontoPercentual = 0;
+let descontoValorAtual = 0;
 let taxaEntrega = 0;
+let cupomAplicado = "";
+let cuponsDisponiveis = [];
+let pedidoPixCriado = false;
+let pedidoPixId = null;
+let intervaloStatusPix = null;
+let tentativasStatusPix = 0;
 
 const dinheiro = valor => Number(valor || 0).toLocaleString("pt-BR", {
     style: "currency", currency: "BRL"
@@ -479,14 +482,13 @@ function mercadosCarrinho() {
 
 function totalPedido() {
     const subtotal = subtotalCarrinho();
-    const desconto = subtotal * descontoPercentual;
-    return Math.max(0, subtotal - desconto + taxaEntrega);
+    return Math.max(0, subtotal - descontoValorAtual + taxaEntrega);
 }
 
 function renderizarResumo() {
     const lista = document.getElementById("checkoutPedidos");
     const subtotal = subtotalCarrinho();
-    const desconto = subtotal * descontoPercentual;
+    const desconto = descontoValorAtual;
     const total = totalPedido();
 
     if (!carrinho.length) {
@@ -576,26 +578,171 @@ function atualizarParcelas() {
     ).join("");
 }
 
-function applyCoupon() {
-    const codigo = document.getElementById("couponCode").value.trim().toUpperCase();
-    const feedback = document.getElementById("couponFeedback");
-    if (codigo === "SHOPWISE10") {
-        descontoPercentual = .10; feedback.textContent = "Cupom SHOPWISE10 aplicado: 10% de desconto.";
-    } else if (codigo === "ECONOMIA5") {
-        descontoPercentual = .05; feedback.textContent = "Cupom ECONOMIA5 aplicado: 5% de desconto.";
-    } else {
-        descontoPercentual = 0; feedback.textContent = codigo ? "Cupom inválido." : "Digite um cupom.";
+function calcularDescontoCupom(cupom) {
+    const subtotal = subtotalCarrinho();
+    const valorCupom = precoNumero(cupom.valor);
+
+    if (cupom.tipo === "percentual") {
+        return Math.min(subtotal, subtotal * (valorCupom / 100));
     }
+
+    return Math.min(subtotal, valorCupom);
+}
+
+function descricaoCupom(cupom) {
+    const valor = precoNumero(cupom.valor);
+    const minimo = precoNumero(cupom.valor_minimo);
+
+    const beneficio = cupom.tipo === "percentual"
+        ? `${valor}% de desconto`
+        : `${dinheiro(valor)} de desconto`;
+
+    const minimoTexto = minimo > 0
+        ? ` • Compra mínima: ${dinheiro(minimo)}`
+        : "";
+
+    return cupom.descricao
+        ? `${cupom.descricao} • ${beneficio}${minimoTexto}`
+        : `${beneficio}${minimoTexto}`;
+}
+
+function renderizarCuponsDisponiveis() {
+    const lista = document.getElementById("couponList");
+    if (!lista) return;
+
+    lista.innerHTML = "";
+
+    if (!cuponsDisponiveis.length) {
+        const aviso = document.createElement("p");
+        aviso.textContent = "Nenhum cupom disponível neste momento.";
+        lista.appendChild(aviso);
+        return;
+    }
+
+    cuponsDisponiveis.forEach(cupom => {
+        const card = document.createElement("div");
+        card.className = "coupon-card";
+
+        const info = document.createElement("div");
+
+        const codigo = document.createElement("strong");
+        codigo.textContent = cupom.codigo;
+
+        const descricao = document.createElement("span");
+        descricao.textContent = descricaoCupom(cupom);
+
+        info.appendChild(codigo);
+        info.appendChild(descricao);
+
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.textContent = "Usar";
+        botao.addEventListener("click", () => selectCoupon(cupom.codigo));
+
+        card.appendChild(info);
+        card.appendChild(botao);
+        lista.appendChild(card);
+    });
+}
+
+async function carregarCupons() {
+    const feedback = document.getElementById("couponFeedback");
+
+    try {
+        const resposta = await fetch("/api/cupons/");
+        if (!resposta.ok) {
+            throw new Error("Falha ao buscar cupons.");
+        }
+
+        const dados = await resposta.json();
+        cuponsDisponiveis = Array.isArray(dados) ? dados : [];
+        renderizarCuponsDisponiveis();
+
+        feedback.textContent = cuponsDisponiveis.length
+            ? `${cuponsDisponiveis.length} cupom(ns) disponível(is) agora.`
+            : "Nenhum cupom disponível neste momento.";
+    } catch (erro) {
+        console.error(erro);
+        cuponsDisponiveis = [];
+        renderizarCuponsDisponiveis();
+        feedback.textContent = "Não foi possível carregar os cupons agora.";
+    }
+}
+
+function applyCoupon() {
+    const codigoDigitado =
+        document.getElementById("couponCode").value.trim().toUpperCase();
+
+    const feedback = document.getElementById("couponFeedback");
+
+    if (!codigoDigitado) {
+        descontoValorAtual = 0;
+        cupomAplicado = "";
+        feedback.textContent = "Digite um código de cupom.";
+        renderizarResumo();
+        return;
+    }
+
+    const cupom = cuponsDisponiveis.find(
+        item => String(item.codigo).toUpperCase() === codigoDigitado
+    );
+
+    if (!cupom) {
+        descontoValorAtual = 0;
+        cupomAplicado = "";
+        feedback.textContent = "Cupom inválido, expirado ou indisponível.";
+        renderizarResumo();
+        return;
+    }
+
+    const subtotal = subtotalCarrinho();
+    const valorMinimo = precoNumero(cupom.valor_minimo);
+
+    if (subtotal < valorMinimo) {
+        descontoValorAtual = 0;
+        cupomAplicado = "";
+        feedback.textContent =
+            `Este cupom exige compra mínima de ${dinheiro(valorMinimo)}.`;
+        renderizarResumo();
+        return;
+    }
+
+    descontoValorAtual = calcularDescontoCupom(cupom);
+    cupomAplicado = cupom.codigo;
+
+    feedback.textContent =
+        `Cupom ${cupom.codigo} aplicado: ${dinheiro(descontoValorAtual)} de desconto.`;
+
     renderizarResumo();
 }
 
-function openCouponModal(){ document.getElementById("couponModal").setAttribute("aria-hidden","false"); document.getElementById("couponModal").classList.add("active"); }
-function closeCouponModal(){ document.getElementById("couponModal").setAttribute("aria-hidden","true"); document.getElementById("couponModal").classList.remove("active"); }
-function selectCoupon(codigo){ document.getElementById("couponCode").value=codigo; closeCouponModal(); applyCoupon(); }
+function openCouponModal() {
+    document.getElementById("couponModal").setAttribute("aria-hidden", "false");
+    document.getElementById("couponModal").classList.add("active");
+}
+
+function closeCouponModal() {
+    document.getElementById("couponModal").setAttribute("aria-hidden", "true");
+    document.getElementById("couponModal").classList.remove("active");
+}
+
+function selectCoupon(codigo) {
+    document.getElementById("couponCode").value = codigo;
+    closeCouponModal();
+    applyCoupon();
+}
 
 function copyPixCode() {
-    const input=document.getElementById("pixCode");
-    navigator.clipboard?.writeText(input.value).then(()=>alert("Código PIX copiado."));
+    const input = document.getElementById("pixCode");
+
+    if (!input.value.trim()) {
+        alert("Gere o PIX antes de copiar o código.");
+        return;
+    }
+
+    navigator.clipboard?.writeText(input.value)
+        .then(() => alert("Código PIX copiado."))
+        .catch(() => alert("Não foi possível copiar automaticamente. Selecione o código manualmente."));
 }
 
 function validarCheckout() {
@@ -614,9 +761,320 @@ function validarCheckout() {
     return true;
 }
 
-function finalizarPedido() {
+
+function preencherComprovantePixAprovado(pedidoId, total, pagamento) {
+    document.getElementById("receiptOrderNumber").textContent =
+        `SW-${String(pedidoId).padStart(6, "0")}`;
+
+    document.getElementById("receiptTransaction").textContent =
+        pagamento?.payment_id
+            ? String(pagamento.payment_id)
+            : `MP-${String(pedidoId).padStart(6, "0")}`;
+
+    document.getElementById("receiptMethod").textContent = "PIX";
+
+    document.getElementById("receiptTotal").textContent =
+        dinheiro(total);
+
+    document.getElementById("receiptDate").textContent =
+        new Date().toLocaleString("pt-BR");
+
+    document.getElementById("receiptStatusText").textContent =
+        "Pagamento confirmado";
+
+    document.getElementById("modalTitle").textContent =
+        "Pagamento aprovado!";
+
+    document.getElementById("modalSubtitle").textContent =
+        "O Mercado Pago confirmou o PIX e o pedido foi liberado para processamento.";
+}
+
+
+function pararMonitoramentoPix() {
+    if (intervaloStatusPix) {
+        clearInterval(intervaloStatusPix);
+        intervaloStatusPix = null;
+    }
+}
+
+
+async function consultarStatusPixAutomaticamente(pedidoId, total, pagamentoInicial) {
+    try {
+        const resposta = await fetch(
+            `/api/pedidos/${pedidoId}/status-pix/`,
+            { method: "GET" }
+        );
+
+        if (!resposta.ok) {
+            console.warn("Não foi possível consultar o status do PIX agora.");
+            return;
+        }
+
+        const dados = await resposta.json();
+
+        const pixTimer = document.getElementById("pixTimer");
+        const gatewayStatus = document.getElementById("gatewayStatus");
+        const botao = document.getElementById("payButton");
+        const botaoMobile = document.getElementById("mobilePayButton");
+
+        if (dados.pedido_status === "confirmado") {
+            pararMonitoramentoPix();
+
+            pixTimer.textContent = "Pagamento aprovado";
+
+            gatewayStatus.textContent =
+                `Pedido SW-${String(pedidoId).padStart(6, "0")} pago e confirmado.`;
+
+            botao.textContent = "PAGAMENTO APROVADO";
+            botaoMobile.textContent = "PAGAMENTO APROVADO";
+            botao.disabled = true;
+            botaoMobile.disabled = true;
+
+            preencherComprovantePixAprovado(
+                pedidoId,
+                total,
+                pagamentoInicial
+            );
+
+            openPaymentModal();
+            return;
+        }
+
+        if (dados.pedido_status === "cancelado") {
+            pararMonitoramentoPix();
+
+            pixTimer.textContent = "Pagamento cancelado";
+
+            gatewayStatus.textContent =
+                "A cobrança PIX foi cancelada ou expirou.";
+
+            botao.textContent = "PIX CANCELADO";
+            botaoMobile.textContent = "PIX CANCELADO";
+            botao.disabled = true;
+            botaoMobile.disabled = true;
+
+            alert("O pagamento PIX foi cancelado ou expirou.");
+            return;
+        }
+
+        pixTimer.textContent = "Aguardando pagamento";
+
+        const detalhe =
+            dados.pagamento?.status_detail ||
+            dados.pagamento?.order_status_detail ||
+            "waiting_transfer";
+
+        gatewayStatus.textContent =
+            `Pedido SW-${String(pedidoId).padStart(6, "0")} aguardando pagamento PIX (${detalhe}).`;
+
+    } catch (erro) {
+        console.error("Erro ao consultar status do PIX:", erro);
+    }
+}
+
+
+function iniciarMonitoramentoPix(pedidoId, total, pagamentoInicial) {
+    pararMonitoramentoPix();
+
+    pedidoPixId = pedidoId;
+    tentativasStatusPix = 0;
+
+    consultarStatusPixAutomaticamente(
+        pedidoId,
+        total,
+        pagamentoInicial
+    );
+
+    intervaloStatusPix = setInterval(() => {
+        tentativasStatusPix += 1;
+
+        // 150 tentativas x 4 segundos = aproximadamente 10 minutos
+        if (tentativasStatusPix >= 150) {
+            pararMonitoramentoPix();
+
+            document.getElementById("gatewayStatus").textContent =
+                "A consulta automática foi encerrada. Você ainda pode acompanhar o pedido pela página de Pedidos.";
+
+            return;
+        }
+
+        consultarStatusPixAutomaticamente(
+            pedidoId,
+            total,
+            pagamentoInicial
+        );
+    }, 4000);
+}
+
+
+async function finalizarPedido() {
     if (!validarCheckout()) return;
-    alert("Checkout validado. No próximo passo, o pedido será gravado no banco de dados.");
+
+    const botao = document.getElementById("payButton");
+    const botaoMobile = document.getElementById("mobilePayButton");
+    const textoOriginal = botao.textContent;
+    const textoMobileOriginal = botaoMobile.textContent;
+
+    const tipoEntrega =
+        document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
+
+    const formaPagamento =
+        document.querySelector('input[name="paymentMethod"]:checked')?.value || "pix";
+
+    if (formaPagamento === "pix" && pedidoPixCriado) {
+        alert("O PIX deste pedido já foi gerado. Use o QR Code ou o código copia e cola.");
+        return;
+    }
+
+    const payload = {
+        tipo_entrega: tipoEntrega,
+        endereco_entrega:
+            tipoEntrega === "delivery"
+                ? document.getElementById("deliveryAddress").value.trim()
+                : "",
+        observacoes: document.getElementById("orderNotes").value.trim(),
+        forma_pagamento: formaPagamento,
+        cupom: cupomAplicado,
+        itens: carrinho.map(item => ({
+            produto_id: item.id,
+            quantidade: Number(item.quantidade || 1)
+        }))
+    };
+
+    botao.disabled = true;
+    botaoMobile.disabled = true;
+    botao.textContent = "Processando pedido...";
+    botaoMobile.textContent = "Processando...";
+
+    try {
+        const resposta = await fetch("/api/pedidos/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            if (resposta.status === 401) {
+                alert("Faça login como cliente antes de finalizar o pedido.");
+            } else {
+                alert(dados.erro || "Não foi possível criar o pedido.");
+            }
+            return;
+        }
+
+        if (formaPagamento === "pix") {
+            const pagamento = dados.pagamento;
+
+            if (!pagamento || !pagamento.qr_code) {
+                alert("O pedido foi criado, mas o Mercado Pago não retornou o PIX corretamente.");
+                return;
+            }
+
+            pedidoPixCriado = true;
+            pedidoPixId = dados.pedido.id;
+            localStorage.removeItem("carrinho");
+
+            const pixCode = document.getElementById("pixCode");
+            const pixQrImage = document.getElementById("pixQrImage");
+            const pixPlaceholder = document.getElementById("pixPlaceholder");
+            const pixTicketLink = document.getElementById("pixTicketLink");
+            const pixInstructions = document.getElementById("pixInstructions");
+            const pixTimer = document.getElementById("pixTimer");
+            const gatewayStatus = document.getElementById("gatewayStatus");
+
+            pixCode.value = pagamento.qr_code;
+
+            if (pagamento.qr_code_base64) {
+                pixQrImage.src = pagamento.qr_code_base64.startsWith("data:")
+                    ? pagamento.qr_code_base64
+                    : `data:image/png;base64,${pagamento.qr_code_base64}`;
+                pixQrImage.hidden = false;
+                pixPlaceholder.hidden = true;
+            }
+
+            if (pagamento.ticket_url) {
+                pixTicketLink.href = pagamento.ticket_url;
+                pixTicketLink.hidden = false;
+            }
+
+            pixInstructions.textContent =
+                "Escaneie o QR Code ou use o código copia e cola para concluir o pagamento de teste.";
+            pixTimer.textContent = "Aguardando pagamento";
+
+            gatewayStatus.textContent =
+                `Pedido SW-${String(dados.pedido.id).padStart(6, "0")} criado. ` +
+                "Aguardando confirmação do PIX pelo Mercado Pago sandbox.";
+
+            botao.textContent = "PIX gerado - aguardando pagamento";
+            botaoMobile.textContent = "PIX gerado";
+            botao.disabled = true;
+            botaoMobile.disabled = true;
+
+            iniciarMonitoramentoPix(
+                dados.pedido.id,
+                dados.pedido.total,
+                pagamento
+            );
+
+            alert(
+                "PIX sandbox gerado com sucesso! " +
+                "O ShopWise agora vai acompanhar a confirmação automaticamente."
+            );
+            return;
+        }
+
+        localStorage.removeItem("carrinho");
+
+        const nomesPagamento = {
+            credito: "Cartão de crédito",
+            debito: "Cartão de débito",
+            entrega: "Na entrega"
+        };
+
+        document.getElementById("receiptOrderNumber").textContent =
+            `SW-${String(dados.pedido.id).padStart(6, "0")}`;
+        document.getElementById("receiptTransaction").textContent =
+            `SIM-${String(dados.pedido.id).padStart(6, "0")}`;
+        document.getElementById("receiptMethod").textContent =
+            nomesPagamento[formaPagamento] || formaPagamento;
+        document.getElementById("receiptTotal").textContent =
+            dinheiro(dados.pedido.total);
+        document.getElementById("receiptDate").textContent =
+            new Date().toLocaleString("pt-BR");
+        document.getElementById("receiptStatusText").textContent =
+            "Pedido confirmado";
+        document.getElementById("modalTitle").textContent =
+            "Pedido confirmado!";
+        document.getElementById("modalSubtitle").textContent =
+            "Seu pedido foi salvo no sistema.";
+
+        openPaymentModal();
+
+    } catch (erro) {
+        console.error(erro);
+        alert("Não foi possível conectar ao servidor. Tente novamente.");
+    } finally {
+        if (!pedidoPixCriado) {
+            botao.disabled = false;
+            botaoMobile.disabled = false;
+            botao.textContent = textoOriginal;
+            botaoMobile.textContent = textoMobileOriginal;
+        }
+    }
+}
+
+function openPaymentModal() {
+    const modal = document.getElementById("paymentModal");
+    modal.setAttribute("aria-hidden", "false");
+    modal.classList.add("active");
+}
+
+function closePaymentModal() {
+    const modal = document.getElementById("paymentModal");
+    modal.setAttribute("aria-hidden", "true");
+    modal.classList.remove("active");
 }
 
 document.querySelectorAll('input[name="paymentMethod"]').forEach(el =>
@@ -636,10 +1094,15 @@ document.getElementById("cardCvv")?.addEventListener("input", e => {
     e.target.value=e.target.value.replace(/\D/g,"").slice(0,4);
 });
 
+window.addEventListener("beforeunload", () => {
+    pararMonitoramentoPix();
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     renderizarResumo();
     toggleAddressConfig();
     atualizarPagamento();
+    carregarCupons();
 });
 </script>
 </body>
