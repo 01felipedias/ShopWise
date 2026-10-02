@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,10 +7,10 @@
     <title>ShopWise - Efetuar Pagamento</title>
 
     <!-- CSS global do sistema -->
-    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
 
     <!-- CSS exclusivo do checkout/pagamento -->
-    <link rel="stylesheet" href="../styles/checkout.css">
+    <link rel="stylesheet" href="{% static 'styles/checkout.css' %}">
 </head>
 <body>
     <div class="app-layout">
@@ -19,7 +20,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </div>
                 <a href="feedproduto.html" aria-label="Ir para a página inicial">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                    <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                 </a>
             </div>
 
@@ -125,7 +126,7 @@
                                     <input type="radio" name="deliveryMethod" value="pickup" onchange="toggleAddressConfig()">
                                     <div class="option-content">
                                         <h4>Retirar no Mercado</h4>
-                                        <p>Grátis - Super Quaresma</p>
+                                        <p>Grátis - retirada no supermercado</p>
                                     </div>
                                 </label>
                             </div>
@@ -141,7 +142,7 @@
                             </div>
                             <div class="checkout-input-group">
                                 <label for="deliveryAddress" class="checkout-label">Endereço completo</label>
-                                <input id="deliveryAddress" type="text" class="checkout-input" placeholder="Rua, número, bairro" value="Rua Defala Attem, 123 - Centro">
+                                <input id="deliveryAddress" type="text" class="checkout-input" placeholder="Rua, número, bairro" value="">
                             </div>
                         </div>
 
@@ -153,8 +154,8 @@
                                     <p>Retire seu pedido diretamente no mercado selecionado.</p>
                                 </div>
                             </div>
-                            <p class="pickup-market-name"><strong>Super Quaresma</strong></p>
-                            <p>Avenida Bucar Neto, Centro - Floriano, PI</p>
+                            <p class="pickup-market-name"><strong id="pickupMarketName">Supermercado do pedido</strong></p>
+                            <p id="pickupMarketAddress">Consulte o endereço do supermercado.</p>
                             <span>Apresente o número do pedido no balcão de atendimento.</span>
                         </div>
 
@@ -303,7 +304,7 @@
                             </div>
 
                             <div class="market-summary-box">
-                                <strong>Super Quaresma</strong>
+                                <strong id="pickupMarketName">Supermercado do pedido</strong>
                                 <span id="marketDeliveryInfo">Entrega em até 2h • Taxa R$ 5,00</span>
                             </div>
 
@@ -455,6 +456,191 @@
         </div>
     </div>
 
-    <script src="../utils/checkout.js"></script>
+    <script>
+const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+let descontoPercentual = 0;
+let taxaEntrega = 0;
+
+const dinheiro = valor => Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency", currency: "BRL"
+});
+const precoNumero = valor => Number(String(valor ?? "0").replace(",", ".")) || 0;
+
+function subtotalCarrinho() {
+    return carrinho.reduce((total, item) =>
+        total + precoNumero(item.preco) * Number(item.quantidade || 1), 0);
+}
+
+function mercadosCarrinho() {
+    return [...new Set(carrinho.map(item =>
+        item.supermercado?.nome || item.mercado || "Supermercado"
+    ))];
+}
+
+function totalPedido() {
+    const subtotal = subtotalCarrinho();
+    const desconto = subtotal * descontoPercentual;
+    return Math.max(0, subtotal - desconto + taxaEntrega);
+}
+
+function renderizarResumo() {
+    const lista = document.getElementById("checkoutPedidos");
+    const subtotal = subtotalCarrinho();
+    const desconto = subtotal * descontoPercentual;
+    const total = totalPedido();
+
+    if (!carrinho.length) {
+        lista.innerHTML = "<p>Seu carrinho está vazio.</p>";
+        document.getElementById("payButton").disabled = true;
+        document.getElementById("mobilePayButton").disabled = true;
+    } else {
+        lista.innerHTML = carrinho.map(item => {
+            const qtd = Number(item.quantidade || 1);
+            const valor = precoNumero(item.preco) * qtd;
+            return `<div class="summary-item">
+                <span>${qtd}x ${item.nome}</span>
+                <span>${dinheiro(valor)}</span>
+            </div>`;
+        }).join("");
+    }
+
+    document.getElementById("subtotalValue").textContent = dinheiro(subtotal);
+    document.getElementById("deliveryFeeValue").textContent = taxaEntrega ? dinheiro(taxaEntrega) : "Grátis";
+    document.getElementById("discountValue").textContent = desconto ? `- ${dinheiro(desconto)}` : dinheiro(0);
+    document.getElementById("finalTotal").textContent = dinheiro(total);
+    document.getElementById("mobileTotal").textContent = dinheiro(total);
+
+    const nomes = mercadosCarrinho();
+    const mercadoTexto = nomes.length === 1 ? nomes[0] : `${nomes.length} supermercados`;
+    const summaryMarket = document.getElementById("summaryMarketName");
+    const pickupMarket = document.getElementById("pickupMarketName");
+    if (summaryMarket) summaryMarket.textContent = mercadoTexto;
+    if (pickupMarket) pickupMarket.textContent = mercadoTexto;
+
+    atualizarBotoesPagamento();
+    atualizarParcelas();
+}
+
+function toggleAddressConfig() {
+    const metodo = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
+    const entrega = metodo === "delivery";
+    document.getElementById("addressCard").hidden = !entrega;
+    document.getElementById("pickupCard").hidden = entrega;
+    document.getElementById("summaryDeliveryMethod").textContent = entrega ? "Entrega em casa" : "Retirada no mercado";
+    document.getElementById("summaryDeliveryTime").textContent = entrega ? "Até 2h" : "Retirada";
+    document.getElementById("marketDeliveryInfo").textContent = entrega ? "Entrega selecionada" : "Retirada grátis";
+    taxaEntrega = 0;
+    renderizarResumo();
+}
+
+function atualizarPagamento() {
+    const metodo = document.querySelector('input[name="paymentMethod"]:checked')?.value || "pix";
+    document.querySelectorAll(".payment-method").forEach(el => el.classList.remove("active"));
+    document.querySelector(`.payment-method[data-payment-card="${metodo}"]`)?.classList.add("active");
+
+    document.getElementById("pixPanel").hidden = metodo !== "pix";
+    document.getElementById("pixPanel").classList.toggle("active", metodo === "pix");
+    const cartao = metodo === "credito" || metodo === "debito";
+    document.getElementById("cardPanel").hidden = !cartao;
+    document.getElementById("cardPanel").classList.toggle("active", cartao);
+    document.getElementById("deliveryPaymentPanel").hidden = metodo !== "entrega";
+    document.getElementById("deliveryPaymentPanel").classList.toggle("active", metodo === "entrega");
+    document.getElementById("installmentGroup").hidden = metodo !== "credito";
+    document.getElementById("debitInfo").hidden = metodo !== "debito";
+
+    const nomes = {pix:"PIX", credito:"Cartão de crédito", debito:"Cartão de débito", entrega:"Na entrega"};
+    document.getElementById("summaryPaymentMethod").textContent = nomes[metodo];
+    atualizarBotoesPagamento();
+}
+
+function atualizarBotoesPagamento() {
+    const metodo = document.querySelector('input[name="paymentMethod"]:checked')?.value || "pix";
+    const total = dinheiro(totalPedido());
+    const textos = {
+        pix:`Gerar pagamento PIX - ${total}`,
+        credito:`Pagar com crédito - ${total}`,
+        debito:`Pagar com débito - ${total}`,
+        entrega:`Confirmar pedido - ${total}`
+    };
+    document.getElementById("payButton").textContent = textos[metodo];
+    document.getElementById("mobilePayButton").textContent =
+        metodo === "pix" ? "Gerar pagamento PIX" : "Finalizar pedido";
+}
+
+function atualizarParcelas() {
+    const select = document.getElementById("installments");
+    const total = totalPedido();
+    if (!select) return;
+    select.innerHTML = [1,2,3].map(n =>
+        `<option value="${n}">${n}x de ${dinheiro(total/n)} sem juros</option>`
+    ).join("");
+}
+
+function applyCoupon() {
+    const codigo = document.getElementById("couponCode").value.trim().toUpperCase();
+    const feedback = document.getElementById("couponFeedback");
+    if (codigo === "SHOPWISE10") {
+        descontoPercentual = .10; feedback.textContent = "Cupom SHOPWISE10 aplicado: 10% de desconto.";
+    } else if (codigo === "ECONOMIA5") {
+        descontoPercentual = .05; feedback.textContent = "Cupom ECONOMIA5 aplicado: 5% de desconto.";
+    } else {
+        descontoPercentual = 0; feedback.textContent = codigo ? "Cupom inválido." : "Digite um cupom.";
+    }
+    renderizarResumo();
+}
+
+function openCouponModal(){ document.getElementById("couponModal").setAttribute("aria-hidden","false"); document.getElementById("couponModal").classList.add("active"); }
+function closeCouponModal(){ document.getElementById("couponModal").setAttribute("aria-hidden","true"); document.getElementById("couponModal").classList.remove("active"); }
+function selectCoupon(codigo){ document.getElementById("couponCode").value=codigo; closeCouponModal(); applyCoupon(); }
+
+function copyPixCode() {
+    const input=document.getElementById("pixCode");
+    navigator.clipboard?.writeText(input.value).then(()=>alert("Código PIX copiado."));
+}
+
+function validarCheckout() {
+    if (!carrinho.length) { alert("Seu carrinho está vazio."); return false; }
+    const entrega = document.querySelector('input[name="deliveryMethod"]:checked')?.value === "delivery";
+    if (entrega && !document.getElementById("deliveryAddress").value.trim()) {
+        alert("Informe o endereço de entrega."); return false;
+    }
+    const metodo=document.querySelector('input[name="paymentMethod"]:checked')?.value;
+    if (metodo==="credito" || metodo==="debito") {
+        const campos=["cardName","cardNumber","cardExpiry","cardCvv"];
+        if (campos.some(id=>!document.getElementById(id).value.trim())) {
+            alert("Preencha os dados do cartão para continuar."); return false;
+        }
+    }
+    return true;
+}
+
+function finalizarPedido() {
+    if (!validarCheckout()) return;
+    alert("Checkout validado. No próximo passo, o pedido será gravado no banco de dados.");
+}
+
+document.querySelectorAll('input[name="paymentMethod"]').forEach(el =>
+    el.addEventListener("change", atualizarPagamento));
+document.querySelectorAll('input[name="deliveryMethod"]').forEach(el =>
+    el.addEventListener("change", toggleAddressConfig));
+
+document.getElementById("cardNumber")?.addEventListener("input", e => {
+    e.target.value=e.target.value.replace(/\D/g,"").slice(0,16).replace(/(.{4})/g,"$1 ").trim();
+});
+document.getElementById("cardExpiry")?.addEventListener("input", e => {
+    let v=e.target.value.replace(/\D/g,"").slice(0,4);
+    if(v.length>2)v=v.slice(0,2)+"/"+v.slice(2);
+    e.target.value=v;
+});
+document.getElementById("cardCvv")?.addEventListener("input", e => {
+    e.target.value=e.target.value.replace(/\D/g,"").slice(0,4);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderizarResumo();
+    toggleAddressConfig();
+    atualizarPagamento();
+});
+</script>
 </body>
 </html>

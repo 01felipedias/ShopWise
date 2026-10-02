@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Carrinho</title>
 
-    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
 </head>
 
 <body>
@@ -17,7 +18,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </div>
                 <a href="feedproduto.html" aria-label="Ir para a página inicial">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                    <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                 </a>
             </div>
 
@@ -107,7 +108,6 @@
                     </div>
 
                     <button class="btn-verde" onclick="irParaCheckout()">Realizar Pedido</button>
-                    </button>
 
 
                 </aside>
@@ -119,6 +119,25 @@
     </div>
 
 </div>
-<script src="../utils/carrinho.js"></script>
+<style>
+.cart-products{display:flex;flex-direction:column;gap:16px}.cart-item{background:#fff;border:1px solid #e1ebe6;border-radius:16px;padding:18px;display:grid;grid-template-columns:100px 1fr auto;gap:18px;align-items:center}.cart-item img{width:100px;height:100px;object-fit:contain}.cart-controls{display:flex;align-items:center;gap:10px;margin-top:12px}.cart-controls button{width:34px;height:34px;border:1px solid #00b978;background:#fff;color:#00b978;border-radius:8px;cursor:pointer}.item-total{font-weight:800}.remove-item{border:0;background:transparent;color:#b33;cursor:pointer;margin-top:8px}.empty-cart{background:#fff;border-radius:16px;padding:30px;text-align:center}@media(max-width:800px){.cart-layout{grid-template-columns:1fr!important}.cart-item{grid-template-columns:80px 1fr}.item-total{grid-column:2}.cart-item img{width:80px;height:80px}}
+</style>
+<script>
+let carrinho=JSON.parse(localStorage.getItem("carrinho"))||[];
+const precoNumero=v=>Number(String(v??0).replace(",","."))||0;
+const moeda=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function salvar(){localStorage.setItem("carrinho",JSON.stringify(carrinho));renderizar();}
+function aumentar(id){const i=carrinho.find(x=>x.id===id);if(!i)return;const e=Number(i.estoque||0);if(e&&Number(i.quantidade||0)>=e){alert("A quantidade máxima disponível desse produto já está no carrinho.");return;}i.quantidade=Number(i.quantidade||0)+1;salvar();}
+function diminuir(id){const i=carrinho.find(x=>x.id===id);if(!i)return;i.quantidade=Number(i.quantidade||0)-1;if(i.quantidade<=0)carrinho=carrinho.filter(x=>x.id!==id);salvar();}
+function remover(id){carrinho=carrinho.filter(x=>x.id!==id);salvar();}
+function renderizar(){
+ const c=document.getElementById("cartProducts");let sub=0;
+ if(!carrinho.length){c.innerHTML='<div class="empty-cart"><h2>Seu carrinho está vazio</h2><p>Adicione produtos no feed para continuar.</p><a href="feedproduto.html">Voltar aos produtos</a></div>';document.getElementById("subtotal").textContent="R$ 0,00";document.getElementById("total").textContent="R$ 0,00";return;}
+ c.innerHTML=carrinho.map(i=>{const p=precoNumero(i.preco),q=Number(i.quantidade||1),t=p*q;sub+=t;const mercado=i.supermercado?.nome||i.mercado||"Supermercado";const img=i.img||"https://placehold.co/120x120/f4f7f6/777?text=Sem+Imagem";return `<article class="cart-item"><img src="${img}" alt="${i.nome}"><div><h3>${i.nome}</h3><p>${mercado}</p><strong>${moeda(p)} cada</strong><div class="cart-controls"><button onclick="diminuir(${i.id})">−</button><b>${q}</b><button onclick="aumentar(${i.id})">+</button></div><button class="remove-item" onclick="remover(${i.id})">Remover</button></div><div class="item-total">${moeda(t)}</div></article>`}).join("");
+ document.getElementById("subtotal").textContent=moeda(sub);document.getElementById("total").textContent=moeda(sub);
+}
+function irParaCheckout(){if(carrinho.length)window.location.href="checkout.html";else alert("Seu carrinho está vazio.");}
+document.addEventListener("DOMContentLoaded",renderizar);
+</script>
 </body>
 </html>

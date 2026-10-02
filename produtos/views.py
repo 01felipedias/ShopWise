@@ -265,3 +265,32 @@ class LoginCliente(APIView):
                 'email': cliente.email
             }
         })
+
+
+class FeedProdutos(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        produtos = Produto.objects.filter(
+            supermercado__isnull=False
+        ).select_related('supermercado').order_by('-criado_em')
+
+        dados = []
+
+        for produto in produtos:
+            dados.append({
+                'id': produto.id,
+                'nome': produto.nome,
+                'categoria': produto.categoria,
+                'preco': str(produto.preco),
+                'estoque': produto.estoque,
+                'descricao': produto.descricao,
+                'supermercado': {
+                    'id': produto.supermercado.id,
+                    'nome': produto.supermercado.nome,
+                    'cidade': produto.supermercado.cidade,
+                    'bairro': produto.supermercado.bairro,
+                }
+            })
+
+        return Response(dados)

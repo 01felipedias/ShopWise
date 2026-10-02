@@ -10,6 +10,7 @@ from produtos.views import (
     LoginSupermercado,
     ClienteList,
     LoginCliente,
+    FeedProdutos,
 )
 
 
@@ -43,6 +44,14 @@ def login_usuario(request):
 
 def feed_produto(request):
     return render(request, 'feedproduto.html')
+
+
+def carrinho(request):
+    return render(request, 'carrinho.html')
+
+
+def checkout(request):
+    return render(request, 'checkout.html')
 
 
 urlpatterns = [
@@ -87,6 +96,13 @@ urlpatterns = [
         feed_produto,
         name='feed_produto'
     ),
+    path('carrinho.html',
+         carrinho,
+         name='carrinho'),
+
+    path('checkout.html',
+         checkout,
+         name='checkout'),
 
     # =========================
     # API - SUPERMERCADO
@@ -103,6 +119,8 @@ urlpatterns = [
         'api/login-supermercado/',
         LoginSupermercado.as_view()
     ),
+    path('api/feed/produtos/',
+         FeedProdutos.as_view()),
 
     # =========================
     # API - PRODUTOS

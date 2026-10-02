@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,8 +7,8 @@
     <meta name="description" content="ShopWise - Compare preços entre os principais supermercados da região e economize nas suas compras diárias.">
     <title>ShopWise - Feed de Produtos</title>
     
-    <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/baners.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/baners.css' %}">
 </head>
 
 <body>
@@ -28,7 +29,7 @@
 
                 <a href="feedproduto.html" aria-label="Ir para a página inicial">
                     <img 
-                        src="../assets/img/logoshopwise.png" 
+                        src="{% static 'assets/img/logoshopwise.png' %}" 
                         alt="ShopWise" 
                         class="sidebar-full-logo" 
                         onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"
@@ -95,7 +96,7 @@
 
                         <a href="feedproduto.html" class="mobile-logo-area">
                             <img 
-                                src="../assets/img/logoshopwise.png" 
+                                src="{% static 'assets/img/logoshopwise.png' %}" 
                                 alt="ShopWise" 
                                 class="mobile-logo-img"
                                 onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"
@@ -144,11 +145,11 @@
                                     <div class="banner-track" id="bannerTrack">
                                 
                                         <div class="banner-slide">
-                                            <img src="../assets/promoçãoq.png" alt="Promoção Super Quaresma - Descontos Semanais">
+                                            <img src="{% static 'assets/promoçãoq.png' %}" alt="Promoção Super Quaresma - Descontos Semanais">
                                         </div>
                                 
                                         <div class="banner-slide">
-                                            <img src="../assets/promoçãom.png" alt="Promoção Mix Mateus - Natal do Coração">
+                                            <img src="{% static 'assets/promoçãom.png' %}" alt="Promoção Mix Mateus - Natal do Coração">
                                         </div>
                                 
                                     </div>
@@ -166,13 +167,13 @@
 
                     <section class="stats" aria-label="Estatísticas">
                         <div class="stat-card">
-                            <h3>10</h3>
-                            <span>Ofertas ativas</span>
+                            <h3 id="totalProdutosStat">0</h3>
+                            <span>Produtos disponíveis</span>
                         </div>
 
                         <div class="stat-card">
-                            <h3>R$ 4,40</h3>
-                            <span>Maior economia</span>
+                            <h3 id="totalMercadosStat">0</h3>
+                            <span>Supermercados</span>
                         </div>
                     </section>
 
@@ -196,10 +197,6 @@
                     <div class="categories-container" id="categoryContainer">
                         <button class="cat-btn active" type="button" data-categoria="todos">
                             Todos <span class="cat-count">0</span>
-                        </button>
-
-                        <button class="cat-btn" type="button" data-categoria="descontos">
-                            Descontos <span class="cat-count">0</span>
                         </button>
 
                         <button class="cat-btn" type="button" data-categoria="mercearia">
@@ -232,7 +229,6 @@
                         <select id="sortSelect">
                             <option value="menor-preco">Menor preço</option>
                             <option value="maior-preco">Maior preço</option>
-                            <option value="maior-desconto">Maior desconto</option>
                             <option value="nome">Nome A-Z</option>
                         </select>
 
@@ -252,7 +248,7 @@
                     <div class="footer-brand">
                         <a href="#" class="footer-logo" aria-label="ShopWise">
                             <img 
-                                src="../assets/shopwise_sem_fundo.png" 
+                                src="{% static 'assets/shopwise_sem_fundo.png' %}" 
                                 alt="ShopWise" 
                                 class="footer-logo-img"
                                 onerror="this.onerror=null; this.src='https://placehold.co/170x55/ffffff/00b978?text=ShopWise';"
@@ -338,34 +334,9 @@
     </div>
 
     <script>
-        const lojasFloriano = [
-            { id: 1, nome: "Mix Mateus", img: "../assets/mix.png", desconto: "Até 30%" },
-            { id: 2, nome: "Super Quaresma", img: "../assets/quaresma.png", desconto: "Ofertas" },
-            { id: 3, nome: "Carvalho", img: "../assets/carvalho.png", desconto: "Até 25%" },
-            { id: 4, nome: "Jorge Batista", img: "../assets/jorge-batista.png", desconto: "Novo" }
-        ];
-
-        const dadosProdutos = [
-            { id: 1, nome: "Feijão Carioca tipo 1 Kicaldo 1kg", preco: "6,49", precoOriginal: "8,99", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/feijao-kicaldo.png" },
-            { id: 2, nome: "Feijão Preto Fugini 250g", preco: "3,49", precoOriginal: "5,00", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/feijao-fugini.png" },
-            { id: 3, nome: "Leite UHT Integral Ninho 1L", preco: "4,99", precoOriginal: "6,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/leite-ninho.png" },
-            { id: 4, nome: "Queijo Mussarela Fatiado Itambé 150g", preco: "9,99", precoOriginal: "12,90", mercado: "Q", mercadoClass: "market-q", categoria: "laticinios", img: "../assets/queijo-itambe.png" },
-            { id: 5, nome: "Iogurte Desnatado YoPRO 160g", preco: "8,99", precoOriginal: "11,50", mercado: "Mix", mercadoClass: "market-mix", categoria: "laticinios", img: "../assets/iogurte-yopro.png" },
-            { id: 6, nome: "Flocão de Milho Nutrivita 500g", preco: "2,19", precoOriginal: "3,20", mercado: "Q", mercadoClass: "market-q", categoria: "mercearia", img: "../assets/flocao-bsb.png" },
-            { id: 7, nome: "Sabão em Pó Omo Lavagem Perfeita 800g", preco: "14,50", precoOriginal: "18,90", mercado: "Mix", mercadoClass: "market-mix", categoria: "limpeza", img: "../assets/sabao-omo.png" },
-            { id: 8, nome: "Café Tradicional 3 Corações 250g", preco: "9,89", precoOriginal: "13,99", mercado: "Mix", mercadoClass: "market-mix", categoria: "mercearia", img: "../assets/cafe-3coracoes.png" },
-            { id: 9, nome: "Refrigerante Coca-Cola 2L", preco: "8,49", precoOriginal: "10,99", mercado: "Q", mercadoClass: "market-q", categoria: "bebidas", img: "../assets/coca-cola.png" },
-            { id: 10, nome: "Detergente Líquido Ypê Neutro 500ml", preco: "2,29", precoOriginal: "3,50", mercado: "Q", mercadoClass: "market-q", categoria: "limpeza", img: "../assets/detergente-ype.png" }
-        ];
-
-        const nomesCategorias = {
-            todos: "Todos",
-            descontos: "Descontos",
-            mercearia: "Mercearia",
-            laticinios: "Laticínios",
-            bebidas: "Bebidas",
-            limpeza: "Limpeza"
-        };
+        let dadosProdutos = [];
+        let lojasFloriano = [];
+        let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
         const estadoBusca = {
             categoria: "todos",
@@ -373,128 +344,135 @@
             ordenacao: "menor-preco"
         };
 
-        let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
-
         function precoParaNumero(valor) {
-            return Number(String(valor).replace(",", "."));
+            return Number(String(valor ?? "0").replace(",", "."));
+        }
+
+        function formatarPreco(valor) {
+            return precoParaNumero(valor).toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
 
         function normalizarTexto(texto) {
-            return String(texto)
+            return String(texto ?? "")
                 .toLowerCase()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
                 .trim();
         }
 
+        function slugCategoria(categoria) {
+            return normalizarTexto(categoria)
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, "");
+        }
+
+        function escaparHtml(valor) {
+            const div = document.createElement("div");
+            div.textContent = String(valor ?? "");
+            return div.innerHTML;
+        }
+
         function obterNomeMercado(produto) {
-            return produto.mercado === "Mix" ? "Mix Mateus" : "Super Quaresma";
+            return produto.supermercado?.nome || "Supermercado";
         }
 
-        function calcularEconomia(produto) {
-            return precoParaNumero(produto.precoOriginal) - precoParaNumero(produto.preco);
-        }
+        function obterImagemProduto(produto) {
+            const nome = normalizarTexto(produto.nome);
+            const imagens = [
+                ["feijao", "{% static 'assets/feijao-kicaldo.png' %}"],
+                ["leite", "{% static 'assets/leite-ninho.png' %}"],
+                ["queijo", "{% static 'assets/queijo-itambe.png' %}"],
+                ["iogurte", "{% static 'assets/iogurte-yopro.png' %}"],
+                ["flocao", "{% static 'assets/flocao-bsb.png' %}"],
+                ["sabao", "{% static 'assets/sabao-omo.png' %}"],
+                ["cafe", "{% static 'assets/cafe-3coracoes.png' %}"],
+                ["refrigerante", "{% static 'assets/coca-cola.png' %}"],
+                ["coca-cola", "{% static 'assets/coca-cola.png' %}"],
+                ["detergente", "{% static 'assets/detergente-ype.png' %}"]
+            ];
 
-        function calcularDesconto(produto) {
-            const precoAtual = precoParaNumero(produto.preco);
-            const precoOriginal = precoParaNumero(produto.precoOriginal);
-
-            if (!precoOriginal || precoOriginal <= precoAtual) {
-                return 0;
-            }
-
-            return Math.round(((precoOriginal - precoAtual) / precoOriginal) * 100);
-        }
-
-        function formatarEconomia(valor) {
-            return valor.toFixed(2).replace(".", ",");
+            const encontrada = imagens.find(([termo]) => nome.includes(termo));
+            return encontrada ? encontrada[1] : "https://placehold.co/300x300/f4f7f6/777777?text=Sem+Imagem";
         }
 
         function filtrarProdutos() {
-            const termoNormalizado = normalizarTexto(estadoBusca.termo);
+            const termo = normalizarTexto(estadoBusca.termo);
 
-            const produtosFiltrados = dadosProdutos.filter((produto) => {
-                const nomeProduto = normalizarTexto(produto.nome);
-                const categoriaProduto = normalizarTexto(produto.categoria);
-                const mercadoProduto = normalizarTexto(obterNomeMercado(produto));
-                const desconto = calcularDesconto(produto);
-
+            const lista = dadosProdutos.filter((produto) => {
                 const correspondeTermo =
-                    termoNormalizado === "" ||
-                    nomeProduto.includes(termoNormalizado) ||
-                    categoriaProduto.includes(termoNormalizado) ||
-                    mercadoProduto.includes(termoNormalizado);
+                    !termo ||
+                    normalizarTexto(produto.nome).includes(termo) ||
+                    normalizarTexto(produto.categoria).includes(termo) ||
+                    normalizarTexto(obterNomeMercado(produto)).includes(termo);
 
                 const correspondeCategoria =
                     estadoBusca.categoria === "todos" ||
-                    produto.categoria === estadoBusca.categoria ||
-                    (estadoBusca.categoria === "descontos" && desconto > 0);
+                    slugCategoria(produto.categoria) === estadoBusca.categoria;
 
                 return correspondeTermo && correspondeCategoria;
             });
 
-            return ordenarProdutos(produtosFiltrados);
+            return ordenarProdutos(lista);
         }
 
         function ordenarProdutos(lista) {
-            const listaOrdenada = [...lista];
+            const ordenada = [...lista];
 
-            switch (estadoBusca.ordenacao) {
-                case "menor-preco":
-                    listaOrdenada.sort((a, b) => precoParaNumero(a.preco) - precoParaNumero(b.preco));
-                    break;
-
-                case "maior-preco":
-                    listaOrdenada.sort((a, b) => precoParaNumero(b.preco) - precoParaNumero(a.preco));
-                    break;
-
-                case "maior-desconto":
-                    listaOrdenada.sort((a, b) => calcularDesconto(b) - calcularDesconto(a));
-                    break;
-
-                case "nome":
-                    listaOrdenada.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
-                    break;
-
-                default:
-                    listaOrdenada.sort((a, b) => precoParaNumero(a.preco) - precoParaNumero(b.preco));
+            if (estadoBusca.ordenacao === "maior-preco") {
+                ordenada.sort((a, b) => precoParaNumero(b.preco) - precoParaNumero(a.preco));
+            } else if (estadoBusca.ordenacao === "nome") {
+                ordenada.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+            } else {
+                ordenada.sort((a, b) => precoParaNumero(a.preco) - precoParaNumero(b.preco));
             }
 
-            return listaOrdenada;
+            return ordenada;
         }
 
-        function atualizarContadoresCategorias() {
-            document.querySelectorAll("#categoryContainer .cat-btn").forEach((botao) => {
-                const categoria = botao.dataset.categoria;
-                const contador = botao.querySelector(".cat-count");
+        function montarCategorias() {
+            const container = document.getElementById("categoryContainer");
+            if (!container) return;
 
-                if (!contador) return;
+            const categorias = [...new Set(
+                dadosProdutos
+                    .map((produto) => String(produto.categoria || "").trim())
+                    .filter(Boolean)
+            )].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-                let total = 0;
-
-                if (categoria === "todos") {
-                    total = dadosProdutos.length;
-                } else if (categoria === "descontos") {
-                    total = dadosProdutos.filter((produto) => calcularDesconto(produto) > 0).length;
-                } else {
-                    total = dadosProdutos.filter((produto) => produto.categoria === categoria).length;
-                }
-
-                contador.textContent = total;
-            });
+            container.innerHTML = `
+                <button class="cat-btn active" type="button" data-categoria="todos">
+                    Todos <span class="cat-count">${dadosProdutos.length}</span>
+                </button>
+                ${categorias.map((categoria) => {
+                    const slug = slugCategoria(categoria);
+                    const total = dadosProdutos.filter(
+                        (produto) => slugCategoria(produto.categoria) === slug
+                    ).length;
+                    return `
+                        <button class="cat-btn" type="button" data-categoria="${slug}">
+                            ${escaparHtml(categoria)} <span class="cat-count">${total}</span>
+                        </button>
+                    `;
+                }).join("")}
+            `;
         }
 
         function atualizarResumoBusca(total) {
             const resultInfo = document.getElementById("resultInfo");
             const activeFilterText = document.getElementById("activeFilterText");
-
             if (!resultInfo || !activeFilterText) return;
 
             resultInfo.textContent = total === 1
                 ? "1 produto encontrado"
                 : `${total} produtos encontrados`;
 
-            const categoria = nomesCategorias[estadoBusca.categoria] || "Todos";
+            const botaoAtivo = document.querySelector("#categoryContainer .cat-btn.active");
+            const categoria = botaoAtivo
+                ? botaoAtivo.childNodes[0].textContent.trim()
+                : "Todos";
             const termo = estadoBusca.termo.trim();
 
             activeFilterText.textContent = termo
@@ -502,81 +480,93 @@
                 : `Filtro ativo: ${categoria}`;
         }
 
+        function criarLojasDosProdutos() {
+            const mapa = new Map();
+
+            dadosProdutos.forEach((produto) => {
+                const supermercado = produto.supermercado;
+
+                if (supermercado?.id && !mapa.has(supermercado.id)) {
+                    mapa.set(supermercado.id, {
+                        id: supermercado.id,
+                        nome: supermercado.nome || "Supermercado",
+                        cidade: supermercado.cidade || "",
+                        bairro: supermercado.bairro || ""
+                    });
+                }
+            });
+
+            lojasFloriano = [...mapa.values()].sort((a, b) =>
+                a.nome.localeCompare(b.nome, "pt-BR")
+            );
+        }
+
         function renderizarLojas() {
             const container = document.getElementById("storesCarousel");
-
             if (!container) return;
 
-            container.innerHTML = lojasFloriano.map((loja) => `
-                <a href="#" class="store-item" title="${loja.nome}" data-loja="${loja.nome}">
-                    <div class="store-logo">
-                        <img 
-                            src="${loja.img}" 
-                            alt="${loja.nome}" 
-                            onerror="this.onerror=null; this.src='https://placehold.co/100x100/e8faf2/00b978?text=Loja';"
-                        >
-                    </div>
+            if (!lojasFloriano.length) {
+                container.innerHTML = '<p>Nenhum supermercado com produtos disponíveis.</p>';
+                return;
+            }
 
-                    <div class="store-text">
-                        <span class="store-name">${loja.nome}</span>
-                        <span class="store-offer">${loja.desconto}</span>
-                    </div>
-                </a>
-            `).join("");
+            container.innerHTML = lojasFloriano.map((loja) => {
+                const inicial = escaparHtml(loja.nome.charAt(0).toUpperCase());
+                return `
+                    <a href="#" class="store-item" title="${escaparHtml(loja.nome)}"
+                       data-loja="${escaparHtml(loja.nome)}">
+                        <div class="store-logo"
+                             style="display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;">
+                            ${inicial}
+                        </div>
+                        <div class="store-text">
+                            <span class="store-name">${escaparHtml(loja.nome)}</span>
+                            <span class="store-offer">Ver produtos</span>
+                        </div>
+                    </a>
+                `;
+            }).join("");
         }
 
         function criarHtmlProduto(produto) {
-            const logoMercado = produto.mercado === "Mix"
-                ? "../assets/mix.png"
-                : "../assets/quaresma.png";
-
-            const economiaFormatada = formatarEconomia(calcularEconomia(produto));
-            const porcentagemDesconto = calcularDesconto(produto);
+            const nome = escaparHtml(produto.nome);
+            const mercado = escaparHtml(obterNomeMercado(produto));
+            const categoria = escaparHtml(produto.categoria || "Sem categoria");
+            const descricao = escaparHtml(produto.descricao || "");
+            const estoque = Number(produto.estoque || 0);
+            const imagem = obterImagemProduto(produto);
 
             return `
                 <article class="product-card">
                     <div class="product-image-wrapper">
-                        <img 
-                            src="${produto.img}" 
-                            alt="${produto.nome}" 
+                        <img
+                            src="${imagem}"
+                            alt="${nome}"
                             onerror="this.onerror=null; this.src='https://placehold.co/300x300/f4f7f6/777777?text=Sem+Imagem';"
                         >
                     </div>
 
                     <div class="product-info">
-                        <div class="price-header">
-                            <span class="original-price">R$ ${produto.precoOriginal}</span>
-                            <span class="discount-badge">-${porcentagemDesconto}%</span>
-                        </div>
-
                         <div class="price-row">
-                            <span class="price">R$ ${produto.preco}</span>
-
-                            <div class="market-logo" title="${obterNomeMercado(produto)}">
-                                <img 
-                                    src="${logoMercado}" 
-                                    alt="Logo ${obterNomeMercado(produto)}" 
-                                    onerror="this.style.display='none'"
-                                >
-                            </div>
+                            <span class="price">R$ ${formatarPreco(produto.preco)}</span>
                         </div>
 
                         <div class="savings-text">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
-                            </svg>
-                            Economiza R$ ${economiaFormatada}
+                            ${mercado} • ${categoria}
                         </div>
 
-                        <h3 class="product-name">${produto.nome}</h3>
+                        <h3 class="product-name">${nome}</h3>
 
-                        <button class="btn-add" type="button" onclick="adicionarCarrinho(${produto.id})">
-                            Adicionar
-                        </button>
+                        ${descricao ? `<p style="font-size:.85rem;color:#666;margin:.35rem 0;">${descricao}</p>` : ""}
 
-                        <button class="btn-comparar" type="button" onclick="openModal()">
-                            📊 Comparar preços
+                        <p style="font-size:.82rem;color:#777;margin:.25rem 0 .75rem;">
+                            ${estoque} unidade${estoque === 1 ? "" : "s"} em estoque
+                        </p>
+
+                        <button class="btn-add" type="button"
+                                onclick="adicionarCarrinho(${produto.id})"
+                                ${estoque <= 0 ? "disabled" : ""}>
+                            ${estoque > 0 ? "Adicionar" : "Sem estoque"}
                         </button>
                     </div>
                 </article>
@@ -585,13 +575,12 @@
 
         function renderizarProdutos() {
             const grid = document.getElementById("productGrid");
-            const lista = filtrarProdutos();
-
             if (!grid) return;
 
+            const lista = filtrarProdutos();
             atualizarResumoBusca(lista.length);
 
-            if (lista.length === 0) {
+            if (!lista.length) {
                 grid.innerHTML = `
                     <div class="empty-state">
                         <h2>Nenhum produto encontrado</h2>
@@ -609,16 +598,24 @@
 
         function adicionarCarrinho(idProduto) {
             const produto = dadosProdutos.find((item) => item.id === idProduto);
-
             if (!produto) return;
 
+            const estoque = Number(produto.estoque || 0);
             const itemExistente = carrinho.find((item) => item.id === idProduto);
+            const quantidadeAtual = itemExistente ? Number(itemExistente.quantidade || 0) : 0;
+
+            if (quantidadeAtual >= estoque) {
+                alert("A quantidade máxima disponível desse produto já está no carrinho.");
+                return;
+            }
 
             if (itemExistente) {
-                itemExistente.quantidade++;
+                itemExistente.quantidade += 1;
             } else {
                 carrinho.push({
                     ...produto,
+                    mercado: obterNomeMercado(produto),
+                    img: obterImagemProduto(produto),
                     quantidade: 1
                 });
             }
@@ -629,11 +626,12 @@
 
         function atualizarBadgeCarrinho() {
             const badge = document.querySelector(".cart-badge");
-
             if (!badge) return;
 
-            const total = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
-
+            const total = carrinho.reduce(
+                (acc, item) => acc + Number(item.quantidade || 0),
+                0
+            );
             badge.textContent = total;
         }
 
@@ -667,22 +665,22 @@
             const storesCarousel = document.getElementById("storesCarousel");
 
             if (categoryContainer) {
-                categoryContainer.querySelectorAll(".cat-btn").forEach((botao) => {
-                    botao.addEventListener("click", function () {
-                        categoryContainer.querySelectorAll(".cat-btn").forEach((item) => {
-                            item.classList.remove("active");
-                        });
+                categoryContainer.addEventListener("click", (event) => {
+                    const botao = event.target.closest(".cat-btn");
+                    if (!botao) return;
 
-                        this.classList.add("active");
-                        estadoBusca.categoria = this.dataset.categoria || "todos";
-
-                        renderizarProdutos();
+                    categoryContainer.querySelectorAll(".cat-btn").forEach((item) => {
+                        item.classList.remove("active");
                     });
+
+                    botao.classList.add("active");
+                    estadoBusca.categoria = botao.dataset.categoria || "todos";
+                    renderizarProdutos();
                 });
             }
 
             if (searchInput) {
-                searchInput.addEventListener("input", function (event) {
+                searchInput.addEventListener("input", (event) => {
                     estadoBusca.termo = event.target.value;
 
                     document.querySelectorAll(".store-item").forEach((loja) => {
@@ -705,9 +703,8 @@
             }
 
             if (storesCarousel) {
-                storesCarousel.addEventListener("click", function (event) {
+                storesCarousel.addEventListener("click", (event) => {
                     const loja = event.target.closest(".store-item");
-
                     if (!loja) return;
 
                     event.preventDefault();
@@ -717,13 +714,9 @@
                     });
 
                     loja.classList.add("active");
-
                     estadoBusca.termo = loja.dataset.loja || "";
 
-                    if (searchInput) {
-                        searchInput.value = estadoBusca.termo;
-                    }
-
+                    if (searchInput) searchInput.value = estadoBusca.termo;
                     renderizarProdutos();
                 });
             }
@@ -746,358 +739,78 @@
                 }
             }
 
-            if (desktopMenuToggle) {
-                desktopMenuToggle.addEventListener("click", toggleMenu);
+            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
+            if (overlay) overlay.addEventListener("click", toggleMenu);
+        }
+
+        async function carregarProdutos() {
+            const grid = document.getElementById("productGrid");
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h2>Carregando produtos...</h2>
+                        <p>Aguarde um instante.</p>
+                    </div>
+                `;
             }
 
-            if (mobileMenuToggle) {
-                mobileMenuToggle.addEventListener("click", toggleMenu);
-            }
-
-            if (overlay) {
-                overlay.addEventListener("click", toggleMenu);
-            }
-
-            document.querySelectorAll(".nav-item").forEach((item) => {
-                item.addEventListener("click", function (event) {
-                    if (this.getAttribute("href") !== "#") {
-                        return; 
-                    }
-                    event.preventDefault();
-
-                    document.querySelectorAll(".nav-item").forEach((nav) => {
-                        nav.classList.remove("active");
-                    });
-
-                    this.classList.add("active");
-
-                    if (window.innerWidth < 768) {
-                        toggleMenu();
+            try {
+                const resposta = await fetch("/api/feed/produtos/", {
+                    method: "GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "Accept": "application/json"
                     }
                 });
-            });
+
+                if (resposta.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(`Erro HTTP ${resposta.status}`);
+                }
+
+                const dados = await resposta.json();
+                dadosProdutos = Array.isArray(dados) ? dados : [];
+
+                criarLojasDosProdutos();
+                montarCategorias();
+                renderizarLojas();
+
+                const totalProdutosStat = document.getElementById("totalProdutosStat");
+                const totalMercadosStat = document.getElementById("totalMercadosStat");
+
+                if (totalProdutosStat) totalProdutosStat.textContent = dadosProdutos.length;
+                if (totalMercadosStat) totalMercadosStat.textContent = lojasFloriano.length;
+
+                renderizarProdutos();
+            } catch (erro) {
+                console.error("Erro ao carregar o feed:", erro);
+
+                if (grid) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <h2>Não foi possível carregar os produtos</h2>
+                            <p>Verifique se o servidor Django está funcionando e tente novamente.</p>
+                        </div>
+                    `;
+                }
+
+                const resultInfo = document.getElementById("resultInfo");
+                if (resultInfo) resultInfo.textContent = "Erro ao carregar produtos";
+            }
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            renderizarLojas();
-            atualizarContadoresCategorias();
             atualizarBadgeCarrinho();
             configurarFiltros();
             configurarSidebar();
-            renderizarProdutos();
+            carregarProdutos();
         });
     </script>
-
-    <!-- MODAL COMPARAÇÃO DE PREÇOS -->
-    <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-        <div class="modal" id="modal">
-
-            <div class="modal-header">
-                <div class="modal-product-thumb">
-                    <img src="../assets/feijao-kicaldo.png" alt="Feijão Kicaldo 1kg">
-                </div>
-
-                <div class="modal-header-info">
-                    <h2>Feijão Carioca Kicaldo 1kg</h2>
-                    <p>Comparando preços em 4 supermercados</p>
-                </div>
-
-                <button class="modal-close" onclick="closeModal()">✕</button>
-            </div>
-
-            <div class="modal-body">
-
-                <div class="best-pick-banner">
-                    <div class="best-pick-icon">🏆</div>
-
-                    <div class="best-pick-info">
-                        <h4>Melhor opção: Super Quaresma</h4>
-                        <p>Você economiza R$ 2,50 em relação ao mais caro</p>
-                    </div>
-
-                    <div class="best-pick-price">
-                        <strong>R$ 6,49</strong>
-                        <span>melhor preço</span>
-                    </div>
-                </div>
-
-                <div class="modal-tabs">
-                    <button class="tab-btn active" onclick="switchTab('precos', this)">💰 Preços</button>
-                    <button class="tab-btn" onclick="switchTab('grafico', this)">📊 Gráfico</button>
-                    <button class="tab-btn" onclick="switchTab('distancia', this)">📍 Distância</button>
-                </div>
-
-                <div class="tab-panel active" id="tab-precos">
-                    <div class="supermarket-list">
-
-                        <div class="supermarket-row best">
-                            <div class="best-tag">✓ Melhor preço</div>
-
-                            <div class="sm-logo">
-                                <span class="modal-market-text modal-logo-super-q">SUPER<br>Q</span>
-                            </div>
-
-                            <div class="sm-info">
-                                <h4>Super Quaresma</h4>
-
-                                <div class="sm-distance">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                        <circle cx="12" cy="10" r="3"/>
-                                    </svg>
-                                    1,2 km de você
-                                </div>
-
-                                <div class="price-bar-wrapper">
-                                    <div class="price-bar-track">
-                                        <div class="price-bar-fill price-bar-72"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sm-price-area">
-                                <div class="sm-price best-price">R$ 6,49</div>
-                                <div class="sm-savings">💚 Mais barato</div>
-                            </div>
-                        </div>
-
-                        <div class="supermarket-row">
-                            <div class="sm-logo">
-                                <span class="modal-market-text modal-logo-mix">MIX<br>MAT.</span>
-                            </div>
-
-                            <div class="sm-info">
-                                <h4>Mix Mateus</h4>
-
-                                <div class="sm-distance">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                        <circle cx="12" cy="10" r="3"/>
-                                    </svg>
-                                    2,5 km de você
-                                </div>
-
-                                <div class="price-bar-wrapper">
-                                    <div class="price-bar-track">
-                                        <div class="price-bar-fill expensive price-bar-82"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sm-price-area">
-                                <div class="sm-price">R$ 7,39</div>
-                                <div class="sm-higher">+ R$ 0,90 mais caro</div>
-                            </div>
-                        </div>
-
-                        <div class="supermarket-row">
-                            <div class="sm-logo">
-                                <span class="modal-market-text modal-logo-carvalho">CAR<br>VLH</span>
-                            </div>
-
-                            <div class="sm-info">
-                                <h4>Carvalho</h4>
-
-                                <div class="sm-distance">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                        <circle cx="12" cy="10" r="3"/>
-                                    </svg>
-                                    3,8 km de você
-                                </div>
-
-                                <div class="price-bar-wrapper">
-                                    <div class="price-bar-track">
-                                        <div class="price-bar-fill expensive price-bar-88"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sm-price-area">
-                                <div class="sm-price">R$ 7,99</div>
-                                <div class="sm-higher">+ R$ 1,50 mais caro</div>
-                            </div>
-                        </div>
-
-                        <div class="supermarket-row">
-                            <div class="sm-logo">
-                                <span class="modal-market-text modal-logo-jorge">JRG<br>BAT</span>
-                            </div>
-
-                            <div class="sm-info">
-                                <h4>Jorge Batista</h4>
-
-                                <div class="sm-distance">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                        <circle cx="12" cy="10" r="3"/>
-                                    </svg>
-                                    5,1 km de você
-                                </div>
-
-                                <div class="price-bar-wrapper">
-                                    <div class="price-bar-track">
-                                        <div class="price-bar-fill most-expensive price-bar-100"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sm-price-area">
-                                <div class="sm-price">R$ 8,99</div>
-                                <div class="sm-higher">+ R$ 2,50 mais caro</div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="tab-panel" id="tab-grafico">
-                    <p class="chart-title">Comparativo visual de preços — Feijão Carioca Kicaldo 1kg</p>
-
-                    <div class="bar-chart">
-                        <div class="bar-group">
-                            <div class="bar-value">R$ 6,49</div>
-                            <div class="bar best-bar chart-bar-zero" id="chartBar1"></div>
-                            <div class="bar-label">Super Quaresma</div>
-                        </div>
-
-                        <div class="bar-group">
-                            <div class="bar-value">R$ 7,39</div>
-                            <div class="bar mid-bar chart-bar-zero" id="chartBar2"></div>
-                            <div class="bar-label">Mix Mateus</div>
-                        </div>
-
-                        <div class="bar-group">
-                            <div class="bar-value">R$ 7,99</div>
-                            <div class="bar mid-bar chart-bar-zero" id="chartBar3"></div>
-                            <div class="bar-label">Carvalho</div>
-                        </div>
-
-                        <div class="bar-group">
-                            <div class="bar-value">R$ 8,99</div>
-                            <div class="bar high-bar chart-bar-zero" id="chartBar4"></div>
-                            <div class="bar-label">Jorge Batista</div>
-                        </div>
-                    </div>
-
-                    <div class="chart-legend">
-                        <div class="chart-legend-item">
-                            <div class="chart-legend-color legend-best"></div>
-                            Melhor preço
-                        </div>
-
-                        <div class="chart-legend-item">
-                            <div class="chart-legend-color legend-mid"></div>
-                            Intermediário
-                        </div>
-
-                        <div class="chart-legend-item">
-                            <div class="chart-legend-color legend-high"></div>
-                            Mais caro
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-panel" id="tab-distancia">
-                    <div class="map-placeholder">
-                        <svg class="map-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2ECC71" stroke-width="1.5">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                            <circle cx="12" cy="10" r="3"/>
-                        </svg>
-
-                        <p>
-                            Supermercados próximos à sua localização<br>
-                            <strong>Floriano, PI</strong>
-                        </p>
-                    </div>
-
-                    <div class="distance-list">
-                        <div class="distance-row">
-                            <div class="distance-dot distance-dot-best"></div>
-
-                            <div class="sm-info">
-                                <h4>Super Quaresma</h4>
-                                <span>R. das Flores, 150 — Centro</span>
-                            </div>
-
-                            <div class="distance-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
-                                </svg>
-                                1,2 km
-                            </div>
-                        </div>
-
-                        <div class="distance-row">
-                            <div class="distance-dot distance-dot-mid"></div>
-
-                            <div class="sm-info">
-                                <h4>Mix Mateus</h4>
-                                <span>Av. Principal, 580 — Bairro Novo</span>
-                            </div>
-
-                            <div class="distance-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
-                                </svg>
-                                2,5 km
-                            </div>
-                        </div>
-
-                        <div class="distance-row">
-                            <div class="distance-dot distance-dot-warning"></div>
-
-                            <div class="sm-info">
-                                <h4>Carvalho</h4>
-                                <span>R. do Comércio, 44 — Centro</span>
-                            </div>
-
-                            <div class="distance-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
-                                </svg>
-                                3,8 km
-                            </div>
-                        </div>
-
-                        <div class="distance-row">
-                            <div class="distance-dot distance-dot-high"></div>
-
-                            <div class="sm-info">
-                                <h4>Jorge Batista</h4>
-                                <span>Av. Principal, 900 — Floriano</span>
-                            </div>
-
-                            <div class="distance-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
-                                </svg>
-                                5,1 km
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn-add-modal" onclick="addToCart()">
-                    🛒 Adicionar ao carrinho — R$ 6,49
-                </button>
-
-                <button class="btn-secondary-modal" onclick="closeModal()">
-                    Fechar
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <script src="../utils/modal.js"></script>
-    <script src="../utils/baners.js"></script>
+    <script src="{% static 'utils/baners.js' %}"></script>
 </body>
 </html>
