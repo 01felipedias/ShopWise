@@ -17,6 +17,7 @@ from produtos.views import (
     AlertaPrecoList,
     NotificacaoList,
     NotificacaoMarcarLida,
+    AvaliacaoList,
 )
 
 
@@ -66,6 +67,10 @@ def pedidos(request):
 
 def alerta_preco(request):
     return render(request, 'AlertaPreco.html')
+
+
+def avaliacao(request):
+    return render(request, 'avaliacao.html')
 
 
 urlpatterns = [
@@ -126,6 +131,9 @@ urlpatterns = [
          alerta_preco,
          name='alerta_preco'),
 
+    path('avaliacao.html',
+         avaliacao,
+         name='avaliacao'),
 
     # =========================
     # API - SUPERMERCADO
@@ -189,5 +197,9 @@ urlpatterns = [
     path(
         'api/notificacoes/<int:notificacao_id>/marcar-lida/',
         NotificacaoMarcarLida.as_view()
+    ),
+    path(
+        'api/avaliacoes/',
+        AvaliacaoList.as_view()
     ),
 ]

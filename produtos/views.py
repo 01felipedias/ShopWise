@@ -18,6 +18,7 @@ from .models import (
     Pagamento,
     AlertaPreco,
     Notificacao,
+    Avaliacao,
 )
 
 from .mercado_pago import (
@@ -1111,3 +1112,208 @@ class NotificacaoMarcarLida(APIView):
             'id': notificacao.id,
             'lida': notificacao.lida,
         })
+
+
+class AvaliacaoList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        avaliacoes = (
+            Avaliacao.objects
+            .filter(cliente_id=cliente_id)
+            .select_related(
+                'produto',
+                'pedido',
+                'item_pedido',
+                'produto__supermercado'
+            )
+            .order_by('-criada_em')
+        )
+
+        itens_avaliaveis = (
+            ItemPedido.objects
+            .filter(
+                pedido__cliente_id=cliente_id,
+                pedido__status='concluido',
+                avaliacao__isnull=True
+            )
+            .select_related(
+                'pedido',
+                'produto',
+                'supermercado'
+            )
+            .order_by('-pedido__criado_em')
+        )
+
+        dados_avaliacoes = []
+
+        for avaliacao in avaliacoes:
+            dados_avaliacoes.append({
+                'id': avaliacao.id,
+                'pedido_id': avaliacao.pedido.id,
+                'item_pedido_id': avaliacao.item_pedido.id,
+                'produto_id': avaliacao.produto.id,
+                'produto': avaliacao.produto.nome,
+                'supermercado': (
+                    avaliacao.produto.supermercado.nome
+                    if avaliacao.produto.supermercado
+                    else ''
+                ),
+                'nota': avaliacao.nota,
+                'preco_correto': avaliacao.preco_correto,
+                'entrega_ok': avaliacao.entrega_ok,
+                'comentario': avaliacao.comentario,
+                'criada_em': avaliacao.criada_em,
+            })
+
+        dados_itens = []
+
+        for item in itens_avaliaveis:
+            dados_itens.append({
+                'item_pedido_id': item.id,
+                'pedido_id': item.pedido.id,
+                'produto_id': item.produto.id,
+                'produto': item.nome_produto,
+                'quantidade': item.quantidade,
+                'preco_unitario': str(
+                    item.preco_unitario
+                ),
+                'supermercado': item.supermercado.nome,
+                'pedido_criado_em': item.pedido.criado_em,
+            })
+
+        return Response({
+            'itens_avaliaveis': dados_itens,
+            'avaliacoes': dados_avaliacoes,
+        })
+
+    def post(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        item_pedido_id = request.data.get(
+            'item_pedido_id'
+        )
+
+        nota = request.data.get('nota')
+
+        preco_correto = request.data.get(
+            'preco_correto',
+            True
+        )
+
+        entrega_ok = request.data.get(
+            'entrega_ok',
+            True
+        )
+
+        comentario = request.data.get(
+            'comentario',
+            ''
+        )
+
+        if not item_pedido_id:
+            return Response(
+                {'erro': 'Informe o item do pedido.'},
+                status=400
+            )
+
+        try:
+            nota = int(nota)
+        except (TypeError, ValueError):
+            return Response(
+                {'erro': 'Nota inválida.'},
+                status=400
+            )
+
+        if nota < 1 or nota > 5:
+            return Response(
+                {
+                    'erro': (
+                        'A nota deve estar entre '
+                        '1 e 5 estrelas.'
+                    )
+                },
+                status=400
+            )
+
+        item = get_object_or_404(
+            ItemPedido.objects.select_related(
+                'pedido',
+                'produto',
+                'supermercado'
+            ),
+            pk=item_pedido_id,
+            pedido__cliente_id=cliente_id
+        )
+
+        if item.pedido.status != 'concluido':
+            return Response(
+                {
+                    'erro': (
+                        'Só é possível avaliar produtos '
+                        'de pedidos concluídos.'
+                    )
+                },
+                status=400
+            )
+
+        if Avaliacao.objects.filter(
+            item_pedido=item
+        ).exists():
+            return Response(
+                {
+                    'erro': (
+                        'Este item já foi avaliado.'
+                    )
+                },
+                status=400
+            )
+
+        avaliacao = Avaliacao.objects.create(
+            cliente_id=cliente_id,
+            pedido=item.pedido,
+            item_pedido=item,
+            produto=item.produto,
+            nota=nota,
+            preco_correto=bool(preco_correto),
+            entrega_ok=bool(entrega_ok),
+            comentario=str(comentario).strip()
+        )
+
+        return Response(
+            {
+                'mensagem': (
+                    'Avaliação enviada com sucesso.'
+                ),
+                'avaliacao': {
+                    'id': avaliacao.id,
+                    'pedido_id': avaliacao.pedido.id,
+                    'produto': avaliacao.produto.nome,
+                    'nota': avaliacao.nota,
+                    'preco_correto': (
+                        avaliacao.preco_correto
+                    ),
+                    'entrega_ok': (
+                        avaliacao.entrega_ok
+                    ),
+                    'comentario': (
+                        avaliacao.comentario
+                    ),
+                }
+            },
+            status=201
+        )

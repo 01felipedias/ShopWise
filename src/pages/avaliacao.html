@@ -1,82 +1,750 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Avaliação</title>
-    <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/avaliacao.css">
+
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/avaliacao.css' %}">
+
+    <style>
+        .avaliacao-select-group {
+            margin-bottom: 22px;
+        }
+
+        .avaliacao-select {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d6dfdb;
+            border-radius: 10px;
+            background: #fff;
+            font: inherit;
+            color: #263238;
+        }
+
+        .avaliacao-star {
+            border: 0;
+            background: transparent;
+            font-size: 32px;
+            color: #d1d5db;
+            cursor: pointer;
+            padding: 0 3px;
+            transition: transform .15s ease, color .15s ease;
+        }
+
+        .avaliacao-star:hover {
+            transform: scale(1.08);
+        }
+
+        .avaliacao-star.active {
+            color: #f4b400;
+        }
+
+        .avaliacao-check-option {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .avaliacao-feedback {
+            margin-top: 12px;
+            font-weight: 700;
+        }
+
+        .avaliacao-feedback.sucesso {
+            color: #15803d;
+        }
+
+        .avaliacao-feedback.erro {
+            color: #b42318;
+        }
+
+        .avaliacao-vazio {
+            background: #fff;
+            border: 1px dashed #cfdad6;
+            border-radius: 14px;
+            padding: 18px;
+            color: #667575;
+            margin-bottom: 20px;
+        }
+
+        .avaliacoes-historico {
+            margin-top: 34px;
+        }
+
+        .avaliacoes-historico h2 {
+            margin-bottom: 14px;
+        }
+
+        .avaliacao-historico-lista {
+            display: grid;
+            gap: 14px;
+        }
+
+        .avaliacao-historico-card {
+            background: #fff;
+            border: 1px solid #dce8e3;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.04);
+        }
+
+        .avaliacao-historico-topo {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .avaliacao-historico-card h3 {
+            margin: 0 0 5px;
+        }
+
+        .avaliacao-historico-meta {
+            color: #73817c;
+            font-size: 12px;
+        }
+
+        .avaliacao-historico-stars {
+            color: #f4b400;
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+
+        .avaliacao-historico-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .avaliacao-tag {
+            display: inline-flex;
+            padding: 6px 9px;
+            border-radius: 999px;
+            background: #ecfdf5;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .avaliacao-tag.negativo {
+            background: #fef2f2;
+            color: #b42318;
+        }
+
+        .avaliacao-comentario-historico {
+            margin: 0;
+            color: #475569;
+            line-height: 1.5;
+        }
+    </style>
 </head>
+
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="app-layout">
+
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="sidebar-toggle-btn" id="desktopMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
                 </div>
-                <a href="feedproduto.html" aria-label="Ir para a página inicial"><img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"></a>
+
+                <a href="feedproduto.html" aria-label="Ir para a página inicial">
+                    <img
+                        src="{% static 'assets/img/logoshopwise.png' %}"
+                        alt="ShopWise"
+                        class="sidebar-full-logo"
+                        onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"
+                    >
+                </a>
             </div>
+
             <nav class="sidebar-nav" aria-label="Menu principal">
-                <a href="feedproduto.html" class="nav-item" aria-label="Página Inicial"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Início</span></a>
-                <a href="AlertaPreco.html" class="nav-item" aria-label="Seus Alertas"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span>Alertas</span></a>
-                <a href="perfil.html" class="nav-item" aria-label="Seu Perfil"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Perfil</span></a>
-                <a href="cupons.html" class="nav-item" aria-label="Seu Cashback"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><span>Cashback</span></a>
-                <a href="pedidos.html" class="nav-item active" aria-label="Seus Pedidos"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span>Pedidos</span></a>
+                <a href="feedproduto.html" class="nav-item" aria-label="Página Inicial">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Início</span>
+                </a>
+
+                <a href="AlertaPreco.html" class="nav-item" aria-label="Seus Alertas">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span>Alertas</span>
+                </a>
+
+                <a href="perfil.html" class="nav-item" aria-label="Seu Perfil">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Perfil</span>
+                </a>
+
+                <a href="cupons.html" class="nav-item" aria-label="Seu Cashback">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Cashback</span>
+                </a>
+
+                <a href="pedidos.html" class="nav-item active" aria-label="Seus Pedidos">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 0 1-2 2h14a2 2 0 0 1-2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span>Pedidos</span>
+                </a>
             </nav>
         </aside>
+
         <div class="main-content">
+
             <header class="navbar standard-navbar" role="banner">
-                <div class="nav-container"><div class="nav-top">
-                    <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>
-                    <a href="feedproduto.html" class="mobile-logo-area"><img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"></a>
-                    <strong class="page-navbar-title">Avaliação</strong>
-                    <div class="location">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        Floriano, PI
+                <div class="nav-container">
+                    <div class="nav-top">
+
+                        <div class="menu-icon" id="mobileMenuToggle" role="button" tabindex="0" aria-label="Alternar menu lateral">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </div>
+
+                        <a href="feedproduto.html" class="mobile-logo-area">
+                            <img
+                                src="{% static 'assets/img/logoshopwise.png' %}"
+                                alt="ShopWise"
+                                class="mobile-logo-img"
+                                onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';"
+                            >
+                        </a>
+
+                        <strong class="page-navbar-title">Avaliação</strong>
+
+                        <div class="location">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            Floriano, PI
+                        </div>
+
+                        <a href="carrinho.html" class="cart-icon" aria-label="Ir para o carrinho">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M6 2L3 6v14a2 2 0 0 1-2 2h14a2 2 0 0 1-2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span class="cart-badge" id="cartBadgeAvaliacao">0</span>
+                        </a>
+
                     </div>
-                    <a href="carrinho.html" class="cart-icon" aria-label="Ir para o carrinho"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cart-badge">3</span></a>
-                </div></div>
+                </div>
             </header>
+
             <main class="page-container" role="main">
-<section class="avaliacao-hero">
-    <span class="avaliacao-badge">Avaliação</span>
-    <h1 class="avaliacao-title">Como foi sua compra?</h1>
-    <p class="avaliacao-subtitle">Sua avaliação ajuda outros consumidores e aumenta a confiabilidade dos supermercados parceiros.</p>
-</section>
 
-<section class="avaliacao-grid" aria-label="Resumo da avaliação">
-    <article class="avaliacao-card">
-        <h3>Nota geral</h3>
-        <div class="avaliacao-stars" aria-label="4 de 5 estrelas">★ ★ ★ ★ ☆</div>
-        <p>4 de 5 estrelas</p>
-    </article>
+                <section class="avaliacao-hero">
+                    <span class="avaliacao-badge">Avaliação</span>
+                    <h1 class="avaliacao-title">Como foi sua compra?</h1>
+                    <p class="avaliacao-subtitle">
+                        Avalie apenas produtos de pedidos concluídos.
+                        Sua opinião ajuda outros consumidores e aumenta a confiabilidade dos supermercados parceiros.
+                    </p>
+                </section>
 
-    <article class="avaliacao-card">
-        <h3>Preço correto?</h3>
-        <p><span class="avaliacao-status">Sim, preço conferido</span></p>
-        <p>O valor cobrado bate com a comparação da plataforma.</p>
-    </article>
+                <div id="avaliacaoSemItens" class="avaliacao-vazio" hidden>
+                    Você não possui produtos disponíveis para avaliação neste momento.
+                </div>
 
-    <article class="avaliacao-card">
-        <h3>Entrega</h3>
-        <p><span class="avaliacao-status">Dentro do prazo</span></p>
-        <p>Produtos chegaram em bom estado.</p>
-    </article>
-</section>
+                <form class="avaliacao-form" id="avaliacaoForm" action="#">
 
-<form class="avaliacao-form" action="#" data-stay-on-page="true">
-    <h3>Comentário</h3>
-    <label class="avaliacao-label" for="comentarioAvaliacao">Conte como foi sua experiência</label>
-    <textarea id="comentarioAvaliacao" class="avaliacao-textarea" placeholder="Ex.: entrega rápida, produtos bem embalados e preço igual ao anunciado..."></textarea>
-    <button type="submit" class="avaliacao-submit" data-toast-success="Avaliação enviada com sucesso!">Enviar avaliação</button>
-</form>
-</main>
+                    <div class="avaliacao-select-group">
+                        <label class="avaliacao-label" for="itemPedidoSelect">
+                            Produto comprado
+                        </label>
+
+                        <select id="itemPedidoSelect" class="avaliacao-select">
+                            <option value="">Carregando produtos...</option>
+                        </select>
+                    </div>
+
+                    <section class="avaliacao-grid" aria-label="Resumo da avaliação">
+
+                        <article class="avaliacao-card">
+                            <h3>Nota geral</h3>
+
+                            <div
+                                class="avaliacao-stars"
+                                id="avaliacaoStars"
+                                role="radiogroup"
+                                aria-label="Escolha de 1 a 5 estrelas"
+                            >
+                                <button type="button" class="avaliacao-star" data-nota="1" aria-label="1 estrela">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="2" aria-label="2 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="3" aria-label="3 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="4" aria-label="4 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="5" aria-label="5 estrelas">★</button>
+                            </div>
+
+                            <p id="avaliacaoNotaTexto">Selecione sua nota</p>
+                        </article>
+
+                        <article class="avaliacao-card">
+                            <h3>Preço correto?</h3>
+
+                            <label class="avaliacao-check-option">
+                                <input type="radio" name="precoCorreto" value="true" checked>
+                                <span>Sim, preço conferido</span>
+                            </label>
+
+                            <label class="avaliacao-check-option">
+                                <input type="radio" name="precoCorreto" value="false">
+                                <span>Não, houve diferença</span>
+                            </label>
+                        </article>
+
+                        <article class="avaliacao-card">
+                            <h3>Entrega</h3>
+
+                            <label class="avaliacao-check-option">
+                                <input type="radio" name="entregaOk" value="true" checked>
+                                <span>Dentro do prazo / tudo certo</span>
+                            </label>
+
+                            <label class="avaliacao-check-option">
+                                <input type="radio" name="entregaOk" value="false">
+                                <span>Houve algum problema</span>
+                            </label>
+                        </article>
+
+                    </section>
+
+                    <h3>Comentário</h3>
+
+                    <label class="avaliacao-label" for="comentarioAvaliacao">
+                        Conte como foi sua experiência
+                    </label>
+
+                    <textarea
+                        id="comentarioAvaliacao"
+                        class="avaliacao-textarea"
+                        placeholder="Ex.: entrega rápida, produtos bem embalados e preço igual ao anunciado..."
+                    ></textarea>
+
+                    <input type="hidden" id="notaAvaliacao" value="">
+
+                    <button type="submit" class="avaliacao-submit" id="btnEnviarAvaliacao">
+                        Enviar avaliação
+                    </button>
+
+                    <p id="avaliacaoFeedback" class="avaliacao-feedback" aria-live="polite"></p>
+                </form>
+
+                <section class="avaliacoes-historico">
+                    <h2>Minhas avaliações</h2>
+
+                    <div id="avaliacoesHistorico" class="avaliacao-historico-lista">
+                        <div class="avaliacao-vazio">Carregando histórico...</div>
+                    </div>
+                </section>
+
+            </main>
         </div>
     </div>
-    <script src="../utils/ui-feedback.js"></script>
+
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
+
+    <script>
+        let itensAvaliaveis = [];
+        let avaliacoesCliente = [];
+
+        function escapar(texto) {
+            return String(texto ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function formatarData(valor) {
+            if (!valor) return "";
+
+            const data = new Date(valor);
+
+            if (Number.isNaN(data.getTime())) {
+                return "";
+            }
+
+            return data.toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        function configurarSidebar() {
+            const desktopMenuToggle = document.getElementById("desktopMenuToggle");
+            const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const mainContent = document.querySelector(".main-content");
+
+            function toggleMenu() {
+                if (window.innerWidth >= 768) {
+                    sidebar?.classList.toggle("pinned");
+                    mainContent?.classList.toggle("sidebar-pinned");
+                } else {
+                    sidebar?.classList.toggle("open");
+                    overlay?.classList.toggle("active");
+                }
+            }
+
+            desktopMenuToggle?.addEventListener("click", toggleMenu);
+            mobileMenuToggle?.addEventListener("click", toggleMenu);
+            overlay?.addEventListener("click", toggleMenu);
+        }
+
+        function atualizarBadgeCarrinho() {
+            const badge = document.getElementById("cartBadgeAvaliacao");
+
+            if (!badge) return;
+
+            const carrinho = JSON.parse(
+                localStorage.getItem("carrinho") || "[]"
+            );
+
+            const quantidade = carrinho.reduce(
+                (total, item) => total + Number(item.quantidade || 1),
+                0
+            );
+
+            badge.textContent = quantidade;
+            badge.style.display = quantidade > 0 ? "inline-flex" : "none";
+        }
+
+        function limparEstrelas() {
+            document.getElementById("notaAvaliacao").value = "";
+
+            document.querySelectorAll(".avaliacao-star").forEach(item => {
+                item.classList.remove("active");
+            });
+
+            document.getElementById("avaliacaoNotaTexto").textContent =
+                "Selecione sua nota";
+        }
+
+        function configurarEstrelas() {
+            const estrelas = document.querySelectorAll(".avaliacao-star");
+            const notaInput = document.getElementById("notaAvaliacao");
+            const texto = document.getElementById("avaliacaoNotaTexto");
+
+            estrelas.forEach(estrela => {
+                estrela.addEventListener("click", () => {
+                    const nota = Number(estrela.dataset.nota);
+
+                    notaInput.value = nota;
+
+                    estrelas.forEach(item => {
+                        const valor = Number(item.dataset.nota);
+
+                        item.classList.toggle(
+                            "active",
+                            valor <= nota
+                        );
+                    });
+
+                    texto.textContent =
+                        nota === 1
+                            ? "1 de 5 estrelas"
+                            : `${nota} de 5 estrelas`;
+                });
+            });
+        }
+
+        function renderizarItensAvaliaveis() {
+            const select = document.getElementById("itemPedidoSelect");
+            const aviso = document.getElementById("avaliacaoSemItens");
+            const form = document.getElementById("avaliacaoForm");
+            const botao = document.getElementById("btnEnviarAvaliacao");
+
+            select.innerHTML = "";
+
+            if (!itensAvaliaveis.length) {
+                select.innerHTML = `
+                    <option value="">
+                        Nenhum produto disponível para avaliação
+                    </option>
+                `;
+
+                aviso.hidden = false;
+                botao.disabled = true;
+                form.classList.add("sem-itens");
+                return;
+            }
+
+            aviso.hidden = true;
+            botao.disabled = false;
+            form.classList.remove("sem-itens");
+
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Selecione um produto";
+            select.appendChild(placeholder);
+
+            itensAvaliaveis.forEach(item => {
+                const option = document.createElement("option");
+
+                option.value = item.item_pedido_id;
+
+                option.textContent =
+                    `Pedido SW-${String(item.pedido_id).padStart(6, "0")} • ` +
+                    `${item.produto} • ${item.supermercado}`;
+
+                select.appendChild(option);
+            });
+        }
+
+        function estrelasTexto(nota) {
+            const valor = Number(nota || 0);
+            return "★".repeat(valor) + "☆".repeat(Math.max(0, 5 - valor));
+        }
+
+        function renderizarHistorico() {
+            const lista = document.getElementById("avaliacoesHistorico");
+
+            if (!avaliacoesCliente.length) {
+                lista.innerHTML = `
+                    <div class="avaliacao-vazio">
+                        Você ainda não enviou nenhuma avaliação.
+                    </div>
+                `;
+                return;
+            }
+
+            lista.innerHTML = avaliacoesCliente.map(avaliacao => `
+                <article class="avaliacao-historico-card">
+
+                    <div class="avaliacao-historico-topo">
+                        <div>
+                            <h3>${escapar(avaliacao.produto)}</h3>
+
+                            <div class="avaliacao-historico-meta">
+                                Pedido SW-${String(avaliacao.pedido_id).padStart(6, "0")}
+                                • ${escapar(avaliacao.supermercado || "")}
+                                ${avaliacao.criada_em ? ` • ${formatarData(avaliacao.criada_em)}` : ""}
+                            </div>
+                        </div>
+
+                        <div
+                            class="avaliacao-historico-stars"
+                            aria-label="${Number(avaliacao.nota)} de 5 estrelas"
+                        >
+                            ${estrelasTexto(avaliacao.nota)}
+                        </div>
+                    </div>
+
+                    <div class="avaliacao-historico-tags">
+                        <span class="avaliacao-tag ${avaliacao.preco_correto ? "" : "negativo"}">
+                            ${avaliacao.preco_correto ? "Preço correto" : "Preço diferente"}
+                        </span>
+
+                        <span class="avaliacao-tag ${avaliacao.entrega_ok ? "" : "negativo"}">
+                            ${avaliacao.entrega_ok ? "Entrega OK" : "Problema na entrega"}
+                        </span>
+                    </div>
+
+                    ${
+                        avaliacao.comentario
+                            ? `<p class="avaliacao-comentario-historico">${escapar(avaliacao.comentario)}</p>`
+                            : '<p class="avaliacao-comentario-historico">Sem comentário.</p>'
+                    }
+
+                </article>
+            `).join("");
+        }
+
+        async function carregarAvaliacoes() {
+            const feedback = document.getElementById("avaliacaoFeedback");
+
+            try {
+                const resposta = await fetch("/api/avaliacoes/");
+                const dados = await resposta.json();
+
+                if (resposta.status === 401) {
+                    feedback.textContent =
+                        "Faça login como cliente para acessar as avaliações.";
+
+                    feedback.className = "avaliacao-feedback erro";
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        dados.erro || "Não foi possível carregar as avaliações."
+                    );
+                }
+
+                itensAvaliaveis = Array.isArray(dados.itens_avaliaveis)
+                    ? dados.itens_avaliaveis
+                    : [];
+
+                avaliacoesCliente = Array.isArray(dados.avaliacoes)
+                    ? dados.avaliacoes
+                    : [];
+
+                renderizarItensAvaliaveis();
+                renderizarHistorico();
+
+            } catch (erro) {
+                console.error(erro);
+
+                feedback.textContent =
+                    "Não foi possível carregar os dados de avaliação.";
+
+                feedback.className = "avaliacao-feedback erro";
+            }
+        }
+
+        async function enviarAvaliacao(event) {
+            event.preventDefault();
+
+            const feedback = document.getElementById("avaliacaoFeedback");
+            const botao = document.getElementById("btnEnviarAvaliacao");
+
+            const itemPedidoId =
+                document.getElementById("itemPedidoSelect").value;
+
+            const nota =
+                Number(document.getElementById("notaAvaliacao").value);
+
+            const precoCorreto =
+                document.querySelector(
+                    'input[name="precoCorreto"]:checked'
+                )?.value === "true";
+
+            const entregaOk =
+                document.querySelector(
+                    'input[name="entregaOk"]:checked'
+                )?.value === "true";
+
+            const comentario =
+                document.getElementById("comentarioAvaliacao").value.trim();
+
+            if (!itemPedidoId) {
+                feedback.textContent =
+                    "Selecione o produto que deseja avaliar.";
+
+                feedback.className =
+                    "avaliacao-feedback erro";
+
+                return;
+            }
+
+            if (!nota) {
+                feedback.textContent =
+                    "Escolha uma nota de 1 a 5 estrelas.";
+
+                feedback.className =
+                    "avaliacao-feedback erro";
+
+                return;
+            }
+
+            botao.disabled = true;
+            botao.textContent = "Enviando avaliação...";
+
+            try {
+                const resposta = await fetch("/api/avaliacoes/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        item_pedido_id: Number(itemPedidoId),
+                        nota: nota,
+                        preco_correto: precoCorreto,
+                        entrega_ok: entregaOk,
+                        comentario: comentario
+                    })
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        dados.erro || "Não foi possível enviar a avaliação."
+                    );
+                }
+
+                feedback.textContent =
+                    dados.mensagem || "Avaliação enviada com sucesso.";
+
+                feedback.className =
+                    "avaliacao-feedback sucesso";
+
+                document.getElementById("comentarioAvaliacao").value = "";
+                document.getElementById("itemPedidoSelect").value = "";
+
+                limparEstrelas();
+
+                document.querySelector(
+                    'input[name="precoCorreto"][value="true"]'
+                ).checked = true;
+
+                document.querySelector(
+                    'input[name="entregaOk"][value="true"]'
+                ).checked = true;
+
+                await carregarAvaliacoes();
+
+            } catch (erro) {
+                console.error(erro);
+
+                feedback.textContent = erro.message;
+
+                feedback.className =
+                    "avaliacao-feedback erro";
+
+            } finally {
+                botao.disabled = false;
+                botao.textContent = "Enviar avaliação";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            configurarSidebar();
+            atualizarBadgeCarrinho();
+            configurarEstrelas();
+
+            document
+                .getElementById("avaliacaoForm")
+                ?.addEventListener("submit", enviarAvaliacao);
+
+            carregarAvaliacoes();
+        });
+    </script>
 </body>
 </html>
