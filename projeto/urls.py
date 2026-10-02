@@ -57,6 +57,10 @@ def checkout(request):
     return render(request, 'checkout.html')
 
 
+def pedidos(request):
+    return render(request, 'pedidos.html')
+
+
 urlpatterns = [
     # Administração
     path('admin/', admin.site.urls),
@@ -106,6 +110,10 @@ urlpatterns = [
     path('checkout.html',
          checkout,
          name='checkout'),
+
+    path('pedidos.html',
+         pedidos,
+         name='pedidos'),
 
     # =========================
     # API - SUPERMERCADO

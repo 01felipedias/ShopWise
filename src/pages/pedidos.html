@@ -1,11 +1,190 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Pedidos</title>
-    <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/pedidos.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/pedidos.css' %}">
+
+    <style>
+        .orders-status-group {
+            margin: 24px 0 32px;
+        }
+
+        .orders-status-title {
+            margin: 0 0 14px;
+            font-size: 20px;
+            font-weight: 900;
+            color: #07152b;
+        }
+
+        .orders-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .order-card-real {
+            background: #fff;
+            border: 1px solid #dbe7e2;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, .04);
+            display: grid;
+            gap: 14px;
+        }
+
+        .order-card-top,
+        .order-card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .order-number {
+            font-size: 17px;
+            font-weight: 900;
+            color: #07152b;
+        }
+
+        .order-date {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #6b7b7b;
+            font-weight: 700;
+        }
+
+        .order-status-badge {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            background: #eef4f2;
+            color: #435451;
+        }
+
+        .order-status-badge.aguardando_pagamento {
+            background: #fff6dd;
+            color: #8a6500;
+        }
+
+        .order-status-badge.confirmado,
+        .order-status-badge.preparando,
+        .order-status-badge.enviado,
+        .order-status-badge.concluido {
+            background: #eafaf1;
+            color: #1f8a50;
+        }
+
+        .order-status-badge.cancelado {
+            background: #fdecea;
+            color: #b02a37;
+        }
+
+        .order-products {
+            display: grid;
+            gap: 7px;
+            background: #f7faf9;
+            border: 1px solid #e7efec;
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .order-product-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 13px;
+        }
+
+        .order-product-line span:first-child {
+            color: #31423f;
+            font-weight: 700;
+        }
+
+        .order-product-line strong {
+            white-space: nowrap;
+        }
+
+        .order-meta {
+            display: flex;
+            gap: 8px 16px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #667575;
+            font-weight: 700;
+        }
+
+        .order-total-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .order-total-box span {
+            color: #667575;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .order-total-box strong {
+            color: #1f8a50;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .btn-order-details {
+            border: none;
+            border-radius: 11px;
+            background: var(--primary);
+            color: #fff;
+            padding: 11px 15px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .btn-order-details:hover {
+            background: var(--primary-dark);
+        }
+
+        .orders-empty,
+        .orders-loading,
+        .orders-error {
+            background: #fff;
+            border: 1px dashed #cfdcd7;
+            border-radius: 14px;
+            padding: 18px;
+            color: #667575;
+            font-weight: 700;
+        }
+
+        .orders-error a {
+            color: var(--primary-dark);
+            font-weight: 900;
+        }
+
+        @media (max-width: 600px) {
+            .order-card-real {
+                padding: 14px;
+            }
+
+            .order-card-bottom,
+            .btn-order-details {
+                width: 100%;
+            }
+
+            .btn-order-details {
+                text-align: center;
+            }
+        }
+    </style>
+
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -17,7 +196,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </div>
                 <a href="feedproduto.html" aria-label="Ir para a página inicial">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                    <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                 </a>
             </div>
             <nav class="sidebar-nav" aria-label="Menu principal">
@@ -36,7 +215,7 @@
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </div>
                     <a href="feedproduto.html" class="mobile-logo-area">
-                        <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                        <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                     </a>
                     <strong class="page-navbar-title">Meus Pedidos</strong>
                     <div class="location">
@@ -48,7 +227,7 @@
                     </div>
                     <a href="carrinho.html" class="cart-icon" aria-label="Ir para o carrinho">
                         <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                        <span class="cart-badge">3</span>
+                        <span class="cart-badge" id="cartBadgePedidos">0</span>
                     </a>
                 </div></div>
             </header>
@@ -66,13 +245,13 @@
                     <div class="orders-list" id="listaAndamento"></div>
                 </section>
 
-                <section class="orders-status-group" aria-label="Pedidos entregues aguardando avaliação">
-                    <h2 class="orders-status-title">Pedidos entregues</h2>
+                <section class="orders-status-group" aria-label="Pedidos concluídos aguardando avaliação">
+                    <h2 class="orders-status-title">Pedidos concluídos</h2>
                     <div class="orders-list" id="listaEntregue"></div>
                 </section>
 
-                <section class="orders-status-group" aria-label="Pedidos finalizados">
-                    <h2 class="orders-status-title">Pedidos finalizados</h2>
+                <section class="orders-status-group" aria-label="Pedidos cancelados">
+                    <h2 class="orders-status-title">Pedidos cancelados</h2>
                     <div class="orders-list" id="listaFinalizado"></div>
                 </section>
 
@@ -87,8 +266,8 @@
         <div class="modal-ped-header">
           <div class="modal-ped-icon">🛍️</div>
           <div>
-            <h2 id="acompTitulo">Pedido SW-482913</h2>
-            <p id="acompSubtitulo">Realizado às 14:32 • Super Quaresma</p>
+            <h2 id="acompTitulo">Pedido</h2>
+            <p id="acompSubtitulo">Carregando informações do pedido...</p>
           </div>
           <button class="modal-close-ped" onclick="fecharAcomp()">✕</button>
         </div>
@@ -101,19 +280,19 @@
             <div class="stepper" id="acompStepper">
               <div class="step" id="acomp-step-0">
                 <div class="step-circle">✅</div>
-                <div class="step-label">Pedido confirmado</div>
+                <div class="step-label">Pagamento</div>
               </div>
               <div class="step" id="acomp-step-1">
                 <div class="step-circle">📦</div>
-                <div class="step-label">Separando produtos</div>
+                <div class="step-label">Confirmado</div>
               </div>
               <div class="step" id="acomp-step-2">
                 <div class="step-circle">🚚</div>
-                <div class="step-label">Saiu para entrega</div>
+                <div class="step-label">Preparando</div>
               </div>
               <div class="step" id="acomp-step-3">
                 <div class="step-circle">🏠</div>
-                <div class="step-label">Entregue</div>
+                <div class="step-label" id="acompUltimoPasso">Entrega</div>
               </div>
               <div class="stepper-progress" id="acompProgress"></div>
             </div>
@@ -140,8 +319,8 @@
             <div class="cliente-card">
               <div class="cliente-avatar" style="background:#3498db;">📍</div>
               <div class="cliente-info">
-                <h4 id="acompEndereco">Rua das Palmeiras, 45 — Centro</h4>
-                <p id="acompMercado" style="color:#777; font-size:13px; margin-top:4px;">Super Quaresma • R. das Flores, 150</p>
+                <h4 id="acompEndereco">Endereço do pedido</h4>
+                <p id="acompMercado" style="color:#777; font-size:13px; margin-top:4px;">Supermercado do pedido</p>
               </div>
             </div>
           </div>
@@ -150,9 +329,9 @@
           <div style="background:#f4f7f6; border:1px solid #e1e1e1; border-radius:12px; padding:16px 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-size:15px; font-weight:700; color:#333;">Total pago</span>
-              <span style="font-size:22px; font-weight:900; color:#27ae60;" id="acompTotal">R$ 22,97</span>
+              <span style="font-size:22px; font-weight:900; color:#27ae60;" id="acompTotal">R$ 0,00</span>
             </div>
-            <div style="font-size:12px; color:#777; margin-top:4px;" id="acompPagamento">PIX aprovado pelo ShopWise Pay Demo.</div>
+            <div style="font-size:12px; color:#777; margin-top:4px;" id="acompPagamento">Forma de pagamento</div>
           </div>
 
         </div>
@@ -170,9 +349,105 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <script src="../utils/ui-feedback.js"></script>
-    <script src="../utils/acompanhar-pedido.js"></script>
     <script>
+        let pedidosCliente = [];
+        let pedidoAtivoCliente = null;
+
+        const statusTexto = {
+            aguardando_pagamento: "Aguardando pagamento",
+            pendente: "Pendente",
+            confirmado: "Confirmado",
+            preparando: "Em preparação",
+            enviado: "Saiu para entrega",
+            concluido: "Concluído",
+            cancelado: "Cancelado"
+        };
+
+        const pagamentoTexto = {
+            pix: "PIX",
+            credito: "Cartão de crédito",
+            debito: "Cartão de débito",
+            entrega: "Pagamento na entrega"
+        };
+
+        const progressoStatus = {
+            aguardando_pagamento: 0,
+            pendente: 1,
+            confirmado: 1,
+            preparando: 2,
+            enviado: 3,
+            concluido: 3,
+            cancelado: 0
+        };
+
+        function dinheiro(valor) {
+            return Number(valor || 0).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            });
+        }
+
+        function escapar(texto) {
+            return String(texto ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function dataPedido(valor) {
+            if (!valor) return "Data não informada";
+
+            const data = new Date(valor);
+
+            if (Number.isNaN(data.getTime())) {
+                return "Data não informada";
+            }
+
+            return data.toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        function numeroPedido(id) {
+            return `SW-${String(id).padStart(6, "0")}`;
+        }
+
+        function mercadosPedido(pedido) {
+            const nomes = [
+                ...new Set(
+                    (pedido.itens || [])
+                        .map(item => item.supermercado)
+                        .filter(Boolean)
+                )
+            ];
+
+            if (!nomes.length) return "Supermercado não informado";
+            return nomes.join(", ");
+        }
+
+        function atualizarBadgeCarrinho() {
+            const badge = document.getElementById("cartBadgePedidos");
+            if (!badge) return;
+
+            const carrinho = JSON.parse(
+                localStorage.getItem("carrinho") || "[]"
+            );
+
+            const quantidade = carrinho.reduce(
+                (total, item) => total + Number(item.quantidade || 1),
+                0
+            );
+
+            badge.textContent = quantidade;
+            badge.style.display = quantidade ? "inline-flex" : "none";
+        }
+
         function configurarSidebar() {
             const desktopMenuToggle = document.getElementById("desktopMenuToggle");
             const mobileMenuToggle = document.getElementById("mobileMenuToggle");
@@ -182,19 +457,368 @@
 
             function toggleMenu() {
                 if (window.innerWidth >= 768) {
-                    sidebar.classList.toggle("pinned");
-                    mainContent.classList.toggle("sidebar-pinned");
+                    sidebar?.classList.toggle("pinned");
+                    mainContent?.classList.toggle("sidebar-pinned");
                 } else {
-                    sidebar.classList.toggle("open");
-                    overlay.classList.toggle("active");
+                    sidebar?.classList.toggle("open");
+                    overlay?.classList.toggle("active");
                 }
             }
 
-            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
-            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
-            if (overlay) overlay.addEventListener("click", toggleMenu);
+            desktopMenuToggle?.addEventListener("click", toggleMenu);
+            mobileMenuToggle?.addEventListener("click", toggleMenu);
+            overlay?.addEventListener("click", toggleMenu);
         }
-        document.addEventListener("DOMContentLoaded", configurarSidebar);
+
+        function mensagemVazia(texto) {
+            return `<div class="orders-empty">${escapar(texto)}</div>`;
+        }
+
+        function criarCardPedido(pedido) {
+            const itens = pedido.itens || [];
+            const previewItens = itens.slice(0, 3).map(item => `
+                <div class="order-product-line">
+                    <span>${Number(item.quantidade || 0)}x ${escapar(item.nome)}</span>
+                    <strong>${dinheiro(item.subtotal)}</strong>
+                </div>
+            `).join("");
+
+            const restante = itens.length > 3
+                ? `<div class="order-product-line">
+                       <span>+ ${itens.length - 3} item(ns)</span>
+                       <strong></strong>
+                   </div>`
+                : "";
+
+            return `
+                <article class="order-card-real">
+                    <div class="order-card-top">
+                        <div>
+                            <div class="order-number">Pedido ${numeroPedido(pedido.id)}</div>
+                            <div class="order-date">${dataPedido(pedido.criado_em)}</div>
+                        </div>
+                        <span class="order-status-badge ${escapar(pedido.status)}">
+                            ${escapar(statusTexto[pedido.status] || pedido.status)}
+                        </span>
+                    </div>
+
+                    <div class="order-products">
+                        ${previewItens || '<span>Nenhum item encontrado.</span>'}
+                        ${restante}
+                    </div>
+
+                    <div class="order-meta">
+                        <span>🏪 ${escapar(mercadosPedido(pedido))}</span>
+                        <span>💳 ${escapar(pagamentoTexto[pedido.forma_pagamento] || pedido.forma_pagamento)}</span>
+                        <span>📦 ${pedido.tipo_entrega === "pickup" ? "Retirada" : "Entrega"}</span>
+                    </div>
+
+                    <div class="order-card-bottom">
+                        <div class="order-total-box">
+                            <span>Total</span>
+                            <strong>${dinheiro(pedido.total)}</strong>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn-order-details"
+                            onclick="abrirAcompanhamento(${Number(pedido.id)})"
+                        >
+                            Ver detalhes
+                        </button>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderizarPedidos() {
+            const andamento = document.getElementById("listaAndamento");
+            const concluidos = document.getElementById("listaEntregue");
+            const cancelados = document.getElementById("listaFinalizado");
+
+            const grupos = {
+                andamento: pedidosCliente.filter(p =>
+                    [
+                        "aguardando_pagamento",
+                        "pendente",
+                        "confirmado",
+                        "preparando",
+                        "enviado"
+                    ].includes(p.status)
+                ),
+                concluidos: pedidosCliente.filter(p => p.status === "concluido"),
+                cancelados: pedidosCliente.filter(p => p.status === "cancelado")
+            };
+
+            andamento.innerHTML = grupos.andamento.length
+                ? grupos.andamento.map(criarCardPedido).join("")
+                : mensagemVazia("Nenhum pedido em andamento.");
+
+            concluidos.innerHTML = grupos.concluidos.length
+                ? grupos.concluidos.map(criarCardPedido).join("")
+                : mensagemVazia("Nenhum pedido concluído.");
+
+            cancelados.innerHTML = grupos.cancelados.length
+                ? grupos.cancelados.map(criarCardPedido).join("")
+                : mensagemVazia("Nenhum pedido cancelado.");
+        }
+
+        async function atualizarPixPendentes(pedidos) {
+            const pendentes = pedidos.filter(
+                pedido =>
+                    pedido.status === "aguardando_pagamento" &&
+                    pedido.forma_pagamento === "pix"
+            );
+
+            await Promise.all(
+                pendentes.map(async pedido => {
+                    try {
+                        const resposta = await fetch(
+                            `/api/pedidos/${pedido.id}/status-pix/`
+                        );
+
+                        if (!resposta.ok) return;
+
+                        const dados = await resposta.json();
+
+                        if (dados.pedido_status) {
+                            pedido.status = dados.pedido_status;
+                        }
+                    } catch (erro) {
+                        console.warn(
+                            `Não foi possível atualizar o PIX do pedido ${pedido.id}.`,
+                            erro
+                        );
+                    }
+                })
+            );
+        }
+
+        async function carregarPedidos() {
+            const listas = [
+                document.getElementById("listaAndamento"),
+                document.getElementById("listaEntregue"),
+                document.getElementById("listaFinalizado")
+            ];
+
+            listas.forEach(lista => {
+                lista.innerHTML = '<div class="orders-loading">Carregando pedidos...</div>';
+            });
+
+            try {
+                const resposta = await fetch("/api/pedidos/");
+                const dados = await resposta.json();
+
+                if (resposta.status === 401) {
+                    listas.forEach(lista => lista.innerHTML = "");
+                    document.getElementById("listaAndamento").innerHTML = `
+                        <div class="orders-error">
+                            Você precisa entrar como cliente para ver seus pedidos.
+                            <a href="login.html">Ir para o login</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(dados.erro || "Não foi possível carregar os pedidos.");
+                }
+
+                pedidosCliente = Array.isArray(dados) ? dados : [];
+
+                await atualizarPixPendentes(pedidosCliente);
+
+                renderizarPedidos();
+            } catch (erro) {
+                console.error(erro);
+
+                listas.forEach(lista => lista.innerHTML = "");
+
+                document.getElementById("listaAndamento").innerHTML = `
+                    <div class="orders-error">
+                        Não foi possível carregar seus pedidos agora.
+                    </div>
+                `;
+            }
+        }
+
+        function abrirAcompanhamento(id) {
+            pedidoAtivoCliente = pedidosCliente.find(
+                pedido => Number(pedido.id) === Number(id)
+            );
+
+            if (!pedidoAtivoCliente) return;
+
+            renderizarAcompanhamento();
+
+            document
+                .getElementById("modalAcompOverlay")
+                .classList.add("active");
+
+            document.body.style.overflow = "hidden";
+        }
+
+        function fecharAcomp() {
+            document
+                .getElementById("modalAcompOverlay")
+                .classList.remove("active");
+
+            document.body.style.overflow = "";
+        }
+
+        function fecharAcompOverlay(evento) {
+            if (evento.target === document.getElementById("modalAcompOverlay")) {
+                fecharAcomp();
+            }
+        }
+
+        function informacaoStatus(pedido) {
+            const info = {
+                aguardando_pagamento: {
+                    icone: "💳",
+                    label: "Aguardando pagamento PIX",
+                    desc: "A cobrança foi criada e o pedido será confirmado após a aprovação do pagamento."
+                },
+                pendente: {
+                    icone: "⏳",
+                    label: "Pedido pendente",
+                    desc: "Seu pedido foi recebido e aguarda confirmação."
+                },
+                confirmado: {
+                    icone: "✅",
+                    label: "Pedido confirmado",
+                    desc: "Seu pedido está confirmado e seguirá para preparação."
+                },
+                preparando: {
+                    icone: "📦",
+                    label: "Pedido em preparação",
+                    desc: "Os produtos do seu pedido estão sendo separados."
+                },
+                enviado: {
+                    icone: "🚚",
+                    label: "Pedido saiu para entrega",
+                    desc: "Seu pedido está a caminho."
+                },
+                concluido: {
+                    icone: "🏠",
+                    label: "Pedido concluído",
+                    desc: "O pedido foi concluído com sucesso."
+                },
+                cancelado: {
+                    icone: "❌",
+                    label: "Pedido cancelado",
+                    desc: "Este pedido foi cancelado."
+                }
+            };
+
+            return info[pedido.status] || {
+                icone: "📦",
+                label: statusTexto[pedido.status] || "Status do pedido",
+                desc: "Acompanhe as atualizações do seu pedido."
+            };
+        }
+
+        function renderizarAcompanhamento() {
+            const pedido = pedidoAtivoCliente;
+            if (!pedido) return;
+
+            const mercados = mercadosPedido(pedido);
+            const indice = progressoStatus[pedido.status] ?? 0;
+            const progresso = ["0%", "33%", "66%", "100%"][indice];
+            const info = informacaoStatus(pedido);
+
+            document.getElementById("acompTitulo").textContent =
+                `Pedido ${numeroPedido(pedido.id)}`;
+
+            document.getElementById("acompSubtitulo").textContent =
+                `${dataPedido(pedido.criado_em)} • ${mercados}`;
+
+            for (let i = 0; i < 4; i++) {
+                const passo = document.getElementById(`acomp-step-${i}`);
+                passo.classList.remove("done", "active");
+
+                if (pedido.status === "cancelado") continue;
+
+                if (i < indice || pedido.status === "concluido") {
+                    passo.classList.add("done");
+                } else if (i === indice) {
+                    passo.classList.add("active");
+                }
+            }
+
+            document.getElementById("acompProgress").style.width =
+                pedido.status === "cancelado" ? "0%" : progresso;
+
+            document.getElementById("acompUltimoPasso").textContent =
+                pedido.tipo_entrega === "pickup" ? "Retirada" : "Entrega";
+
+            document.getElementById("acompStatusIcone").textContent =
+                info.icone;
+
+            document.getElementById("acompStatusLabel").textContent =
+                info.label;
+
+            document.getElementById("acompStatusDesc").textContent =
+                info.desc;
+
+            const lista = document.getElementById("acompItensList");
+
+            lista.innerHTML = (pedido.itens || []).map(item => `
+                <div class="item-row">
+                    <div
+                        class="item-img"
+                        style="display:grid;place-items:center;font-size:20px;"
+                        aria-hidden="true"
+                    >📦</div>
+
+                    <div class="item-info">
+                        <h4>${escapar(item.nome)}</h4>
+                        <span>
+                            Qtd: ${Number(item.quantidade || 0)}
+                            • ${escapar(item.supermercado || "")}
+                        </span>
+                    </div>
+
+                    <div class="item-preco">
+                        ${dinheiro(item.subtotal)}
+                    </div>
+                </div>
+            `).join("");
+
+            const endereco = pedido.tipo_entrega === "pickup"
+                ? "Retirada no supermercado"
+                : (pedido.endereco_entrega || "Endereço não informado");
+
+            document.getElementById("acompEndereco").textContent =
+                endereco;
+
+            document.getElementById("acompMercado").textContent =
+                mercados;
+
+            document.getElementById("acompTotal").textContent =
+                dinheiro(pedido.total);
+
+            const desconto = Number(pedido.desconto || 0);
+            const pagamento =
+                pagamentoTexto[pedido.forma_pagamento] ||
+                pedido.forma_pagamento;
+
+            document.getElementById("acompPagamento").textContent =
+                desconto > 0
+                    ? `${pagamento} • Desconto: ${dinheiro(desconto)}`
+                    : pagamento;
+        }
+
+        document.addEventListener("keydown", evento => {
+            if (evento.key === "Escape") fecharAcomp();
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            configurarSidebar();
+            atualizarBadgeCarrinho();
+            carregarPedidos();
+        });
     </script>
+
 </body>
 </html>
