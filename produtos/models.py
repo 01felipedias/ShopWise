@@ -280,3 +280,76 @@ class Pagamento(models.Model):
 
     def __str__(self):
         return f'Pagamento do Pedido #{self.pedido.id}'
+
+class AlertaPreco(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='alertas_preco'
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name='alertas_preco'
+    )
+
+    preco_alvo = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    ativo = models.BooleanField(default=True)
+
+    atingido = models.BooleanField(default=False)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['cliente', 'produto'],
+                name='alerta_unico_cliente_produto'
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f'{self.cliente.nome} - '
+            f'{self.produto.nome} - '
+            f'R$ {self.preco_alvo}'
+        )
+
+
+class Notificacao(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='notificacoes'
+    )
+
+    alerta = models.ForeignKey(
+        AlertaPreco,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='notificacoes'
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    titulo = models.CharField(max_length=150)
+    mensagem = models.TextField()
+
+    lida = models.BooleanField(default=False)
+
+    criada_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.cliente.nome} - {self.titulo}'

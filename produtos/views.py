@@ -16,6 +16,8 @@ from .models import (
     Pedido,
     ItemPedido,
     Pagamento,
+    AlertaPreco,
+    Notificacao,
 )
 
 from .mercado_pago import (
@@ -151,6 +153,8 @@ class ProdutoDetalhe(APIView):
         if erro is not None:
             return erro
 
+        preco_anterior = produto.preco
+
         dados = request.data.copy()
         dados['supermercado'] = request.session['supermercado_id']
 
@@ -160,10 +164,62 @@ class ProdutoDetalhe(APIView):
         )
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            with transaction.atomic():
+                produto_atualizado = serializer.save()
 
-        return Response(serializer.errors, status=400)
+                preco_baixou = (
+                    produto_atualizado.preco < preco_anterior
+                )
+
+                if preco_baixou:
+                    alertas = (
+                        AlertaPreco.objects
+                        .select_for_update()
+                        .filter(
+                            produto=produto_atualizado,
+                            ativo=True,
+                            atingido=False,
+                            preco_alvo__gte=produto_atualizado.preco
+                        )
+                        .select_related('cliente')
+                    )
+
+                    for alerta in alertas:
+                        Notificacao.objects.create(
+                            cliente=alerta.cliente,
+                            alerta=alerta,
+                            produto=produto_atualizado,
+                            titulo='Preço baixou!',
+                            mensagem=(
+                                f'O produto {produto_atualizado.nome} '
+                                f'chegou a R$ '
+                                f'{produto_atualizado.preco:.2f}. '
+                                f'Seu preço desejado era R$ '
+                                f'{alerta.preco_alvo:.2f}.'
+                            )
+                        )
+
+                        alerta.atingido = True
+                        alerta.ativo = False
+
+                        alerta.save(
+                            update_fields=[
+                                'atingido',
+                                'ativo',
+                                'atualizado_em',
+                            ]
+                        )
+
+            return Response(
+                ProdutoSerializer(
+                    produto_atualizado
+                ).data
+            )
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
 
     def delete(self, request, pk):
         produto, erro = self.obter_produto(request, pk)
@@ -822,4 +878,236 @@ class StatusPagamentoPix(APIView):
                 'order_status': status_order,
                 'order_status_detail': detalhe_order,
             }
+        })
+
+
+class AlertaPrecoList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        alertas = (
+            AlertaPreco.objects
+            .filter(cliente_id=cliente_id)
+            .select_related(
+                'produto',
+                'produto__supermercado'
+            )
+            .order_by('-criado_em')
+        )
+
+        dados = []
+
+        for alerta in alertas:
+            produto = alerta.produto
+
+            dados.append({
+                'id': alerta.id,
+                'preco_alvo': str(alerta.preco_alvo),
+                'ativo': alerta.ativo,
+                'atingido': alerta.atingido,
+                'criado_em': alerta.criado_em,
+                'produto': {
+                    'id': produto.id,
+                    'nome': produto.nome,
+                    'categoria': produto.categoria,
+                    'preco_atual': str(produto.preco),
+                    'estoque': produto.estoque,
+                    'supermercado': (
+                        produto.supermercado.nome
+                        if produto.supermercado
+                        else ''
+                    ),
+                }
+            })
+
+        return Response(dados)
+
+    def post(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        produto_id = request.data.get('produto_id')
+        preco_alvo = request.data.get('preco_alvo')
+
+        if not produto_id:
+            return Response(
+                {'erro': 'Informe o produto.'},
+                status=400
+            )
+
+        if preco_alvo in [None, '']:
+            return Response(
+                {'erro': 'Informe o preço desejado.'},
+                status=400
+            )
+
+        try:
+            preco_alvo = Decimal(str(preco_alvo))
+        except Exception:
+            return Response(
+                {'erro': 'Preço desejado inválido.'},
+                status=400
+            )
+
+        if preco_alvo <= 0:
+            return Response(
+                {
+                    'erro': (
+                        'O preço desejado deve ser '
+                        'maior que zero.'
+                    )
+                },
+                status=400
+            )
+
+        produto = get_object_or_404(
+            Produto.objects.select_related(
+                'supermercado'
+            ),
+            pk=produto_id
+        )
+
+        alerta, criado = AlertaPreco.objects.get_or_create(
+            cliente_id=cliente_id,
+            produto=produto,
+            defaults={
+                'preco_alvo': preco_alvo,
+                'ativo': True,
+                'atingido': False,
+            }
+        )
+
+        if not criado:
+            alerta.preco_alvo = preco_alvo
+            alerta.ativo = True
+            alerta.atingido = False
+            alerta.save(
+                update_fields=[
+                    'preco_alvo',
+                    'ativo',
+                    'atingido',
+                    'atualizado_em',
+                ]
+            )
+
+        mensagem = (
+            'Alerta criado com sucesso.'
+            if criado
+            else 'Alerta atualizado com sucesso.'
+        )
+
+        return Response(
+            {
+                'mensagem': mensagem,
+                'alerta': {
+                    'id': alerta.id,
+                    'produto_id': produto.id,
+                    'produto': produto.nome,
+                    'preco_atual': str(produto.preco),
+                    'preco_alvo': str(alerta.preco_alvo),
+                    'ativo': alerta.ativo,
+                }
+            },
+            status=201 if criado else 200
+        )
+
+
+class NotificacaoList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        notificacoes = (
+            Notificacao.objects
+            .filter(cliente_id=cliente_id)
+            .select_related(
+                'produto',
+                'alerta'
+            )
+            .order_by('-criada_em')
+        )
+
+        dados = []
+
+        for notificacao in notificacoes:
+            dados.append({
+                'id': notificacao.id,
+                'titulo': notificacao.titulo,
+                'mensagem': notificacao.mensagem,
+                'lida': notificacao.lida,
+                'criada_em': notificacao.criada_em,
+                'produto_id': (
+                    notificacao.produto.id
+                    if notificacao.produto
+                    else None
+                ),
+                'produto': (
+                    notificacao.produto.nome
+                    if notificacao.produto
+                    else None
+                ),
+                'alerta_id': (
+                    notificacao.alerta.id
+                    if notificacao.alerta
+                    else None
+                ),
+            })
+
+        nao_lidas = notificacoes.filter(
+            lida=False
+        ).count()
+
+        return Response({
+            'nao_lidas': nao_lidas,
+            'notificacoes': dados,
+        })
+
+
+class NotificacaoMarcarLida(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, notificacao_id):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        notificacao = get_object_or_404(
+            Notificacao,
+            pk=notificacao_id,
+            cliente_id=cliente_id
+        )
+
+        notificacao.lida = True
+        notificacao.save(
+            update_fields=['lida']
+        )
+
+        return Response({
+            'mensagem': 'Notificação marcada como lida.',
+            'id': notificacao.id,
+            'lida': notificacao.lida,
         })

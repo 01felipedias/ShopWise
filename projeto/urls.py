@@ -14,6 +14,9 @@ from produtos.views import (
     PedidoList,
     CupomList,
     StatusPagamentoPix,
+    AlertaPrecoList,
+    NotificacaoList,
+    NotificacaoMarcarLida,
 )
 
 
@@ -59,6 +62,10 @@ def checkout(request):
 
 def pedidos(request):
     return render(request, 'pedidos.html')
+
+
+def alerta_preco(request):
+    return render(request, 'AlertaPreco.html')
 
 
 urlpatterns = [
@@ -115,6 +122,11 @@ urlpatterns = [
          pedidos,
          name='pedidos'),
 
+    path('AlertaPreco.html',
+         alerta_preco,
+         name='alerta_preco'),
+
+
     # =========================
     # API - SUPERMERCADO
     # =========================
@@ -165,5 +177,17 @@ urlpatterns = [
     path(
         'api/login-cliente/',
         LoginCliente.as_view()
+    ),
+    path(
+        'api/alertas-preco/',
+        AlertaPrecoList.as_view()
+    ),
+    path(
+        'api/notificacoes/',
+        NotificacaoList.as_view()
+    ),
+    path(
+        'api/notificacoes/<int:notificacao_id>/marcar-lida/',
+        NotificacaoMarcarLida.as_view()
     ),
 ]

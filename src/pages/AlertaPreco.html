@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,8 +7,51 @@
     <title>Alertas de Preço - ShopWise</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/alerta.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/alerta.css' %}">
+
+    <style>
+        .nav-actions{display:flex;align-items:center;gap:14px}
+        .notification-bell{position:relative;width:42px;height:42px;border:0;border-radius:12px;background:rgba(255,255,255,.18);color:#fff;display:grid;place-items:center;font-size:18px;cursor:pointer}
+        .notification-bell:hover{background:rgba(255,255,255,.28)}
+        .notification-badge{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#ef4444;color:#fff;border:2px solid #2ecc71;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+        .shopwise-notifications-section,.shopwise-alerts-section{margin:0 0 34px}
+        .alerts-section-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:15px}
+        .alerts-section-heading h2{margin:0 0 5px;font-size:21px;color:#1f2937}
+        .alerts-section-heading p{margin:0;color:#6b7280;font-size:14px}
+        .section-counter{white-space:nowrap;background:#ecfdf5;color:#15803d;border:1px solid #bbf7d0;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800}
+        .notifications-list{display:grid;gap:12px}
+        .notification-card{background:#fff;border:1px solid #dce8e3;border-radius:16px;padding:16px;display:grid;grid-template-columns:44px 1fr auto;gap:13px;align-items:start;box-shadow:0 6px 18px rgba(0,0,0,.04)}
+        .notification-card.unread{border-color:#86efac;background:#f0fdf4}
+        .notification-icon{width:44px;height:44px;border-radius:13px;background:#dcfce7;color:#15803d;display:grid;place-items:center;font-size:20px}
+        .notification-content h3{margin:0 0 5px;font-size:15px;color:#1f2937}
+        .notification-content p{margin:0;color:#4b5563;line-height:1.45;font-size:13px}
+        .notification-meta{display:inline-block;margin-top:7px;color:#81908a;font-size:11px;font-weight:600}
+        .btn-mark-read{border:0;border-radius:10px;padding:9px 11px;background:#2ecc71;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+        .btn-mark-read:hover{background:#27ae60}
+        .notification-read-label{color:#728079;font-size:12px;font-weight:700;padding-top:7px}
+        .alerts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+        .alert-card-item.real-alert{background:#fff;border:1px solid #dce8e3;border-radius:16px;padding:17px;box-shadow:0 6px 18px rgba(0,0,0,.04)}
+        .alert-product-placeholder{width:56px;height:56px;border-radius:14px;background:#ecfdf5;color:#15803d;display:grid;place-items:center;font-size:22px;flex:0 0 56px}
+        .alert-card-body.real-body{display:flex;gap:13px;align-items:center}
+        .alert-product-info{min-width:0}
+        .alert-product-title{margin:0 0 4px}
+        .alert-market{display:block;font-size:12px;color:#7b8984;margin-top:3px}
+        .alert-current-price.real-price{margin:8px 0 0;font-size:13px;color:#374151}
+        .alert-current-price.real-price strong{color:#15803d;font-size:16px}
+        .alert-price-section.real-target{margin-top:14px;border-top:1px solid #edf2f0;padding-top:13px}
+        .alert-status{margin-top:12px;display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:#fff7ed;color:#9a5b13;font-size:12px;font-weight:800}
+        .alert-status.reached{background:#dcfce7;color:#15803d}
+        .alert-loading,.alert-empty,.alert-error{background:#fff;border:1px dashed #cfdad6;border-radius:14px;padding:18px;color:#6b7280;font-size:14px;font-weight:600}
+        .alert-error a{color:#15803d;font-weight:800}
+        @media(max-width:720px){
+            .alerts-section-heading{align-items:flex-start;flex-direction:column}
+            .notification-card{grid-template-columns:42px 1fr}
+            .notification-card>:last-child{grid-column:2;justify-self:start}
+            .location{display:none}
+        }
+    </style>
+
 </head>
 <body>
 
@@ -25,7 +69,7 @@
                     </svg>
                 </div>
                 <a href="feedproduto.html" aria-label="Ir para a página inicial">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                    <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                 </a>
             </div>
 
@@ -87,7 +131,7 @@
                         </div>
 
                         <a href="feedproduto.html" class="mobile-logo-area">
-                            <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
+                            <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="mobile-logo-img" onerror="this.onerror=null; this.src='https://placehold.co/120x35/2ECC71/ffffff?text=ShopWise';">
                         </a>
 
                         <div class="results-info-area">
@@ -95,6 +139,11 @@
                         </div>
 
                         <div class="nav-actions">
+                            <button type="button" class="notification-bell" id="notificationBell" aria-label="Ver notificações" title="Notificações">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="notification-badge" id="notificationBadge" hidden>0</span>
+                            </button>
+
                             <div class="location">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -109,102 +158,72 @@
 
             <main class="page-container" role="main">
                 <section class="feed-section-header">
-                    <h2>Alertas Criados</h2>
-                    <p>Gerencie seus limites de monitoramento de preços.</p>
+                    <h2>Alertas de Preço</h2>
+                    <p>Acompanhe os produtos que você escolheu e veja quando o preço desejado for atingido.</p>
                 </section>
 
-                <div class="alerts-grid" id="alertsList">
-                    
-                    <div class="alert-card-item">
-                        <div class="alert-card-body">
-                            <div class="alert-product-img">
-                                <img src="../assets/feijaoPilao.jpeg" alt="Feijão Pilão">
-                            </div>
-                            <div class="alert-product-info">
-                                <h3 class="alert-product-title">Feijão Pilão Tradicional</h3>
-                                <span class="alert-product-weight">500g</span>
-                                <p class="alert-current-price">Preço atual: <del>R$15,99</del></p>
-                            </div>
+                <section class="shopwise-notifications-section" id="notificacoesSection">
+                    <div class="alerts-section-heading">
+                        <div>
+                            <h2><i class="fa-solid fa-bell"></i> Notificações</h2>
+                            <p>Quando um produto atingir seu preço-alvo, o aviso aparecerá aqui.</p>
                         </div>
-                        <div class="alert-price-section">
-                            <p class="alert-price-title">Preço do alerta</p>
-                            <p class="alert-target-value">R$ 10,00</p>
-                        </div>
-                        <div class="alert-card-actions" style="margin-top: 15px;">
-                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
-                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
-                        </div>
+                        <span class="section-counter" id="unreadCounter">0 não lidas</span>
                     </div>
 
-                    <div class="alert-card-item">
-                        <div class="alert-card-body">
-                            <div class="alert-product-img">
-                                <img src="../assets/leiteEmpoNinho.jpeg" alt="Leite Ninho">
-                            </div>
-                            <div class="alert-product-info">
-                                <h3 class="alert-product-title">Leite Pó Integral Ninho Lata</h3>
-                                <span class="alert-product-weight">380g</span>
-                                <p class="alert-current-price">Preço atual: <del>R$23,99</del></p>
-                            </div>
+                    <div class="notifications-list" id="notificationsList">
+                        <div class="alert-loading">Carregando notificações...</div>
+                    </div>
+                </section>
+
+                <section class="shopwise-alerts-section">
+                    <div class="alerts-section-heading">
+                        <div>
+                            <h2>Alertas Criados</h2>
+                            <p>Seus limites de monitoramento de preços salvos no ShopWise.</p>
                         </div>
-                        <div class="alert-price-section">
-                            <p class="alert-price-title">Preço do alerta</p>
-                            <p class="alert-target-value">R$ 15,50</p>
-                        </div>
-                        <div class="alert-card-actions" style="margin-top: 15px;">
-                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
-                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
-                        </div>
+                        <span class="section-counter" id="alertsCounter">0 alertas</span>
                     </div>
 
-                    <div class="alert-card-item">
-                        <div class="alert-card-body">
-                            <div class="alert-product-img">
-                                <img src="../assets/Iogurte YoPRO.jpeg" alt="YoPRO">
-                            </div>
-                            <div class="alert-product-info">
-                                <h3 class="alert-product-title">Iogurte Desnatado Coco zero</h3>
-                                <span class="alert-product-weight">160g</span>
-                                <p class="alert-current-price">Preço atual: <del>R$8,99</del></p>
-                            </div>
-                        </div>
-                        <div class="alert-price-section">
-                            <p class="alert-price-title">Preço do alerta</p>
-                            <p class="alert-target-value">R$ 5,00</p>
-                        </div>
-                        <div class="alert-card-actions" style="margin-top: 15px;">
-                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
-                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
-                        </div>
+                    <div class="alerts-grid" id="alertsList">
+                        <div class="alert-loading">Carregando alertas...</div>
                     </div>
-
-                    <div class="alert-card-item">
-                        <div class="alert-card-body">
-                            <div class="alert-product-img">
-                                <img src="../assets/CafetresCoracoes.jpeg" alt="Café 3 Corações">
-                            </div>
-                            <div class="alert-product-info">
-                                <h3 class="alert-product-title">Café Tradicional 3 Corações</h3>
-                                <span class="alert-product-weight">500g</span>
-                                <p class="alert-current-price">Preço atual: <del>R$18,50</del></p>
-                            </div>
-                        </div>
-                        <div class="alert-price-section">
-                            <p class="alert-price-title">Preço do alerta</p>
-                            <p class="alert-target-value">R$ 14,90</p>
-                        </div>
-                        <div class="alert-card-actions" style="margin-top: 15px;">
-                            <a href="Ajustaralerta.html" class="btn-alert-adjust">Ajustar</a>
-                            <button class="btn-alert-delete" onclick="alert('Alerta excluído!')">Excluir</button>
-                        </div>
-                    </div>
-
-                </div>
+                </section>
             </main>
         </div>
     </div>
 
     <script>
+        let alertasShopWise = [];
+        let notificacoesShopWise = [];
+
+        const dinheiro = valor => Number(valor || 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+        function escapar(texto) {
+            return String(texto ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function formatarData(valor) {
+            if (!valor) return "";
+            const data = new Date(valor);
+            if (Number.isNaN(data.getTime())) return "";
+            return data.toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
         function configurarSidebar() {
             const desktopMenuToggle = document.getElementById("desktopMenuToggle");
             const mobileMenuToggle = document.getElementById("mobileMenuToggle");
@@ -214,19 +233,220 @@
 
             function toggleMenu() {
                 if (window.innerWidth >= 768) {
-                    sidebar.classList.toggle("pinned");
-                    mainContent.classList.toggle("sidebar-pinned");
+                    sidebar?.classList.toggle("pinned");
+                    mainContent?.classList.toggle("sidebar-pinned");
                 } else {
-                    sidebar.classList.toggle("open");
-                    overlay.classList.toggle("active");
+                    sidebar?.classList.toggle("open");
+                    overlay?.classList.toggle("active");
                 }
             }
 
-            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
-            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
-            if (overlay) overlay.addEventListener("click", toggleMenu);
+            desktopMenuToggle?.addEventListener("click", toggleMenu);
+            mobileMenuToggle?.addEventListener("click", toggleMenu);
+            overlay?.addEventListener("click", toggleMenu);
         }
-        document.addEventListener("DOMContentLoaded", configurarSidebar);
+
+        function atualizarContadorNotificacoes(quantidade) {
+            const badge = document.getElementById("notificationBadge");
+            const counter = document.getElementById("unreadCounter");
+
+            badge.textContent = quantidade;
+            badge.hidden = quantidade <= 0;
+            counter.textContent = quantidade === 1
+                ? "1 não lida"
+                : `${quantidade} não lidas`;
+        }
+
+        function renderizarNotificacoes() {
+            const lista = document.getElementById("notificationsList");
+
+            if (!notificacoesShopWise.length) {
+                lista.innerHTML = '<div class="alert-empty">Você ainda não possui notificações de preço.</div>';
+                return;
+            }
+
+            lista.innerHTML = notificacoesShopWise.map(notificacao => `
+                <article class="notification-card ${notificacao.lida ? "" : "unread"}">
+                    <div class="notification-icon">
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    </div>
+
+                    <div class="notification-content">
+                        <h3>${escapar(notificacao.titulo)}</h3>
+                        <p>${escapar(notificacao.mensagem)}</p>
+                        <span class="notification-meta">
+                            ${escapar(notificacao.produto || "Produto")}
+                            ${notificacao.criada_em ? ` • ${formatarData(notificacao.criada_em)}` : ""}
+                        </span>
+                    </div>
+
+                    ${
+                        notificacao.lida
+                            ? '<span class="notification-read-label">Lida</span>'
+                            : `<button type="button" class="btn-mark-read" onclick="marcarNotificacaoLida(${Number(notificacao.id)})">Marcar como lida</button>`
+                    }
+                </article>
+            `).join("");
+        }
+
+        async function carregarNotificacoes() {
+            const lista = document.getElementById("notificationsList");
+
+            try {
+                const resposta = await fetch("/api/notificacoes/");
+                const dados = await resposta.json();
+
+                if (resposta.status === 401) {
+                    lista.innerHTML = '<div class="alert-error">Faça login como cliente para ver suas notificações. <a href="login.html">Ir para o login</a></div>';
+                    atualizarContadorNotificacoes(0);
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(dados.erro || "Não foi possível carregar as notificações.");
+                }
+
+                notificacoesShopWise = Array.isArray(dados.notificacoes)
+                    ? dados.notificacoes
+                    : [];
+
+                atualizarContadorNotificacoes(Number(dados.nao_lidas || 0));
+                renderizarNotificacoes();
+
+            } catch (erro) {
+                console.error(erro);
+                lista.innerHTML = '<div class="alert-error">Não foi possível carregar as notificações agora.</div>';
+                atualizarContadorNotificacoes(0);
+            }
+        }
+
+        async function marcarNotificacaoLida(id) {
+            try {
+                const resposta = await fetch(
+                    `/api/notificacoes/${id}/marcar-lida/`,
+                    {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"}
+                    }
+                );
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(dados.erro || "Não foi possível marcar a notificação como lida.");
+                }
+
+                const notificacao = notificacoesShopWise.find(
+                    item => Number(item.id) === Number(id)
+                );
+
+                if (notificacao) notificacao.lida = true;
+
+                const naoLidas = notificacoesShopWise.filter(
+                    item => !item.lida
+                ).length;
+
+                atualizarContadorNotificacoes(naoLidas);
+                renderizarNotificacoes();
+
+            } catch (erro) {
+                console.error(erro);
+                alert("Não foi possível marcar a notificação como lida.");
+            }
+        }
+
+        function renderizarAlertas() {
+            const lista = document.getElementById("alertsList");
+            const contador = document.getElementById("alertsCounter");
+
+            contador.textContent = alertasShopWise.length === 1
+                ? "1 alerta"
+                : `${alertasShopWise.length} alertas`;
+
+            if (!alertasShopWise.length) {
+                lista.innerHTML = '<div class="alert-empty">Você ainda não criou nenhum alerta de preço.</div>';
+                return;
+            }
+
+            lista.innerHTML = alertasShopWise.map(alerta => {
+                const produto = alerta.produto || {};
+                const atingido =
+                    Boolean(alerta.atingido) ||
+                    Number(produto.preco_atual || 0) <= Number(alerta.preco_alvo || 0);
+
+                return `
+                    <article class="alert-card-item real-alert">
+                        <div class="alert-card-body real-body">
+                            <div class="alert-product-placeholder">
+                                <i class="fa-solid fa-box-open"></i>
+                            </div>
+
+                            <div class="alert-product-info">
+                                <h3 class="alert-product-title">${escapar(produto.nome || "Produto")}</h3>
+                                <span class="alert-product-weight">${escapar(produto.categoria || "")}</span>
+                                <span class="alert-market">${escapar(produto.supermercado || "")}</span>
+                                <p class="alert-current-price real-price">
+                                    Preço atual: <strong>${dinheiro(produto.preco_atual)}</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="alert-price-section real-target">
+                            <p class="alert-price-title">Preço desejado</p>
+                            <p class="alert-target-value">${dinheiro(alerta.preco_alvo)}</p>
+                        </div>
+
+                        <div class="alert-status ${atingido ? "reached" : ""}">
+                            <i class="fa-solid ${atingido ? "fa-circle-check" : "fa-clock"}"></i>
+                            ${atingido ? "Meta atingida" : "Monitorando preço"}
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        async function carregarAlertas() {
+            const lista = document.getElementById("alertsList");
+
+            try {
+                const resposta = await fetch("/api/alertas-preco/");
+                const dados = await resposta.json();
+
+                if (resposta.status === 401) {
+                    lista.innerHTML = '<div class="alert-error">Faça login como cliente para ver seus alertas. <a href="login.html">Ir para o login</a></div>';
+                    document.getElementById("alertsCounter").textContent = "0 alertas";
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(dados.erro || "Não foi possível carregar os alertas.");
+                }
+
+                alertasShopWise = Array.isArray(dados) ? dados : [];
+                renderizarAlertas();
+
+            } catch (erro) {
+                console.error(erro);
+                lista.innerHTML = '<div class="alert-error">Não foi possível carregar seus alertas agora.</div>';
+                document.getElementById("alertsCounter").textContent = "0 alertas";
+            }
+        }
+
+        document.getElementById("notificationBell")?.addEventListener(
+            "click",
+            () => {
+                document.getElementById("notificacoesSection")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        );
+
+        document.addEventListener("DOMContentLoaded", () => {
+            configurarSidebar();
+            carregarNotificacoes();
+            carregarAlertas();
+        });
     </script>
 </body>
 </html>
