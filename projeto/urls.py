@@ -18,6 +18,8 @@ from produtos.views import (
     NotificacaoList,
     NotificacaoMarcarLida,
     AvaliacaoList,
+    PerfilCliente,
+    LogoutCliente,
 )
 
 
@@ -71,6 +73,10 @@ def alerta_preco(request):
 
 def avaliacao(request):
     return render(request, 'avaliacao.html')
+
+
+def perfil(request):
+    return render(request, 'perfil.html')
 
 
 urlpatterns = [
@@ -135,6 +141,10 @@ urlpatterns = [
          avaliacao,
          name='avaliacao'),
 
+    path('perfil.html',
+         perfil,
+         name='perfil'),
+
     # =========================
     # API - SUPERMERCADO
     # =========================
@@ -163,6 +173,8 @@ urlpatterns = [
         'api/pedidos/<int:pedido_id>/status-pix/',
         StatusPagamentoPix.as_view()),
 
+
+
     # =========================
     # API - PRODUTOS
     # =========================
@@ -174,6 +186,8 @@ urlpatterns = [
         'api/produtos/<int:pk>/',
         ProdutoDetalhe.as_view()
     ),
+
+
 
     # =========================
     # API - CLIENTE
@@ -201,5 +215,13 @@ urlpatterns = [
     path(
         'api/avaliacoes/',
         AvaliacaoList.as_view()
+    ),
+    path(
+        'api/perfil/',
+        PerfilCliente.as_view()
+    ),
+    path(
+        'api/logout-cliente/',
+        LogoutCliente.as_view()
     ),
 ]

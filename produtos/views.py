@@ -1317,3 +1317,136 @@ class AvaliacaoList(APIView):
             },
             status=201
         )
+
+
+class PerfilCliente(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        cliente = get_object_or_404(
+            Cliente,
+            pk=cliente_id
+        )
+
+        pedidos = Pedido.objects.filter(
+            cliente=cliente
+        )
+
+        alertas_ativos = AlertaPreco.objects.filter(
+            cliente=cliente,
+            ativo=True
+        ).count()
+
+        total_economizado = sum(
+            pedido.desconto
+            for pedido in pedidos
+        )
+
+        return Response({
+            'id': cliente.id,
+            'nome': cliente.nome,
+            'cpf': cliente.cpf,
+            'email': cliente.email,
+            'cep': cliente.cep,
+            'criado_em': cliente.criado_em,
+            'estatisticas': {
+                'pedidos': pedidos.count(),
+                'alertas_ativos': alertas_ativos,
+                'economizado': str(total_economizado),
+            }
+        })
+
+    def put(self, request):
+        cliente_id = request.session.get('cliente_id')
+
+        if not cliente_id:
+            return Response(
+                {'erro': 'Cliente não autenticado.'},
+                status=401
+            )
+
+        cliente = get_object_or_404(
+            Cliente,
+            pk=cliente_id
+        )
+
+        nome = request.data.get(
+            'nome',
+            cliente.nome
+        ).strip()
+
+        email = request.data.get(
+            'email',
+            cliente.email
+        ).strip().lower()
+
+        cep = request.data.get(
+            'cep',
+            cliente.cep
+        ).strip()
+
+        if not nome:
+            return Response(
+                {'erro': 'Informe o nome.'},
+                status=400
+            )
+
+        if not email:
+            return Response(
+                {'erro': 'Informe o e-mail.'},
+                status=400
+            )
+
+        email_em_uso = Cliente.objects.filter(
+            email=email
+        ).exclude(
+            pk=cliente.id
+        ).exists()
+
+        if email_em_uso:
+            return Response(
+                {'erro': 'Este e-mail já está em uso.'},
+                status=400
+            )
+
+        cliente.nome = nome
+        cliente.email = email
+        cliente.cep = cep
+
+        cliente.save(
+            update_fields=[
+                'nome',
+                'email',
+                'cep',
+            ]
+        )
+
+        return Response({
+            'mensagem': 'Perfil atualizado com sucesso.',
+            'cliente': {
+                'id': cliente.id,
+                'nome': cliente.nome,
+                'cpf': cliente.cpf,
+                'email': cliente.email,
+                'cep': cliente.cep,
+            }
+        })
+
+
+class LogoutCliente(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        request.session.pop('cliente_id', None)
+
+        return Response({
+            'mensagem': 'Logout realizado com sucesso.'
+        })

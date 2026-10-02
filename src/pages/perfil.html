@@ -1,11 +1,179 @@
+{% load static %}
 ﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Perfil</title>
-    <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/perfil.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/perfil.css' %}">
+
+    <style>
+        .profile-action-row,
+        .btn-primary-link {
+            font: inherit;
+        }
+
+        button.profile-action-row,
+        button.btn-primary-link {
+            width: 100%;
+            border: 0;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        button.btn-primary-link {
+            width: auto;
+        }
+
+        .profile-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, .45);
+        }
+
+        .profile-modal-overlay.active {
+            display: flex;
+        }
+
+        .profile-modal {
+            position: relative;
+            width: min(520px, 100%);
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, .2);
+        }
+
+        .profile-modal h2 {
+            margin: 0 0 6px;
+        }
+
+        .profile-modal > p {
+            margin: 0 0 18px;
+            color: #64748b;
+        }
+
+        .profile-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            border: 0;
+            background: transparent;
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        .profile-edit-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .profile-edit-form label {
+            display: grid;
+            gap: 6px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .profile-edit-form input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 13px;
+            border: 1px solid #d6dfdb;
+            border-radius: 10px;
+            font: inherit;
+        }
+
+        .profile-edit-form input:disabled {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .profile-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .profile-modal-primary,
+        .profile-modal-secondary {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .profile-modal-primary {
+            background: #2ecc71;
+            color: #fff;
+        }
+
+        .profile-modal-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        #profileEditFeedback {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        #profileEditFeedback.success {
+            color: #15803d;
+        }
+
+        #profileEditFeedback.error {
+            color: #b42318;
+        }
+
+        .profile-info-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .profile-info-grid > div {
+            display: grid;
+            gap: 4px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .profile-info-grid span {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .profile-info-grid strong {
+            color: #0f172a;
+            word-break: break-word;
+        }
+    
+        .profile-avatar-initial {
+            width: 100%;
+            height: 100%;
+            min-width: 72px;
+            min-height: 72px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: .5px;
+        }
+    </style>
+
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -22,7 +190,7 @@
                 </div>
 
                 <a href="feedproduto.html" aria-label="Ir para a pagina inicial">
-                    <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo">
+                    <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo">
                 </a>
             </div>
 
@@ -84,7 +252,7 @@
                         </div>
 
                         <a href="feedproduto.html" class="mobile-logo-area">
-                            <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="mobile-logo-img">
+                            <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="mobile-logo-img">
                         </a>
 
                         <strong class="profile-page-title">Meu Perfil</strong>
@@ -104,21 +272,21 @@
                 <section class="profile-hero-panel" aria-label="Resumo do perfil">
                     <div class="profile-identity">
                         <div class="profile-avatar-shell">
-                            <img src="../assets/img/avatar-raimundo.png" alt="Foto de Raimundo Alves">
+                            <div class="profile-avatar-initial" id="profileAvatarInitial" aria-label="Avatar do cliente">SW</div>
                         </div>
 
                         <div class="profile-identity-text">
                             <div class="profile-badges">
                                 <span class="profile-badge success">Conta ativa</span>
-                                <span class="profile-badge">Cashback ativado</span>
+                                <span class="profile-badge">Cliente ShopWise</span>
                             </div>
 
-                            <h1>Raimundo Alves</h1>
-                            <p>raimundoalves4323@gmail.com</p>
-                            <span class="profile-meta">Cliente desde 2026 - Floriano, PI</span>
+                            <h1 id="profileName">Carregando...</h1>
+                            <p id="profileEmail">Carregando...</p>
+                            <span class="profile-meta" id="profileMeta">Carregando dados da conta...</span>
 
                             <div class="profile-actions">
-                                <a href="#" class="btn-primary-link">Editar perfil</a>
+                                <button type="button" class="btn-primary-link" id="btnEditarPerfil">Editar perfil</button>
                             </div>
                         </div>
                     </div>
@@ -134,7 +302,7 @@
                             </svg>
                         </span>
                         <div>
-                            <strong>12</strong>
+                            <strong id="statPedidos">0</strong>
                             <p>Compras realizadas</p>
                         </div>
                     </article>
@@ -147,7 +315,7 @@
                             </svg>
                         </span>
                         <div>
-                            <strong>4</strong>
+                            <strong id="statAlertas">0</strong>
                             <p>Alertas ativos</p>
                         </div>
                     </article>
@@ -160,7 +328,7 @@
                             </svg>
                         </span>
                         <div>
-                            <strong>R$ 42,30</strong>
+                            <strong id="statEconomizado">R$ 0,00</strong>
                             <p>Economizados no ShopWise</p>
                         </div>
                     </article>
@@ -181,17 +349,17 @@
                             </div>
                         </div>
 
-                        <a href="#" class="profile-action-row">
+                        <button type="button" class="profile-action-row" id="btnMeusDados">
                             <span>Meus dados</span>
-                            <small>Nome, email e telefone</small>
-                        </a>
-                        <a href="#" class="profile-action-row">
-                            <span>Endereços</span>
-                            <small>Locais de entrega favoritos</small>
-                        </a>
-                        <a href="#" class="profile-action-row">
+                            <small>Nome, CPF, e-mail e CEP</small>
+                        </button>
+                        <button type="button" class="profile-action-row" id="btnEnderecoPerfil">
+                            <span>CEP cadastrado</span>
+                            <small id="profileCepResumo">Carregando...</small>
+                        </button>
+                        <a href="AlertaPreco.html" class="profile-action-row">
                             <span>Notificações</span>
-                            <small>Avisos de oferta e pedido</small>
+                            <small>Alertas de preço e avisos da conta</small>
                         </a>
                     </article>
 
@@ -244,14 +412,14 @@
                             <span>Segurança</span>
                             <small>Senha e acesso da conta</small>
                         </a>
-                        <a href="#" class="profile-action-row">
-                            <span>Privacidade</span>
-                            <small>Dados usados na plataforma</small>
-                        </a>
-                        <a href="login.html" class="profile-action-row danger-link">
+                        <button type="button" class="profile-action-row" id="btnPrivacidade">
+                            <span>Dados da conta</span>
+                            <small>Consulte CPF, e-mail, CEP e data de cadastro</small>
+                        </button>
+                        <button type="button" class="profile-action-row danger-link" id="btnLogout">
                             <span>Sair da conta</span>
                             <small>Encerrar sessão atual</small>
-                        </a>
+                        </button>
                     </article>
                 </section>
             </main>
@@ -259,6 +427,25 @@
     </div>
 
     <script>
+        let perfilCliente = null;
+
+        const dinheiro = valor => Number(valor || 0).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        });
+
+        function formatarData(valor) {
+            if (!valor) return "-";
+
+            const data = new Date(valor);
+
+            if (Number.isNaN(data.getTime())) {
+                return "-";
+            }
+
+            return data.toLocaleDateString("pt-BR");
+        }
+
         function configurarSidebar() {
             const desktopMenuToggle = document.getElementById("desktopMenuToggle");
             const mobileMenuToggle = document.getElementById("mobileMenuToggle");
@@ -268,21 +455,369 @@
 
             function toggleMenu() {
                 if (window.innerWidth >= 768) {
-                    sidebar.classList.toggle("pinned");
-                    mainContent.classList.toggle("sidebar-pinned");
+                    sidebar?.classList.toggle("pinned");
+                    mainContent?.classList.toggle("sidebar-pinned");
                 } else {
-                    sidebar.classList.toggle("open");
-                    overlay.classList.toggle("active");
+                    sidebar?.classList.toggle("open");
+                    overlay?.classList.toggle("active");
                 }
             }
 
-            if (desktopMenuToggle) desktopMenuToggle.addEventListener("click", toggleMenu);
-            if (mobileMenuToggle) mobileMenuToggle.addEventListener("click", toggleMenu);
-            if (overlay) overlay.addEventListener("click", toggleMenu);
+            desktopMenuToggle?.addEventListener("click", toggleMenu);
+            mobileMenuToggle?.addEventListener("click", toggleMenu);
+            overlay?.addEventListener("click", toggleMenu);
         }
 
-        document.addEventListener("DOMContentLoaded", configurarSidebar);
+        function renderizarPerfil() {
+            if (!perfilCliente) return;
+
+            const nomeCompleto = perfilCliente.nome || "Cliente";
+            const iniciais = nomeCompleto
+                .split(/\s+/)
+                .filter(Boolean)
+                .slice(0, 2)
+                .map(parte => parte[0]?.toUpperCase() || "")
+                .join("") || "SW";
+
+            const avatar = document.getElementById("profileAvatarInitial");
+            if (avatar) avatar.textContent = iniciais;
+
+            document.getElementById("profileName").textContent =
+                nomeCompleto;
+
+            document.getElementById("profileEmail").textContent =
+                perfilCliente.email || "";
+
+            document.getElementById("profileMeta").textContent =
+                `Cliente desde ${formatarData(perfilCliente.criado_em)}`;
+
+            document.getElementById("statPedidos").textContent =
+                perfilCliente.estatisticas?.pedidos ?? 0;
+
+            document.getElementById("statAlertas").textContent =
+                perfilCliente.estatisticas?.alertas_ativos ?? 0;
+
+            document.getElementById("statEconomizado").textContent =
+                dinheiro(perfilCliente.estatisticas?.economizado ?? 0);
+
+            document.getElementById("profileCepResumo").textContent =
+                perfilCliente.cep || "CEP não informado";
+
+            document.getElementById("editNome").value =
+                perfilCliente.nome || "";
+
+            document.getElementById("editEmail").value =
+                perfilCliente.email || "";
+
+            document.getElementById("editCep").value =
+                perfilCliente.cep || "";
+
+            document.getElementById("editCpf").value =
+                perfilCliente.cpf || "";
+
+            document.getElementById("infoNome").textContent =
+                perfilCliente.nome || "-";
+
+            document.getElementById("infoCpf").textContent =
+                perfilCliente.cpf || "-";
+
+            document.getElementById("infoEmail").textContent =
+                perfilCliente.email || "-";
+
+            document.getElementById("infoCep").textContent =
+                perfilCliente.cep || "-";
+
+            document.getElementById("infoCriadoEm").textContent =
+                formatarData(perfilCliente.criado_em);
+        }
+
+        async function carregarPerfil() {
+            try {
+                const resposta = await fetch("/api/perfil/");
+                const dados = await resposta.json();
+
+                if (resposta.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        dados.erro || "Não foi possível carregar o perfil."
+                    );
+                }
+
+                perfilCliente = dados;
+                renderizarPerfil();
+
+            } catch (erro) {
+                console.error(erro);
+
+                document.getElementById("profileName").textContent =
+                    "Não foi possível carregar o perfil";
+
+                document.getElementById("profileEmail").textContent =
+                    "";
+            }
+        }
+
+        function abrirModalEdicao() {
+            if (!perfilCliente) return;
+
+            renderizarPerfil();
+
+            document
+                .getElementById("profileEditModal")
+                .classList.add("active");
+
+            document
+                .getElementById("profileEditModal")
+                .setAttribute("aria-hidden", "false");
+        }
+
+        function fecharModalEdicao() {
+            document
+                .getElementById("profileEditModal")
+                .classList.remove("active");
+
+            document
+                .getElementById("profileEditModal")
+                .setAttribute("aria-hidden", "true");
+
+            document.getElementById("profileEditFeedback").textContent = "";
+            document.getElementById("profileEditFeedback").className = "";
+        }
+
+        function abrirModalInfo() {
+            if (!perfilCliente) return;
+
+            renderizarPerfil();
+
+            document
+                .getElementById("profileInfoModal")
+                .classList.add("active");
+
+            document
+                .getElementById("profileInfoModal")
+                .setAttribute("aria-hidden", "false");
+        }
+
+        function fecharModalInfo() {
+            document
+                .getElementById("profileInfoModal")
+                .classList.remove("active");
+
+            document
+                .getElementById("profileInfoModal")
+                .setAttribute("aria-hidden", "true");
+        }
+
+        async function salvarPerfil(event) {
+            event.preventDefault();
+
+            const feedback =
+                document.getElementById("profileEditFeedback");
+
+            const botao =
+                document.getElementById("btnSalvarPerfil");
+
+            const payload = {
+                nome: document.getElementById("editNome").value.trim(),
+                email: document.getElementById("editEmail").value.trim(),
+                cep: document.getElementById("editCep").value.trim()
+            };
+
+            botao.disabled = true;
+            botao.textContent = "Salvando...";
+
+            try {
+                const resposta = await fetch("/api/perfil/", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        dados.erro || "Não foi possível atualizar o perfil."
+                    );
+                }
+
+                perfilCliente = {
+                    ...perfilCliente,
+                    ...dados.cliente
+                };
+
+                renderizarPerfil();
+
+                feedback.textContent =
+                    dados.mensagem || "Perfil atualizado com sucesso.";
+
+                feedback.className = "success";
+
+                setTimeout(() => {
+                    fecharModalEdicao();
+                }, 700);
+
+            } catch (erro) {
+                console.error(erro);
+
+                feedback.textContent = erro.message;
+                feedback.className = "error";
+
+            } finally {
+                botao.disabled = false;
+                botao.textContent = "Salvar alterações";
+            }
+        }
+
+        async function fazerLogout() {
+            try {
+                const resposta = await fetch(
+                    "/api/logout-cliente/",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }
+                );
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        dados.erro ||
+                        "Não foi possível sair da conta."
+                    );
+                }
+
+                window.location.href = "login.html";
+
+            } catch (erro) {
+                console.error(erro);
+
+                alert(
+                    erro.message ||
+                    "Não foi possível encerrar a sessão."
+                );
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            configurarSidebar();
+            carregarPerfil();
+
+            document
+                .getElementById("btnEditarPerfil")
+                ?.addEventListener("click", abrirModalEdicao);
+
+            document
+                .getElementById("btnMeusDados")
+                ?.addEventListener("click", abrirModalEdicao);
+
+            document
+                .getElementById("btnEnderecoPerfil")
+                ?.addEventListener("click", abrirModalEdicao);
+
+            document
+                .getElementById("btnPrivacidade")
+                ?.addEventListener("click", abrirModalInfo);
+
+            document
+                .getElementById("btnLogout")
+                ?.addEventListener("click", fazerLogout);
+
+            document
+                .getElementById("profileEditForm")
+                ?.addEventListener("submit", salvarPerfil);
+
+            document.querySelectorAll("[data-close-profile-modal]")
+                .forEach(botao =>
+                    botao.addEventListener("click", fecharModalEdicao)
+                );
+
+            document.querySelectorAll("[data-close-info-modal]")
+                .forEach(botao =>
+                    botao.addEventListener("click", fecharModalInfo)
+                );
+
+            document
+                .getElementById("profileEditModal")
+                ?.addEventListener("click", evento => {
+                    if (evento.target.id === "profileEditModal") {
+                        fecharModalEdicao();
+                    }
+                });
+
+            document
+                .getElementById("profileInfoModal")
+                ?.addEventListener("click", evento => {
+                    if (evento.target.id === "profileInfoModal") {
+                        fecharModalInfo();
+                    }
+                });
+        });
     </script>
+
+    <div class="profile-modal-overlay" id="profileEditModal" aria-hidden="true">
+        <div class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileEditTitle">
+            <button type="button" class="profile-modal-close" data-close-profile-modal>&times;</button>
+
+            <h2 id="profileEditTitle">Editar perfil</h2>
+            <p>Atualize seus dados pessoais.</p>
+
+            <form id="profileEditForm" class="profile-edit-form">
+                <label>
+                    Nome
+                    <input type="text" id="editNome" required>
+                </label>
+
+                <label>
+                    E-mail
+                    <input type="email" id="editEmail" required>
+                </label>
+
+                <label>
+                    CEP
+                    <input type="text" id="editCep" maxlength="10">
+                </label>
+
+                <label>
+                    CPF
+                    <input type="text" id="editCpf" disabled>
+                </label>
+
+                <div class="profile-modal-actions">
+                    <button type="button" class="profile-modal-secondary" data-close-profile-modal>Cancelar</button>
+                    <button type="submit" class="profile-modal-primary" id="btnSalvarPerfil">Salvar alterações</button>
+                </div>
+
+                <p id="profileEditFeedback" aria-live="polite"></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="profile-modal-overlay" id="profileInfoModal" aria-hidden="true">
+        <div class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileInfoTitle">
+            <button type="button" class="profile-modal-close" data-close-info-modal>&times;</button>
+
+            <h2 id="profileInfoTitle">Dados da conta</h2>
+
+            <div class="profile-info-grid">
+                <div><span>Nome</span><strong id="infoNome">-</strong></div>
+                <div><span>CPF</span><strong id="infoCpf">-</strong></div>
+                <div><span>E-mail</span><strong id="infoEmail">-</strong></div>
+                <div><span>CEP</span><strong id="infoCep">-</strong></div>
+                <div><span>Cliente desde</span><strong id="infoCriadoEm">-</strong></div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
 
