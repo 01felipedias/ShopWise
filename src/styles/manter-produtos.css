@@ -174,9 +174,53 @@
 }
 
 .mp-action-link {
-    color: #e74c3c;
+    color: #168754;
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+}
+
+.mp-action-danger {
+    color: #c0392b;
+}
+
+.mp-actions {
+    display: flex;
+    gap: 1rem;
+    white-space: nowrap;
+}
+
+.mp-input-group small {
+    color: #667575;
+    margin-top: 0.35rem;
+}
+
+.mp-message {
+    color: #168754;
+    min-height: 1.3rem;
+    font-weight: 600;
+}
+
+.mp-message-error {
+    color: #c0392b;
+}
+
+@media (max-width: 700px) {
+    .mp-container {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .mp-card {
+        padding: 1.25rem;
+    }
+
+    .mp-form-row {
+        flex-direction: column;
+        gap: 0;
+    }
 }

@@ -162,6 +162,99 @@ input {
     text-decoration: underline;
 }
 
+.login-message {
+    color: #b42318;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.login-message:empty {
+    display: none;
+}
+
+.login-message-success {
+    color: #168754;
+}
+
+.cadastro-tipos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.cadastro-tipos a {
+    border: 1px solid #dbe7e2;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    color: #34483e;
+    font-weight: bold;
+}
+
+.cadastro-tipos a.active {
+    background: #e8f8ee;
+    border-color: #2ECC71;
+    color: #168754;
+}
+
+.cadastro-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #34483e;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.cadastro-senhas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 767px) {
+    .cadastro-page .container {
+        flex-direction: column;
+    }
+
+    .cadastro-page .areaverde,
+    .cadastro-page .form {
+        width: 100%;
+    }
+
+    .cadastro-page .areaverde {
+        padding: 28px 20px;
+    }
+
+    .cadastro-page .areaverde h1 {
+        font-size: 30px;
+    }
+
+    .cadastro-page .areaverde p {
+        font-size: 16px;
+    }
+
+    .cadastro-page .form {
+        padding: 20px;
+    }
+
+    .cadastro-page .card-login,
+    .cadastro-page .form-mercado .card-login {
+        width: 100%;
+        padding: 26px;
+    }
+
+    .cadastro-page .form-mercado {
+        padding: 0 16px 40px;
+    }
+
+    .cadastro-senhas {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
 .btn-verde {
     width: 100%;
     border: none;

@@ -3,89 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Supermercado ShopWise</title>
-
+    <title>Cadastro de Supermercado - ShopWise</title>
     <link rel="stylesheet" href="../styles/style.css">
 </head>
-
-<body>
-
+<body class="cadastro-page">
     <header class="header-cadastro">
-        <img src="../assets//img/logoshopwise.png" alt="Logo ShopWise">
+        <img src="../assets/img/logoshopwise.png" alt="ShopWise">
     </header>
-
     <main class="form-mercado">
-
         <div class="card-login">
-
-            <h2>Cadastro de Supermercado</h2>
-            <p class="subtitulo">
-                Preencha os dados da sua loja para continuar
-            </p>
-
-            <form onsubmit="event.preventDefault(); window.location.href='manter-produtos.html';">
-
-                <h3>Informações da Loja</h3>
-
+            <h2>Cadastre seu supermercado</h2>
+            <p class="subtitulo">Escolha o tipo de cadastro</p>
+            <nav class="cadastro-tipos" aria-label="Tipo de conta">
+                <a href="cadastrousuario.html">Cliente</a>
+                <a href="cadastromercado.html" class="active" aria-current="page">Supermercado</a>
+            </nav>
+            <form data-shopwise-cadastro data-tipo="supermercado" data-destino="login-supermercado.html">
                 <div class="input-group">
-                    <input name="nome responsavel" type="text" placeholder="Nome do responsável" >
+                    <label class="cadastro-label" for="cadastroNome">Nome do responsável *</label>
+                    <input id="cadastroNome" name="nome" type="text" maxlength="150" placeholder="Ex: Jorge" autocomplete="name" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="cnpj" type="text" placeholder="CNPJ" >
+                    <label class="cadastro-label" for="cadastroEmail">E-mail *</label>
+                    <input id="cadastroEmail" name="email" type="email" placeholder="Ex: contato@example.com" autocomplete="email" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="razaosocial" type="text" placeholder="Razão Social" >
+                    <label class="cadastro-label" for="cadastroMercadoNome">Nome do supermercado *</label>
+                    <input id="cadastroMercadoNome" name="supermercado_nome" type="text" maxlength="100" placeholder="Ex: Jorge Super" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="nomeloja" type="text" placeholder="Nome da Loja" >
+                    <label class="cadastro-label" for="cadastroMercadoEndereco">Endereço do supermercado *</label>
+                    <input id="cadastroMercadoEndereco" name="supermercado_endereco" type="text" maxlength="200" placeholder="Ex: Rua Exemplo, 100" required>
                 </div>
-
-                <div class="input-group">
-                    <input name="emailcomercial" type="email" placeholder="Email Comercial" >
+                <div class="cadastro-senhas">
+                    <div class="input-group">
+                        <label class="cadastro-label" for="cadastroSenha">Senha *</label>
+                        <input id="cadastroSenha" name="password" type="password" minlength="8" placeholder="No mínimo 8 caracteres" autocomplete="new-password" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="cadastroConfirmacao">Confirme a senha *</label>
+                        <input id="cadastroConfirmacao" name="confirm_password" type="password" minlength="8" placeholder="Repita a senha" autocomplete="new-password" required>
+                    </div>
                 </div>
-
-                <div class="input-group">
-                    <input name="telefone" type="tel" placeholder="Telefone para contato" >
-                </div>
-
-                <h3>Localização da Loja</h3>
-
-                <div class="input-group">
-                    <input name="cep" type="text" placeholder="CEP" >
-                </div>
-
-                <div class="linha">
-                    <input name="estado" type="text" placeholder="Estado" >
-                    <input name="cidade" type="text" placeholder="Cidade" >
-                </div>
-
-                <div class="input-group">
-                    <input name="bairro" type="text" placeholder="Bairro" >
-                </div>
-
-                <div class="input-group">
-                    <input name="endereco" type="text" placeholder="Endereço" >
-                </div>
-
-                <div class="linha">
-                    <input name="numloja" type="text" placeholder="Número" >
-                    <input name="complemento" type="text" placeholder="Complemento" >
-                </div>
-
-                <button type="submit" class="btn-verde">
-                    Cadastrar Supermercado
-                </button>
-
+                <p class="login-message" role="alert" aria-live="polite"></p>
+                <button type="submit" class="btn-verde">Cadastrar supermercado</button>
             </form>
-            <div class="bottom-links">
-                <a href="login-supermercado.html">Já possui conta? Entrar</a>
-            </div>
+            <div class="bottom-links"><a href="login-supermercado.html">Já possui conta? Entrar</a></div>
         </div>
-
     </main>
-
+    <script src="../utils/cadastro.js"></script>
 </body>
 </html>

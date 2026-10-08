@@ -28,28 +28,20 @@
 
             <h2>Bem-vindo de volta</h2>
             <p class="subtitulo">Faça login para continuar</p>
-            <button class="btn-branco">
-                <img src="../assets/icones/google.png" alt="icon google">
-                Continuar com Google
-            </button>
-
-            <div class="divider">
-                <span>ou</span>
-            </div>
-
-            <form action="feedproduto.html" method="POST">
+            <form data-shopwise-login data-tipo="usuario" data-destino="feedproduto.html">
                 <div class="input-group">
-                    <input type="email"name="email" placeholder="Digite seu email">
+                    <input type="text" name="username" placeholder="E-mail" aria-label="E-mail (ou usuário antigo)" autocomplete="username" required>
                 </div>
 
                 <div class="input-group">
-                    <input type="password" name="senha" placeholder="Digite sua senha">
+                    <input type="password" name="password" placeholder="Digite sua senha" aria-label="Senha" autocomplete="current-password" required>
                 </div>
 
                 <div class="esqueci-senha">
                     <a href="Senha.html ">Esqueceu sua senha?</a>
                 </div>
-                <button type="submit" class="btn-verde">Entrar</button></a>
+                <p class="login-message" role="alert" aria-live="polite"></p>
+                <button type="submit" class="btn-verde">Entrar</button>
             </form>
         
             <div class="bottom-links">
@@ -59,5 +51,6 @@
         </div>
     </section>
 </div>
+<script src="../utils/login.js"></script>
 </body>
 </html>

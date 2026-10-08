@@ -39,23 +39,62 @@ function parsePrice(value) {
     return Number(normalizedValue) || 0;
 }
 
-function getCartItems() {
+function getCartToken() {
     try {
-        const savedCart = JSON.parse(localStorage.getItem("carrinho"));
-        return Array.isArray(savedCart) ? savedCart : [];
-    } catch (error) {
-        return [];
+        return JSON.parse(sessionStorage.getItem('shopwise_auth') || 'null')?.token || null;
+    } catch {
+        return null;
     }
 }
 
-function carregarResumoPedido() {
-    carrinho = getCartItems();
-    const summaryList = document.getElementById("checkoutPedidos");
+async function getCartItems() {
+    const token = getCartToken();
+    if (!token) throw new Error('Entre na sua conta para revisar o carrinho.');
 
+    const response = await fetch('/api/carrinho/', {
+        headers: { Authorization: 'Token ' + token, Accept: 'application/json' }
+    });
+    if (response.status === 401) {
+        sessionStorage.removeItem('shopwise_auth');
+        throw new Error('Sua sessão terminou. Entre novamente.');
+    }
+    if (!response.ok) throw new Error('Não foi possível carregar o carrinho.');
+    return response.json();
+}
+
+function escaparHtml(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, (caractere) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[caractere]);
+}
+
+async function carregarResumoPedido() {
+    const summaryList = document.getElementById("checkoutPedidos");
     if (!summaryList) return;
 
+    summaryList.textContent = 'Carregando carrinho...';
+    let dados;
+    try {
+        dados = await getCartItems();
+        carrinho = dados.itens.map((item) => ({
+            id: item.id,
+            nome: item.produto_nome,
+            preco: item.valor_unitario,
+            quantidade: item.quantidade,
+            img: '../assets/img/logoshopwise.png',
+            mercado: item.supermercado_nome
+        }));
+    } catch (error) {
+        carrinho = [];
+        ORDER_VALUES.subtotal = 0;
+        summaryList.textContent = error.message;
+        const subtotalValue = document.getElementById('subtotalValue');
+        if (subtotalValue) subtotalValue.textContent = formatCurrency(0);
+        updateTotal();
+        return;
+    }
+
     summaryList.innerHTML = "";
-    let subtotal = 0;
 
     if (carrinho.length === 0) {
         summaryList.innerHTML = `
@@ -78,14 +117,13 @@ function carregarResumoPedido() {
         const preco = parsePrice(produto.preco);
         const quantidade = Number(produto.quantidade) || 1;
         const totalItem = preco * quantidade;
-        subtotal += totalItem;
 
         summaryList.innerHTML += `
             <div class="summary-item product-summary">
                 <div class="product-summary-info">
-                    <img src="${produto.img}" alt="${produto.nome}" class="product-summary-image">
+                    <img src="${produto.img}" alt="${escaparHtml(produto.nome)}" class="product-summary-image">
                     <div>
-                        <strong>${produto.nome}</strong>
+                        <strong>${escaparHtml(produto.nome)}</strong>
                         <small>Quantidade: ${quantidade}</small>
                     </div>
                 </div>
@@ -94,11 +132,11 @@ function carregarResumoPedido() {
         `;
     });
 
-    ORDER_VALUES.subtotal = subtotal;
+    ORDER_VALUES.subtotal = Number(dados.total);
 
     const subtotalValue = document.getElementById("subtotalValue");
     if (subtotalValue) {
-        subtotalValue.textContent = formatCurrency(subtotal);
+        subtotalValue.textContent = formatCurrency(ORDER_VALUES.subtotal);
     }
 
     updateTotal();
@@ -550,6 +588,11 @@ async function finalizarPedido() {
     const payButton = document.getElementById('payButton');
     const mobilePayButton = document.getElementById('mobilePayButton');
     const method = getSelectedPaymentMethod();
+
+    if (carrinho.length === 0) {
+        setGatewayStatus('Adicione produtos ao carrinho antes de continuar.', 'error');
+        return;
+    }
 
     if (!validateDeliveryData()) return;
     if ((method === 'credito' || method === 'debito') && !validateCardFields()) {

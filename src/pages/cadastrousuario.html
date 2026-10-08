@@ -3,70 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro ShopWise</title>
+    <title>Cadastro de Cliente - ShopWise</title>
     <link rel="stylesheet" href="../styles/style.css">
 </head>
-
-<body>
-
-<div class="container">
-
-    <section class="areaverde">
-        <div class="areaverde-conteudo">
-            <img src="../assets/img/logoshopwise.png" alt="logo shopwise" style="margin-bottom: 20px;">
-            <h1>Crie sua conta e aproveite benefícios exclusivos</h1>
-
-            <p>
-                Cadastre-se gratuitamente para acompanhar preços,
-                receber alertas, utilizar cupons e ganhar cashback
-                em suas compras.
-            </p>
-        </div>
-    </section>
-
-    <section class="form">
-
-        <div class="card-login">
-
-            <h2>Bem vindo ao ShopWise!</h2>
-            <p class="subtitulo">Preencha os dados para continuar</p>
-
-            <form action="/cadastro" method="POST">
-                <div class="input-group">
-                    <input type="text" name="nome" placeholder="Digite seu nome" >
-                </div>
-
-                <div class="input-group">
-                    <input type="text" name="cpf" placeholder="Digite seu CPF" >
-                </div>
-
-                <div class="input-group">
-                    <input type="email" name="email" placeholder="Digite seu email" >
-                </div>
-
-                <div class="input-group">
-                    <input type="text" name="cep" placeholder="Digite seu CEP" >
-                </div>
-
-                <div class="input-group">
-                    <input type="password" name="senha" placeholder="Digite sua senha" >
-                </div>
-
-                <div class="input-group">
-                    <input type="password" name="confirmasenha" placeholder="Confirme sua senha" >
-                </div>
-                
-                <a href="feedproduto.html"><button type="submit" class="btn-verde">Cadastrar-se</button></a>
-            </form>
-                
-                <div class="bottom-links">
-                    <a href="login.html">Já possui conta? Entrar</a>
-                </div>
-        </div>
-
-    </section>
-
-</div>
-
+<body class="cadastro-page">
+    <div class="container">
+        <section class="areaverde">
+            <div class="areaverde-conteudo">
+                <img src="../assets/img/logoshopwise.png" alt="ShopWise">
+                <h1>Compare preços perto de você</h1>
+                <p>Crie sua conta para entrar no ShopWise e consultar os preços dos supermercados.</p>
+            </div>
+        </section>
+        <main class="form">
+            <div class="card-login">
+                <h2>Crie sua conta</h2>
+                <p class="subtitulo">Escolha o tipo de cadastro</p>
+                <nav class="cadastro-tipos" aria-label="Tipo de conta">
+                    <a href="cadastrousuario.html" class="active" aria-current="page">Cliente</a>
+                    <a href="cadastromercado.html">Supermercado</a>
+                </nav>
+                <form data-shopwise-cadastro data-tipo="usuario" data-destino="login.html">
+                    <div class="input-group">
+                        <label class="cadastro-label" for="cadastroNome">Seu nome *</label>
+                        <input id="cadastroNome" name="nome" type="text" maxlength="150" placeholder="Ex: Felipe" autocomplete="name" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="cadastroEmail">E-mail *</label>
+                        <input id="cadastroEmail" name="email" type="email" placeholder="Ex: felipe@example.com" autocomplete="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="cadastroSenha">Senha *</label>
+                        <input id="cadastroSenha" name="password" type="password" minlength="8" placeholder="No mínimo 8 caracteres" autocomplete="new-password" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="cadastroConfirmacao">Confirme a senha *</label>
+                        <input id="cadastroConfirmacao" name="confirm_password" type="password" minlength="8" placeholder="Repita a senha" autocomplete="new-password" required>
+                    </div>
+                    <p class="login-message" role="alert" aria-live="polite"></p>
+                    <button type="submit" class="btn-verde">Cadastrar cliente</button>
+                </form>
+                <div class="bottom-links"><a href="login.html">Já possui conta? Entrar</a></div>
+            </div>
+        </main>
+    </div>
+    <script src="../utils/cadastro.js"></script>
 </body>
 </html>

@@ -860,6 +860,25 @@ body {
     gap:16px;
 }
 
+.cart-legacy-notice{
+    background:#f2fff7;
+    border:1px solid #bde8cc;
+    border-radius:16px;
+    padding:20px;
+    color:var(--text-main);
+}
+
+.cart-legacy-notice p{
+    margin:8px 0 14px;
+    color:var(--text-light);
+}
+
+.cart-legacy-notice .btn-verde{
+    width:auto;
+    padding:10px 16px;
+    font-size:14px;
+}
+
 .cart-item{
     background:var(--white);
     border:1px solid var(--border);
@@ -1824,6 +1843,42 @@ body {
 
 .modal-logo-jorge {
     color: #cc0000;
+}
+
+/* Dados reais da API não incluem fotos nem logotipos dos produtos. */
+.product-placeholder {
+    flex-direction: column;
+    gap: 5px;
+    color: #607a70;
+    font-size: 42px;
+    background: #f4f8f6;
+    border-radius: 10px;
+}
+
+.product-placeholder span {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.store-initials {
+    color: #087751;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.store-item {
+    font: inherit;
+    text-align: left;
+}
+
+.best-pick-banner[hidden] {
+    display: none;
+}
+
+.btn-add:disabled {
+    color: #88958f;
+    border-color: #dbe7e2;
+    cursor: not-allowed;
 }
 
 .price-bar-72 {

@@ -1,139 +1,231 @@
-// ==================================================
-// BLINDAGEM SHOP-17: MANTER PRODUTOS
-// ==================================================
+// Os produtos são compartilhados; cada supermercado gerencia somente seus preços.
+(() => {
+    const form = document.getElementById('mpFormProduto');
+    const tabela = document.getElementById('mpTabelaProdutos');
+    const nomeInput = document.getElementById('mpNome');
+    const categoriaInput = document.getElementById('mpCategoria');
+    const precoInput = document.getElementById('mpPreco');
+    const salvar = document.getElementById('mpSalvar');
+    const mensagem = document.getElementById('mpMensagem');
+    const estado = { produtos: [], precos: [], edicaoId: null };
 
-(function() {
-    console.log("Módulo Manter Produtos Lojista ativo.");
+    let autenticacao;
+    try {
+        autenticacao = JSON.parse(sessionStorage.getItem('shopwise_auth'));
+    } catch {
+        autenticacao = null;
+    }
+    const mercado = autenticacao?.supermercados?.[0];
+    if (!autenticacao?.token || autenticacao.tipo !== 'supermercado' || !mercado) {
+        window.location.replace('login-supermercado.html');
+        return;
+    }
 
-    // Elementos do formulário e tabela
-    const formProduto = document.getElementById('mpFormProduto');
-    const tabelaProdutos = document.getElementById('mpTabelaProdutos');
-    
-    // Elementos da escolha Manual vs API
-    const btnManual = document.getElementById('btnManual');
-    const btnApi = document.getElementById('btnApi');
-    const sessaoManual = document.getElementById('sessaoManual');
-    const sessaoApi = document.getElementById('sessaoApi');
-    
-    // Chave exclusiva para o LocalStorage do Lojista (evita conflito com o carrinho)
-    const LS_KEY = 'shopwise_lojista_produtos';
+    document.getElementById('mpNomeMercado').textContent = mercado.nome;
+    document.getElementById('mpTabelaMercado').textContent = mercado.nome;
 
-    // ==========================================
-    // LÓGICA DE NAVEGAÇÃO (MANUAL VS API)
-    // ==========================================
-    if(btnManual && btnApi && sessaoManual && sessaoApi) {
-        btnManual.addEventListener('click', () => {
-            btnManual.classList.add('active');
-            btnApi.classList.remove('active');
-            sessaoManual.style.display = 'block'; // Mostra o formulário manual
-            sessaoApi.style.display = 'none';     // Esconde a tela de API
+    const dinheiro = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    function escapar(valor) {
+        return String(valor ?? '').replace(/[&<>"']/g, (caractere) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        })[caractere]);
+    }
+
+    function normalizar(valor) {
+        return String(valor ?? '').trim().normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    function avisar(texto, erro = false) {
+        mensagem.textContent = texto;
+        mensagem.classList.toggle('mp-message-error', erro);
+    }
+
+    function mensagemDaApi(dados) {
+        if (typeof dados?.detail === 'string') return dados.detail;
+        if (typeof dados === 'object' && dados !== null) {
+            return Object.values(dados).flat().map(String).join(' ');
+        }
+        return 'Não foi possível concluir a operação.';
+    }
+
+    async function consultar(caminho, metodo = 'GET', corpo = null) {
+        const resposta = await fetch(caminho, {
+            method: metodo,
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Token ${autenticacao.token}`,
+                ...(corpo ? { 'Content-Type': 'application/json' } : {}),
+            },
+            ...(corpo ? { body: JSON.stringify(corpo) } : {}),
         });
-
-        btnApi.addEventListener('click', () => {
-            btnApi.classList.add('active');
-            btnManual.classList.remove('active');
-            sessaoApi.style.display = 'block';    // Mostra a tela de API
-            sessaoManual.style.display = 'none';  // Esconde o formulário manual
-        });
+        const dados = resposta.status === 204 ? null : await resposta.json().catch(() => null);
+        if (!resposta.ok) {
+            if (resposta.status === 401) {
+                throw new Error('Sua sessão não é válida. Saia e entre novamente.');
+            }
+            throw new Error(mensagemDaApi(dados));
+        }
+        return dados;
     }
 
-    // ==========================================
-    // LÓGICA DE CADASTRO E ESTOQUE
-    // ==========================================
-
-    // Função para buscar produtos salvos
-    function getProdutos() {
-        return JSON.parse(localStorage.getItem(LS_KEY)) || [];
+    function produtoPorNome(nome) {
+        return estado.produtos.find((produto) => normalizar(produto.nome) === normalizar(nome));
     }
 
-    // Função para salvar produtos
-    function setProdutos(produtos) {
-        localStorage.setItem(LS_KEY, JSON.stringify(produtos));
+    function atualizarCategoria() {
+        const produto = produtoPorNome(nomeInput.value);
+        categoriaInput.disabled = Boolean(produto) || estado.edicaoId !== null;
+        categoriaInput.required = !categoriaInput.disabled;
+        if (produto) categoriaInput.value = produto.categoria;
     }
 
-    // Função para desenhar a tabela na tela
+    function limparFormulario() {
+        form.reset();
+        estado.edicaoId = null;
+        nomeInput.disabled = false;
+        categoriaInput.disabled = false;
+        categoriaInput.required = true;
+        document.getElementById('mpTituloForm').textContent = 'Cadastrar preço';
+        salvar.textContent = 'Cadastrar preço';
+    }
+
     function renderizarTabela() {
-        const produtos = getProdutos();
-        if (!tabelaProdutos) return; // Proteção extra
-
-        tabelaProdutos.innerHTML = ''; // Limpa a tabela antes de desenhar
-
-        if (produtos.length === 0) {
-            tabelaProdutos.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #777; padding: 2rem;">Nenhum produto cadastrado no estoque ainda.</td></tr>';
+        const produtos = new Map(estado.produtos.map((produto) => [produto.id, produto]));
+        const meusPrecos = estado.precos.filter((preco) => preco.supermercado === mercado.id);
+        if (!meusPrecos.length) {
+            tabela.innerHTML = '<tr><td colspan="4">Nenhum preço cadastrado para este supermercado.</td></tr>';
             return;
         }
-
-        produtos.forEach(produto => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <strong>${produto.nome}</strong><br>
-                    <small style="color: #666;">${produto.descricao || 'Sem descrição'}</small>
+        tabela.innerHTML = meusPrecos.map((preco) => {
+            const produto = produtos.get(preco.produto);
+            return `<tr>
+                <td><strong>${escapar(produto?.nome || 'Produto não encontrado')}</strong></td>
+                <td>${escapar(produto?.categoria || '—')}</td>
+                <td>${dinheiro.format(Number(preco.valor))}</td>
+                <td class="mp-actions">
+                    <button type="button" class="mp-action-link" data-acao="editar" data-preco-id="${preco.id}">Alterar preço</button>
+                    <button type="button" class="mp-action-link mp-action-danger" data-acao="remover" data-preco-id="${preco.id}">Remover</button>
                 </td>
-                <td style="text-transform: capitalize;">${produto.categoria}</td>
-                <td>R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}</td>
-                <td>${produto.estoque} un.</td>
-                <td>
-                    <a class="mp-action-link" onclick="window.removerProdutoMp(${produto.id})">Excluir</a>
-                </td>
-            `;
-            tabelaProdutos.appendChild(tr);
-        });
+            </tr>`;
+        }).join('');
     }
 
-    // Evento de clique no botão de Cadastrar (Modo Manual)
-    if(formProduto) {
-        formProduto.addEventListener('submit', function(event) {
-            event.preventDefault(); // Evita que a página pisque/recarregue
+    function renderizarSugestoes() {
+        document.getElementById('mpProdutosExistentes').innerHTML = estado.produtos
+            .map((produto) => `<option value="${escapar(produto.nome)}"></option>`).join('');
+    }
 
-            // 1. Captura os valores digitados
-            const nome = document.getElementById('mpNome').value.trim();
-            const categoria = document.getElementById('mpCategoria').value;
-            const preco = document.getElementById('mpPreco').value;
-            const estoque = document.getElementById('mpEstoque').value;
-            const descricao = document.getElementById('mpDescricao').value.trim();
+    async function carregarDados() {
+        const [produtos, precos] = await Promise.all([
+            consultar('/api/produtos/'),
+            consultar('/api/precos/'),
+        ]);
+        estado.produtos = produtos;
+        estado.precos = precos;
+        renderizarSugestoes();
+        renderizarTabela();
+    }
 
-            // 2. Validação básica (SHOP-87)
-            if(!nome || !categoria || !preco || !estoque) {
-                alert("Por favor, preencha todos os campos obrigatórios (*).");
+    function iniciarEdicao(preco) {
+        const produto = estado.produtos.find((item) => item.id === preco.produto);
+        if (!produto) return;
+        estado.edicaoId = preco.id;
+        nomeInput.value = produto.nome;
+        categoriaInput.value = produto.categoria;
+        precoInput.value = preco.valor;
+        nomeInput.disabled = true;
+        categoriaInput.disabled = true;
+        categoriaInput.required = false;
+        document.getElementById('mpTituloForm').textContent = `Alterar preço de ${produto.nome}`;
+        salvar.textContent = 'Salvar preço';
+        avisar('');
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    form.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        const nome = nomeInput.value.trim();
+        const valor = precoInput.value;
+        if (!nome || !valor || !Number.isFinite(Number(valor)) || Number(valor) <= 0) {
+            avisar('Informe um produto e um preço maior que zero.', true);
+            return;
+        }
+        salvar.disabled = true;
+        avisar('Salvando...');
+        let produtoCriado = false;
+        try {
+            if (estado.edicaoId !== null) {
+                const preco = estado.precos.find((item) => item.id === estado.edicaoId && item.supermercado === mercado.id);
+                if (!preco) throw new Error('Preço não encontrado para este supermercado.');
+                await consultar(`/api/precos/${preco.id}/`, 'PUT', {
+                    produto: preco.produto, supermercado: mercado.id, valor,
+                });
+                limparFormulario();
+                await carregarDados();
+                avisar('Preço atualizado com sucesso.');
                 return;
             }
 
-            // 3. Cria o "pacote" do novo produto
-            const novoProduto = {
-                id: Date.now(), // Cria um ID único matemático
-                nome: nome,
-                categoria: categoria,
-                preco: preco,
-                estoque: estoque,
-                descricao: descricao
-            };
-
-            // 4. Salva no estoque
-            const produtos = getProdutos();
-            produtos.push(novoProduto);
-            setProdutos(produtos);
-
-            // 5. Exibe Feedback (SHOP-90)
-            alert("✅ Produto cadastrado com sucesso no estoque!");
-
-            // 6. Limpa os campos e atualiza a tabela na tela
-            formProduto.reset();
-            renderizarTabela();
-        });
-    }
-
-    // Função exposta (fora da bolha de forma controlada) para o botão de Excluir funcionar
-    window.removerProdutoMp = function(id) {
-        if(confirm("Tem certeza que deseja remover este produto do estoque?")) {
-            let produtos = getProdutos();
-            produtos = produtos.filter(p => p.id !== id); // Filtra tirando o produto excluído
-            setProdutos(produtos);
-            renderizarTabela(); // Atualiza a tela
+            let produto = produtoPorNome(nome);
+            if (!produto) {
+                if (!categoriaInput.value) throw new Error('Selecione a categoria do produto novo.');
+                produto = await consultar('/api/produtos/', 'POST', {
+                    nome, categoria: categoriaInput.value,
+                });
+                produtoCriado = true;
+            }
+            if (estado.precos.some((preco) => preco.produto === produto.id && preco.supermercado === mercado.id)) {
+                throw new Error('Este produto já tem preço no seu supermercado. Use “Alterar preço” na tabela.');
+            }
+            await consultar('/api/precos/', 'POST', {
+                produto: produto.id, supermercado: mercado.id, valor,
+            });
+            limparFormulario();
+            await carregarDados();
+            avisar('Preço cadastrado com sucesso.');
+        } catch (erro) {
+            // Se o preço falhar depois da criação, o produto novo continua no catálogo.
+            if (produtoCriado) await carregarDados().catch(() => {});
+            avisar(erro.message || 'Não foi possível salvar o preço.', true);
+        } finally {
+            salvar.disabled = false;
         }
-    };
+    });
 
-    // Assim que a página abre, ele já renderiza a tabela com o que tem salvo
-    renderizarTabela();
+    tabela.addEventListener('click', async (evento) => {
+        const botao = evento.target.closest('[data-acao]');
+        if (!botao) return;
+        const preco = estado.precos.find((item) => item.id === Number(botao.dataset.precoId) && item.supermercado === mercado.id);
+        if (!preco) return;
+        if (botao.dataset.acao === 'editar') {
+            iniciarEdicao(preco);
+            return;
+        }
+        if (!window.confirm('Remover o preço deste produto do seu supermercado?')) return;
+        botao.disabled = true;
+        try {
+            await consultar(`/api/precos/${preco.id}/`, 'DELETE');
+            await carregarDados();
+            avisar('Preço removido do seu supermercado. O produto continua no catálogo.');
+        } catch (erro) {
+            avisar(erro.message || 'Não foi possível remover o preço.', true);
+            botao.disabled = false;
+        }
+    });
 
+    nomeInput.addEventListener('input', atualizarCategoria);
+    document.getElementById('mpLimpar').addEventListener('click', () => {
+        limparFormulario();
+        avisar('');
+    });
+    document.getElementById('mpSair').addEventListener('click', () => {
+        sessionStorage.removeItem('shopwise_auth');
+    });
+
+    carregarDados().catch((erro) => {
+        tabela.innerHTML = '<tr><td colspan="4">Não foi possível carregar os preços.</td></tr>';
+        avisar(erro.message || 'Não foi possível consultar a API.', true);
+    });
 })();
