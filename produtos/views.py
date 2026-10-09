@@ -56,15 +56,50 @@ class SupermercadoList(APIView):
 
 
 class SupermercadoDetalhe(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def obter_supermercado(self, request, pk):
+        usuario_esperado = f'supermercado_{pk}'
+
+        if request.user.username != usuario_esperado:
+            return None, Response(
+                {
+                    'erro': 'Você não tem permissão para acessar este supermercado.'
+                },
+                status=403
+            )
+
+        supermercado = get_object_or_404(
+            Supermercado,
+            pk=pk
+        )
+
+        return supermercado, None
 
     def get(self, request, pk):
-        supermercado = get_object_or_404(Supermercado, pk=pk)
-        serializer = SupermercadoSerializer(supermercado)
+        supermercado, erro = self.obter_supermercado(
+            request,
+            pk
+        )
+
+        if erro is not None:
+            return erro
+
+        serializer = SupermercadoSerializer(
+            supermercado
+        )
+
         return Response(serializer.data)
 
     def put(self, request, pk):
-        supermercado = get_object_or_404(Supermercado, pk=pk)
+        supermercado, erro = self.obter_supermercado(
+            request,
+            pk
+        )
+
+        if erro is not None:
+            return erro
 
         serializer = SupermercadoSerializer(
             supermercado,
@@ -73,14 +108,30 @@ class SupermercadoDetalhe(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
 
-        return Response(serializer.errors, status=400)
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=400
+        )
 
     def delete(self, request, pk):
-        supermercado = get_object_or_404(Supermercado, pk=pk)
+        supermercado, erro = self.obter_supermercado(
+            request,
+            pk
+        )
+
+        if erro is not None:
+            return erro
+
         supermercado.delete()
-        return Response(status=204)
+
+        return Response(
+            status=204
+        )
 
 
 class ProdutoList(APIView):
