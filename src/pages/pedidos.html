@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Pedidos</title>
     <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/pedidos.css">
+    <link rel="stylesheet" href="../styles/pedidos.css?v=20261009-pedidos-api">
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -56,23 +56,23 @@
             <main class="page-container" role="main">
 
                 <section class="orders-hero">
-                    <span class="mini-badge">Rastreamento em tempo real</span>
+                    <span class="mini-badge">Pedidos do ShopWise</span>
                     <h1 class="section-title payment-title">Meus pedidos</h1>
-                    <p class="payment-subtitle">Acompanhe pedidos em andamento, avalie os que chegaram e reveja seu histórico completo.</p>
-                </section>
+                    <p class="payment-subtitle">Acompanhe os pedidos e confira as atualizações do supermercado.</p>
+                <div class="quick-links"><button class="btn-primary-link" id="refreshOrders">Atualizar pedidos</button><a class="btn-secondary-link" id="ordersLogin" href="login.html?next=pedidos" hidden>Entrar como cliente</a><a class="btn-secondary-link" id="ordersMarketLogin" href="login-supermercado.html?next=pedidos" hidden>Entrar como supermercado</a></div><p id="ordersStatus" role="status" aria-live="polite"></p></section>
 
-                <section class="orders-status-group" aria-label="Pedidos em andamento">
-                    <h2 class="orders-status-title">Pedidos em andamento</h2>
+                <section class="orders-status-group" aria-label="Recebidos">
+                    <h2 class="orders-status-title">Recebidos</h2>
                     <div class="orders-list" id="listaAndamento"></div>
                 </section>
 
-                <section class="orders-status-group" aria-label="Pedidos entregues aguardando avaliação">
-                    <h2 class="orders-status-title">Pedidos entregues</h2>
+                <section class="orders-status-group" aria-label="Pedidos em preparação">
+                    <h2 class="orders-status-title">Em preparação</h2>
                     <div class="orders-list" id="listaEntregue"></div>
                 </section>
 
-                <section class="orders-status-group" aria-label="Pedidos finalizados">
-                    <h2 class="orders-status-title">Pedidos finalizados</h2>
+                <section class="orders-status-group" aria-label="Concluídos">
+                    <h2 class="orders-status-title">Concluídos</h2>
                     <div class="orders-list" id="listaFinalizado"></div>
                 </section>
 
@@ -82,7 +82,7 @@
 
     <!-- ══════ MODAL ACOMPANHAMENTO DO CLIENTE ══════ -->
     <div class="modal-overlay" id="modalAcompOverlay" onclick="fecharAcompOverlay(event)">
-      <div class="modal-pedido">
+      <div class="modal-pedido" role="dialog" aria-modal="true" aria-labelledby="acompTitulo">
 
         <div class="modal-ped-header">
           <div class="modal-ped-icon">🛍️</div>
@@ -101,19 +101,15 @@
             <div class="stepper" id="acompStepper">
               <div class="step" id="acomp-step-0">
                 <div class="step-circle">✅</div>
-                <div class="step-label">Pedido confirmado</div>
+                <div class="step-label">Recebido</div>
               </div>
               <div class="step" id="acomp-step-1">
                 <div class="step-circle">📦</div>
-                <div class="step-label">Separando produtos</div>
+                <div class="step-label">Em preparação</div>
               </div>
               <div class="step" id="acomp-step-2">
                 <div class="step-circle">🚚</div>
-                <div class="step-label">Saiu para entrega</div>
-              </div>
-              <div class="step" id="acomp-step-3">
-                <div class="step-circle">🏠</div>
-                <div class="step-label">Entregue</div>
+                <div class="step-label">Concluído</div>
               </div>
               <div class="stepper-progress" id="acompProgress"></div>
             </div>
@@ -149,7 +145,7 @@
           <!-- Total -->
           <div style="background:#f4f7f6; border:1px solid #e1e1e1; border-radius:12px; padding:16px 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:15px; font-weight:700; color:#333;">Total pago</span>
+              <span style="font-size:15px; font-weight:700; color:#333;">Total do pedido</span>
               <span style="font-size:22px; font-weight:900; color:#27ae60;" id="acompTotal">R$ 22,97</span>
             </div>
             <div style="font-size:12px; color:#777; margin-top:4px;" id="acompPagamento">PIX aprovado pelo ShopWise Pay Demo.</div>
@@ -170,8 +166,8 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <script src="../utils/ui-feedback.js"></script>
-    <script src="../utils/acompanhar-pedido.js"></script>
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/pedidos-api.js?v=20261009-revisao"></script>
     <script>
         function configurarSidebar() {
             const desktopMenuToggle = document.getElementById("desktopMenuToggle");

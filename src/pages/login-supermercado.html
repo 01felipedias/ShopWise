@@ -1,46 +1,39 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ShopWise Lojista</title>
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/login-supermercado.css' %}">
+    <title>Login de Supermercado - ShopWise</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/login-supermercado.css">
 </head>
 <body>
-
     <header class="header-cadastro">
-        <img src="{% static 'assets/img/logoshopwise.png' %}" alt="Logo ShopWise">
+        <img src="../assets/img/logoshopwise.png" alt="ShopWise">
     </header>
-
     <main class="form-mercado">
         <div class="card-login">
-            <h2>Login do Lojista</h2>
-            <p class="subtitulo">Acesse sua conta para gerenciar produtos</p>
-
-            <form id="lsLoginForm">
-
+            <h2>Login do supermercado</h2>
+            <p class="subtitulo">Entre com a conta do seu mercado</p>
+            <form data-shopwise-login data-tipo="supermercado" data-destino="manter-produtos.html?v=20261009-sem-foto">
                 <div class="input-group">
-                    <input name="email" type="email" placeholder="E-mail comercial" required>
+                    <label class="cadastro-label" for="identificador">E-mail comercial ou usuário antigo</label>
+                    <input id="identificador" name="identificador" type="text" autocomplete="username" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="senha" type="password" placeholder="Senha" required>
+                    <label class="cadastro-label" for="senha">Senha</label>
+                    <input id="senha" name="password" type="password" autocomplete="current-password" required>
                 </div>
-                
-                <button type="submit" class="btn-verde" style="width: 100%; margin-top: 1rem;">
-                    Entrar
-                </button>
-
+                <p class="login-message" role="alert" aria-live="polite"></p>
+                <button type="submit" class="btn-verde">Entrar</button>
             </form>
-
             <div class="bottom-links">
-                <a href="cadastromercado.html">Não tem conta? Cadastre seu supermercado</a>
+                <a href="cadastromercado.html">Cadastrar supermercado</a>
+                <a href="login.html">Entrar como cliente</a>
             </div>
         </div>
     </main>
-
-    <script src="{% static 'utils/login-supermercado.js' %}"></script>
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/login-api.js?v=20261009-revisao"></script>
 </body>
 </html>

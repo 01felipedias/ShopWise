@@ -1,208 +1,44 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>ShopWise - Login</title>
-
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <title>Login de Cliente - ShopWise</title>
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
-
 <body>
-
-<div class="container">
-
-    <section class="areaverde">
-
-        <div class="areaverde-conteudo">
-
-            <img
-                src="{% static 'assets/img/logoshopwise.png' %}"
-                alt="Logo ShopWise"
-                style="margin-bottom: 20px;"
-            >
-
-            <h1>Entre e aproveite benefícios exclusivos</h1>
-
-            <p>
-                Aplique cupons, ganhe cashback, acompanhe a variação
-                de preço de um produto e receba alerta quando atingir
-                o valor desejado.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <section class="form">
-
-        <div class="card-login">
-
-            <h2>Bem-vindo de volta</h2>
-
-            <p class="subtitulo">
-                Faça login para continuar
-            </p>
-
-
-            <button class="btn-branco" type="button">
-                <img
-                    src="{% static 'assets/icones/google.png' %}"
-                    alt="Ícone Google"
-                >
-                Continuar com Google
-            </button>
-
-
-            <div class="divider">
-                <span>ou</span>
+    <div class="container">
+        <section class="areaverde">
+            <div class="areaverde-conteudo">
+                <img src="../assets/img/logoshopwise.png" alt="ShopWise">
+                <h1>Compare preços perto de você</h1>
+                <p>Entre para consultar os preços dos supermercados.</p>
             </div>
-
-
-            <form id="formLoginCliente">
-
-                <div class="input-group">
-
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Digite seu email"
-                        required
-                    >
-
+        </section>
+        <main class="form">
+            <div class="card-login">
+                <h2>Bem-vindo de volta</h2>
+                <p class="subtitulo">Entre como cliente</p>
+                <form data-shopwise-login data-tipo="usuario" data-destino="feedproduto.html">
+                    <div class="input-group">
+                        <label class="cadastro-label" for="identificador">E-mail ou usuário antigo</label>
+                        <input id="identificador" name="identificador" type="text" autocomplete="username" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="senha">Senha</label>
+                        <input id="senha" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+                    <p class="login-message" role="alert" aria-live="polite"></p>
+                    <button type="submit" class="btn-verde">Entrar</button>
+                </form>
+                <div class="bottom-links">
+                    <a href="cadastrousuario.html">Criar cadastro</a>
+                    <a href="login-supermercado.html">Entrar como supermercado</a>
                 </div>
-
-
-                <div class="input-group">
-
-                    <input
-                        type="password"
-                        name="senha"
-                        placeholder="Digite sua senha"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="esqueci-senha">
-
-                    <a href="Senha.html">
-                        Esqueceu sua senha?
-                    </a>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="btn-verde"
-                >
-                    Entrar
-                </button>
-
-            </form>
-
-
-            <div class="bottom-links">
-
-                <a href="cadastrousuario.html">
-                    Criar cadastro
-                </a>
-
-                <a href="cadastromercado.html">
-                    Cadastrar Supermercado
-                </a>
-
             </div>
-
-        </div>
-
-    </section>
-
-</div>
-
-
-<script>
-
-const formLogin = document.getElementById('formLoginCliente');
-
-
-formLogin.addEventListener('submit', async function(event) {
-
-    event.preventDefault();
-
-
-    const email =
-        formLogin.elements['email'].value.trim();
-
-    const senha =
-        formLogin.elements['senha'].value;
-
-
-    try {
-
-        const resposta = await fetch('/api/login-cliente/', {
-
-            method: 'POST',
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-                email: email,
-                senha: senha
-            })
-
-        });
-
-
-        const dados = await resposta.json();
-
-
-        if (!resposta.ok) {
-
-            alert(
-                dados.erro ||
-                'E-mail ou senha inválidos.'
-            );
-
-            return;
-        }
-
-
-        localStorage.setItem(
-            'shopwise_cliente',
-            JSON.stringify(dados.cliente)
-        );
-
-
-        alert('Login realizado com sucesso!');
-
-
-        window.location.href = 'feedproduto.html';
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        alert(
-            'Não foi possível conectar com o servidor.'
-        );
-
-    }
-
-});
-
-</script>
-
+        </main>
+    </div>
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/login-api.js?v=20261009-revisao"></script>
 </body>
-
 </html>

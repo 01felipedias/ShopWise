@@ -1,237 +1,53 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Cadastro ShopWise</title>
-
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <title>Cadastro de Cliente - ShopWise</title>
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
-
 <body>
-
-<div class="container">
-
-    <section class="areaverde">
-
-        <div class="areaverde-conteudo">
-
-            <img
-                src="{% static 'assets/img/logoshopwise.png' %}"
-                alt="Logo ShopWise"
-                style="margin-bottom: 20px;"
-            >
-
-            <h1>Crie sua conta e aproveite benefícios exclusivos</h1>
-
-            <p>
-                Cadastre-se gratuitamente para acompanhar preços,
-                receber alertas, utilizar cupons e ganhar cashback
-                em suas compras.
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <section class="form">
-
-        <div class="card-login">
-
-            <h2>Bem-vindo ao ShopWise!</h2>
-
-            <p class="subtitulo">
-                Preencha os dados para continuar
-            </p>
-
-
-            <form id="formCadastroCliente">
-
-                <div class="input-group">
-                    <input
-                        type="text"
-                        name="nome"
-                        placeholder="Digite seu nome"
-                        required
-                    >
-                </div>
-
-
-                <div class="input-group">
-                    <input
-                        type="text"
-                        name="cpf"
-                        placeholder="Digite seu CPF"
-                        required
-                    >
-                </div>
-
-
-                <div class="input-group">
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Digite seu email"
-                        required
-                    >
-                </div>
-
-
-                <div class="input-group">
-                    <input
-                        type="text"
-                        name="cep"
-                        placeholder="Digite seu CEP"
-                        required
-                    >
-                </div>
-
-
-                <div class="input-group">
-                    <input
-                        type="password"
-                        name="senha"
-                        placeholder="Digite sua senha"
-                        required
-                    >
-                </div>
-
-
-                <div class="input-group">
-                    <input
-                        type="password"
-                        name="confirmasenha"
-                        placeholder="Confirme sua senha"
-                        required
-                    >
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="btn-verde"
-                >
-                    Cadastrar-se
-                </button>
-
-            </form>
-
-
-            <div class="bottom-links">
-
-                <a href="login.html">
-                    Já possui conta? Entrar
-                </a>
-
+    <div class="container">
+        <section class="areaverde">
+            <div class="areaverde-conteudo">
+                <img src="../assets/img/logoshopwise.png" alt="ShopWise">
+                <h1>Compare preços perto de você</h1>
+                <p>Crie sua conta para consultar preços dos supermercados.</p>
             </div>
-
-        </div>
-
-    </section>
-
-</div>
-
-
-<script>
-
-const formCadastro = document.getElementById('formCadastroCliente');
-
-
-formCadastro.addEventListener('submit', async function(event) {
-
-    event.preventDefault();
-
-
-    const nome = formCadastro.elements['nome'].value.trim();
-    const cpf = formCadastro.elements['cpf'].value.trim();
-    const email = formCadastro.elements['email'].value.trim();
-    const cep = formCadastro.elements['cep'].value.trim();
-    const senha = formCadastro.elements['senha'].value;
-    const confirmaSenha =
-        formCadastro.elements['confirmasenha'].value;
-
-
-    if (senha !== confirmaSenha) {
-
-        alert('As senhas não coincidem.');
-        return;
-
-    }
-
-
-    const dadosCliente = {
-        nome: nome,
-        cpf: cpf,
-        email: email,
-        cep: cep,
-        senha: senha,
-        confirmasenha: confirmaSenha
-    };
-
-
-    try {
-
-        const resposta = await fetch('/api/clientes/', {
-
-            method: 'POST',
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify(dadosCliente)
-
-        });
-
-
-        const dados = await resposta.json();
-
-
-        if (!resposta.ok) {
-
-            if (dados.email) {
-                alert('Este e-mail já está cadastrado.');
-                return;
-            }
-
-            if (dados.cpf) {
-                alert('Este CPF já está cadastrado.');
-                return;
-            }
-
-            alert(
-                dados.erro ||
-                'Não foi possível realizar o cadastro.'
-            );
-
-            return;
-        }
-
-
-        alert('Cadastro realizado com sucesso!');
-
-        window.location.href = 'login.html';
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        alert(
-            'Não foi possível conectar com o servidor.'
-        );
-
-    }
-
-});
-
-</script>
-
+        </section>
+        <main class="form">
+            <div class="card-login">
+                <h2>Crie sua conta</h2>
+                <p class="subtitulo">Escolha o tipo de cadastro</p>
+                <nav class="cadastro-tipos" aria-label="Tipo de conta">
+                    <a class="active" aria-current="page" href="cadastrousuario.html">Cliente</a>
+                    <a href="cadastromercado.html">Supermercado</a>
+                </nav>
+                <form data-shopwise-cadastro data-tipo="usuario" data-login="login.html">
+                    <div class="input-group">
+                        <label class="cadastro-label" for="nome">Seu nome</label>
+                        <input id="nome" name="nome" type="text" maxlength="150" autocomplete="name" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="email">E-mail</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="senha">Senha</label>
+                        <input id="senha" name="password" type="password" autocomplete="new-password" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="cadastro-label" for="confirmacao">Confirme a senha</label>
+                        <input id="confirmacao" name="confirm_password" type="password" autocomplete="new-password" required>
+                    </div>
+                    <p class="login-message" role="alert" aria-live="polite"></p>
+                    <button type="submit" class="btn-verde">Cadastrar cliente</button>
+                </form>
+                <div class="bottom-links"><a href="login.html">Já possui conta? Entrar</a></div>
+            </div>
+        </main>
+    </div>
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/cadastro-api.js?v=20261009-revisao"></script>
 </body>
-
 </html>

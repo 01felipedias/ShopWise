@@ -5,6 +5,62 @@ const ORDER_VALUES = {
 };
 
 let carrinho = [];
+let checkoutPronto = false;
+let enviandoPedido = false;
+let pedidoEnviado = false;
+let appliedCouponCode = '';
+
+function autenticacaoCheckout() {
+    try { return JSON.parse(sessionStorage.getItem('shopwise_auth')); } catch { return null; }
+}
+
+async function conferirCheckout() {
+    checkoutPronto = false;
+    updatePayButtonText();
+    const aviso = document.getElementById('checkoutNotice');
+    aviso.hidden = false;
+    const login = document.getElementById('checkoutLoginLink');
+    login.hidden = true;
+    const mercadoId = Number(sessionStorage.getItem('shopwise_checkout_mercado'));
+    const itens = getCartItems();
+    if (!itens.length || !mercadoId || itens.some((item) => Number(item.supermercadoId) !== mercadoId || !item.produtoId)) {
+        aviso.textContent = 'Volte ao carrinho e escolha um supermercado com todos os produtos antes de confirmar.';
+        return;
+    }
+    aviso.textContent = 'Conferindo preços e estoque do supermercado escolhido...';
+    try {
+        const resposta = await fetch('/api/carrinho/comparar/', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({itens: itens.map((item) => ({produto: item.produtoId, quantidade: item.quantidade}))})
+        });
+        if (!resposta.ok) throw new Error('Não foi possível conferir os preços. Atualize a página para tentar novamente.');
+        const dados = await resposta.json();
+        const mercado = dados.supermercados.find((item) => item.supermercado === mercadoId);
+        if (!mercado?.completo) throw new Error('O supermercado não tem mais estoque suficiente. Volte ao carrinho e compare novamente.');
+        for (const item of itens) {
+            const atual = mercado.itens.find((produto) => produto.produto === Number(item.produtoId));
+            item.preco = atual.preco_unitario;
+            item.estoque = atual.estoque;
+            item.supermercadoNome = mercado.supermercado_nome;
+            item.supermercadoEndereco = mercado.supermercado_endereco;
+        }
+        localStorage.setItem('carrinho', JSON.stringify(itens));
+        carregarResumoPedido();
+        const auth = autenticacaoCheckout();
+        if (auth?.tipo !== 'usuario' || !auth.token) {
+            aviso.textContent = 'Entre como cliente para confirmar o pedido. Sua escolha e seu carrinho serão mantidos.';
+            login.hidden = false;
+            return;
+        }
+        checkoutPronto = true;
+        aviso.textContent = '';
+        aviso.hidden = true;
+    } catch (erro) {
+        aviso.textContent = ShopWiseMensagens.falha(erro);
+    } finally {
+        updatePayButtonText();
+    }
+}
 
 const VALID_COUPONS = {
     SHOPWISE10: 0.10,
@@ -54,16 +110,31 @@ function carregarResumoPedido() {
 
     if (!summaryList) return;
 
-    summaryList.innerHTML = "";
+    const mercados = [...new Set(carrinho.map((produto) => produto.supermercadoNome).filter(Boolean))];
+    const nomesMercados = mercados.length ? mercados.join(' e ') : 'Supermercado';
+    const descricaoRetirada = mercados.length > 1
+        ? 'Grátis - retirada em cada supermercado'
+        : `Grátis - ${nomesMercados}`;
+    document.getElementById('pickupMarketDescription').textContent = descricaoRetirada;
+    document.getElementById('pickupMarketName').textContent = nomesMercados;
+    document.getElementById('reviewMarketName').textContent = nomesMercados;
+    const enderecos = [...new Set(carrinho.map((produto) => produto.supermercadoEndereco).filter(Boolean))];
+    document.getElementById('pickupMarketAddress').textContent = enderecos.length
+        ? enderecos.join(' • ')
+        : 'Consulte o endereço do supermercado cadastrado.';
+
+    summaryList.replaceChildren();
     let subtotal = 0;
 
     if (carrinho.length === 0) {
-        summaryList.innerHTML = `
-            <div class="summary-item">
-                <span>Carrinho vazio</span>
-                <span>R$ 0,00</span>
-            </div>
-        `;
+        const linhaVazia = document.createElement('div');
+        linhaVazia.className = 'summary-item';
+        const mensagem = document.createElement('span');
+        mensagem.textContent = 'Carrinho vazio';
+        const valorVazio = document.createElement('span');
+        valorVazio.textContent = formatCurrency(0);
+        linhaVazia.append(mensagem, valorVazio);
+        summaryList.append(linhaVazia);
         ORDER_VALUES.subtotal = 0;
 
         const subtotalValue = document.getElementById("subtotalValue");
@@ -80,18 +151,28 @@ function carregarResumoPedido() {
         const totalItem = preco * quantidade;
         subtotal += totalItem;
 
-        summaryList.innerHTML += `
-            <div class="summary-item product-summary">
-                <div class="product-summary-info">
-                    <img src="${produto.img}" alt="${produto.nome}" class="product-summary-image">
-                    <div>
-                        <strong>${produto.nome}</strong>
-                        <small>Quantidade: ${quantidade}</small>
-                    </div>
-                </div>
-                <span>${formatCurrency(totalItem)}</span>
-            </div>
-        `;
+        const linha = document.createElement('div');
+        linha.className = 'summary-item product-summary';
+        const info = document.createElement('div');
+        info.className = 'product-summary-info';
+        if (produto.img) {
+            const imagem = document.createElement('img');
+            imagem.src = produto.img;
+            imagem.alt = produto.nome || 'Produto';
+            imagem.className = 'product-summary-image';
+            info.append(imagem);
+        }
+        const texto = document.createElement('div');
+        const nome = document.createElement('strong');
+        nome.textContent = produto.nome || 'Produto';
+        const quantidadeTexto = document.createElement('small');
+        quantidadeTexto.textContent = `Quantidade: ${quantidade}`;
+        texto.append(nome, quantidadeTexto);
+        info.append(texto);
+        const valor = document.createElement('span');
+        valor.textContent = formatCurrency(totalItem);
+        linha.append(info, valor);
+        summaryList.append(linha);
     });
 
     ORDER_VALUES.subtotal = subtotal;
@@ -149,22 +230,13 @@ function updatePayButtonText() {
     const mobileTotal = document.getElementById('mobileTotal');
     const method = getSelectedPaymentMethod();
 
-    const labels = {
-        pix: `Gerar pagamento PIX - ${formatCurrency(currentTotal)}`,
-        credito: `Pagar com cartão de crédito - ${formatCurrency(currentTotal)}`,
-        debito: `Pagar à vista no débito - ${formatCurrency(currentTotal)}`,
-        entrega: `Confirmar pedido - ${formatCurrency(currentTotal)}`
-    };
+    const labels = Object.fromEntries(['pix', 'credito', 'debito', 'entrega'].map((nome) =>
+        [nome, `Confirmar pedido - ${formatCurrency(currentTotal)}`]));
 
-    const shortLabels = {
-        pix: `Gerar PIX`,
-        credito: `Pagar no crédito`,
-        debito: `Pagar no débito`,
-        entrega: `Confirmar pedido`
-    };
-
-    if (payButton) payButton.textContent = labels[method] || labels.pix;
-    if (mobilePayButton) mobilePayButton.textContent = shortLabels[method] || shortLabels.pix;
+    if (payButton) payButton.textContent = enviandoPedido ? 'Confirmando pedido...' : (labels[method] || labels.pix);
+    if (mobilePayButton) mobilePayButton.textContent = 'Confirmar pedido';
+    if (payButton) payButton.disabled = !checkoutPronto || enviandoPedido || pedidoEnviado;
+    if (mobilePayButton) mobilePayButton.disabled = !checkoutPronto || enviandoPedido || pedidoEnviado;
     if (mobileTotal) mobileTotal.textContent = formatCurrency(currentTotal);
 
     updateCheckoutReview();
@@ -174,7 +246,9 @@ function updateTotal() {
     const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
     const deliveryFee = deliveryMethod === "delivery" ? ORDER_VALUES.deliveryFee : 0;
 
-    currentTotal = Math.max(0, ORDER_VALUES.subtotal + deliveryFee - ORDER_VALUES.discount);
+    const subtotalCentavos = Math.round(ORDER_VALUES.subtotal * 100);
+    ORDER_VALUES.discount = appliedCouponCode ? Math.round(subtotalCentavos * VALID_COUPONS[appliedCouponCode]) / 100 : 0;
+    currentTotal = (subtotalCentavos + Math.round(deliveryFee * 100) - Math.round(ORDER_VALUES.discount * 100)) / 100;
 
     const deliveryFeeValue = document.getElementById("deliveryFeeValue");
     const discountValue = document.getElementById("discountValue");
@@ -266,7 +340,7 @@ function updatePaymentPanels() {
 
     const gatewayMessage = method === 'entrega'
         ? 'Pedido será confirmado sem cobrança online. Pagamento será feito na entrega.'
-        : 'Gateway ShopWise Pay pronto para processar a transação.';
+        : 'Pagamento demonstrativo para a apresentação do ShopWise.';
 
     setGatewayStatus(gatewayMessage, '');
     clearCardErrors();
@@ -293,6 +367,7 @@ function applyCoupon(successMessage) {
     const code = couponInput.value.trim().toUpperCase();
 
     if (!code) {
+        appliedCouponCode = '';
         ORDER_VALUES.discount = 0;
         feedback.textContent = 'Digite um cupom para aplicar.';
         feedback.className = 'coupon-feedback-error';
@@ -301,6 +376,7 @@ function applyCoupon(successMessage) {
     }
 
     if (!VALID_COUPONS[code]) {
+        appliedCouponCode = '';
         ORDER_VALUES.discount = 0;
         feedback.textContent = 'Cupom inválido ou expirado.';
         feedback.className = 'coupon-feedback-error';
@@ -308,7 +384,8 @@ function applyCoupon(successMessage) {
         return false;
     }
 
-    ORDER_VALUES.discount = ORDER_VALUES.subtotal * VALID_COUPONS[code];
+    appliedCouponCode = code;
+    ORDER_VALUES.discount = Math.round(Math.round(ORDER_VALUES.subtotal * 100) * VALID_COUPONS[code]) / 100;
 
     feedback.textContent = successMessage || `Cupom ${code} aplicado com sucesso.`;
     feedback.className = 'coupon-feedback-success';
@@ -419,219 +496,74 @@ function validateDeliveryData() {
     return true;
 }
 
-function validateCardFields() {
-    clearCardErrors();
-
-    const cardName = document.getElementById('cardName');
-    const cardNumber = document.getElementById('cardNumber');
-    const cardExpiry = document.getElementById('cardExpiry');
-    const cardCvv = document.getElementById('cardCvv');
-    const fields = [cardName, cardNumber, cardExpiry, cardCvv];
-    let isValid = true;
-    let firstInvalid = null;
-
-    fields.forEach((field) => clearFieldError(field));
-
-    if (!cardName?.value.trim()) {
-        setFieldError(cardName, 'Digite o nome impresso no cartão.');
-        firstInvalid = firstInvalid || cardName;
-        isValid = false;
-    }
-
-    const onlyDigitsCard = cardNumber?.value.replace(/\D/g, '') || '';
-    if (!onlyDigitsCard) {
-        setFieldError(cardNumber, 'Digite o número do cartão.');
-        firstInvalid = firstInvalid || cardNumber;
-        isValid = false;
-    } else if (onlyDigitsCard.length < 13) {
-        setFieldError(cardNumber, 'Digite um número de cartão válido.');
-        firstInvalid = firstInvalid || cardNumber;
-        isValid = false;
-    }
-
-    const expiry = cardExpiry?.value.trim() || '';
-    if (!expiry) {
-        setFieldError(cardExpiry, 'Digite a validade do cartão.');
-        firstInvalid = firstInvalid || cardExpiry;
-        isValid = false;
-    } else if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-        setFieldError(cardExpiry, 'Use o formato MM/AA.');
-        firstInvalid = firstInvalid || cardExpiry;
-        isValid = false;
-    }
-
-    const onlyDigitsCvv = cardCvv?.value.replace(/\D/g, '') || '';
-    if (!onlyDigitsCvv) {
-        setFieldError(cardCvv, 'Digite o CVV.');
-        firstInvalid = firstInvalid || cardCvv;
-        isValid = false;
-    } else if (onlyDigitsCvv.length < 3) {
-        setFieldError(cardCvv, 'Digite um CVV válido.');
-        firstInvalid = firstInvalid || cardCvv;
-        isValid = false;
-    }
-
-    if (!isValid) {
-        setGatewayStatus('Revise os campos destacados antes de continuar.', 'error');
-        firstInvalid?.focus();
-    }
-
-    return isValid;
-}
-
-function buildPaymentPayload() {
-    const method = getSelectedPaymentMethod();
-    const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || 'delivery';
-    const installments = method === 'credito'
-        ? Number(document.getElementById('installments')?.value || 1)
-        : 1;
-
-    const payload = {
-        pedido: generateOrderNumber(),
-        metodoPagamento: method,
-        metodoRecebimento: deliveryMethod,
-        valor: currentTotal,
-        cupom: typeof appliedCouponCode !== 'undefined' ? appliedCouponCode : null,
-        desconto: ORDER_VALUES.discount,
-        parcelas: installments,
-        observacoes: document.getElementById('orderNotes').value.trim(),
-        gateway: method === 'entrega' ? 'Sem cobrança online' : 'ShopWise Pay Demo',
-        criptografia: method === 'entrega' ? 'Não se aplica a cartão' : 'TLS/tokenização simulada'
-    };
-
-    if (method === 'credito' || method === 'debito') {
-        const cardNumber = document.getElementById('cardNumber').value.replace(/\D/g, '');
-
-        payload.cartao = {
-            nome: document.getElementById('cardName').value.trim(),
-            final: cardNumber.slice(-4),
-            token: `tok_sw_${Math.random().toString(36).slice(2, 12)}`,
-            tipo: method === 'credito' ? 'Crédito' : 'Débito à vista'
-        };
-    }
-
-    return payload;
-}
-
-function simulatePaymentGateway(payload) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const method = payload.metodoPagamento;
-            let status = 'aprovado';
-
-            // Simulação para testes: cartão terminando em 0 será recusado.
-            if (payload.cartao?.final?.endsWith('0')) {
-                status = 'recusado';
-            }
-
-            // PIX e pagamento na entrega ficam aprovados na demo para facilitar apresentação.
-            if (method === 'pix' || method === 'entrega') {
-                status = 'aprovado';
-            }
-
-            resolve({
-                status,
-                orderNumber: payload.pedido,
-                transactionId: method === 'entrega' ? 'PAGAMENTO-NA-ENTREGA' : `TX-${Date.now().toString().slice(-8)}`,
-                method,
-                total: payload.valor,
-                installments: payload.parcelas,
-                date: new Date()
-            });
-        }, 1300);
-    });
-}
-
-function generateOrderNumber() {
-    return `SW-${Math.floor(100000 + Math.random() * 900000)}`;
-}
-
 async function finalizarPedido() {
-    const payButton = document.getElementById('payButton');
-    const mobilePayButton = document.getElementById('mobilePayButton');
-    const method = getSelectedPaymentMethod();
-
-    if (!validateDeliveryData()) return;
-    if ((method === 'credito' || method === 'debito') && !validateCardFields()) {
-        if (window.showToast) window.showToast('Revise os dados do cartão antes de continuar.', 'error');
-        return;
-    }
-
-    const payload = buildPaymentPayload();
-
-    if (payButton) payButton.disabled = true;
-    if (mobilePayButton) mobilePayButton.disabled = true;
-
-    const loadingTexts = {
-        pix: 'Gerando PIX...',
-        credito: 'Processando crédito...',
-        debito: 'Processando débito à vista...',
-        entrega: 'Confirmando pedido...'
+    if (!checkoutPronto || enviandoPedido || pedidoEnviado || !validateDeliveryData()) return;
+    const auth = autenticacaoCheckout();
+    if (!auth?.token || auth.tipo !== 'usuario') return;
+    const payload = {
+        supermercado: Number(sessionStorage.getItem('shopwise_checkout_mercado')),
+        itens: carrinho.map(item => ({produto: Number(item.produtoId), quantidade: item.quantidade})),
+        total_esperado: currentTotal.toFixed(2),
+        recebimento: document.querySelector('input[name="deliveryMethod"]:checked')?.value || 'delivery',
+        pagamento: getSelectedPaymentMethod(),
+        endereco: document.getElementById('deliveryAddress').value.trim(),
+        observacoes: document.getElementById('orderNotes').value.trim(),
+        cupom: appliedCouponCode
     };
-
-    if (payButton) payButton.textContent = loadingTexts[method] || 'Processando...';
-    if (mobilePayButton) mobilePayButton.textContent = 'Aguarde...';
-
-    const processingMessage = method === 'entrega'
-        ? 'Enviando pedido ao supermercado para pagamento na entrega...'
-        : 'Enviando transação criptografada para o gateway ShopWise Pay...';
-
-    setGatewayStatus(processingMessage, 'processing');
-
+    const assinatura = JSON.stringify(payload);
+    let tentativa;
+    try { tentativa = JSON.parse(sessionStorage.getItem('shopwise_pedido_tentativa')); } catch {}
+    if (tentativa?.assinatura !== assinatura) tentativa = {assinatura, chave: crypto.randomUUID()};
+    sessionStorage.setItem('shopwise_pedido_tentativa', JSON.stringify(tentativa));
+    payload.chave = tentativa.chave;
+    enviandoPedido = true;
+    updatePayButtonText();
+    setGatewayStatus('Conferindo preços e estoque e salvando o pedido...', 'processing');
     try {
-        const response = await simulatePaymentGateway(payload);
-
-        if (response.status === 'aprovado') {
-            const successMessage = method === 'entrega'
-                ? 'Pedido confirmado. Pagamento será realizado na entrega.'
-                : 'Pagamento aprovado pelo gateway. Comprovante emitido.';
-
-            setGatewayStatus(successMessage, 'success');
-            if (window.showToast) window.showToast(successMessage, 'success');
-            openReceipt(response);
-        } else {
-            setGatewayStatus('Pagamento recusado pelo gateway. Tente outro cartão ou método.', 'error');
-            if (window.showToast) window.showToast('Pagamento recusado. Tente outro método.', 'error');
-            openReceipt(response);
+        const resposta = await fetch('/api/pedidos/', {
+            method: 'POST', headers: {'Content-Type': 'application/json', Authorization: `Token ${auth.token}`},
+            body: JSON.stringify(payload)
+        });
+        if (resposta.status >= 500) throw new Error(ShopWiseMensagens.servidor);
+        const dados = await resposta.json();
+        if (!resposta.ok) {
+            if (resposta.status === 409) await conferirCheckout();
+            if (resposta.status === 401) {
+                checkoutPronto = false;
+                sessionStorage.removeItem('shopwise_auth');
+                document.getElementById('checkoutLoginLink').hidden = false;
+                document.getElementById('checkoutNotice').hidden = false;
+                document.getElementById('checkoutNotice').textContent = 'Sua sessão foi encerrada. Entre novamente para continuar. Seu carrinho foi mantido.';
+                throw new Error('Entre novamente para confirmar o pedido. Seu carrinho foi mantido.');
+            }
+            throw new Error(ShopWiseMensagens.dados(dados, 'Revise os dados do pedido e tente novamente.'));
         }
-    } catch (error) {
-        setGatewayStatus('Não foi possível processar o pedido. Verifique a conexão e tente novamente.', 'error');
-        if (window.showToast) window.showToast('Falha de conexão ao processar pedido.', 'error');
+        pedidoEnviado = true;
+        localStorage.setItem('carrinho', '[]');
+        sessionStorage.removeItem('shopwise_checkout_mercado');
+        sessionStorage.removeItem('shopwise_pedido_tentativa');
+        clearInterval(pixTimerInterval);
+        setGatewayStatus('Pedido salvo e enviado ao supermercado. O pagamento é demonstrativo.', 'success');
+        openReceipt(dados);
+    } catch (erro) {
+        setGatewayStatus(ShopWiseMensagens.falha(erro), 'error');
     } finally {
-        if (payButton) payButton.disabled = false;
-        if (mobilePayButton) mobilePayButton.disabled = false;
+        enviandoPedido = false;
         updatePayButtonText();
     }
 }
 
-function openReceipt(response) {
-    const approved = response.status === 'aprovado';
-    const isDeliveryPayment = response.method === 'entrega';
+function openReceipt(pedido) {
+    document.getElementById('receiptStatusIcon').textContent = '✓';
+    document.getElementById('modalTitle').textContent = 'Pedido confirmado!';
+    document.getElementById('modalSubtitle').textContent = `Enviado para ${pedido.supermercado_nome}. Acompanhe em Meus pedidos.`;
+    document.getElementById('receiptOrderNumber').textContent = `SW-${String(pedido.id).padStart(6, '0')}`;
+    document.getElementById('receiptTransaction').textContent = 'Demonstrativo — sem cobrança online';
+    document.getElementById('receiptMethod').textContent = getPaymentMethodLabel(pedido.pagamento);
+    document.getElementById('receiptTotal').textContent = formatCurrency(Number(pedido.total));
+    document.getElementById('receiptDate').textContent = new Date(pedido.criado_em).toLocaleString('pt-BR');
+    document.getElementById('receiptStatusText').textContent = pedido.status_nome;
     const modal = document.getElementById('paymentModal');
-    const statusIcon = document.getElementById('receiptStatusIcon');
-
-    statusIcon.textContent = approved ? '✓' : '!';
-    statusIcon.classList.toggle('denied', !approved);
-
-    document.getElementById('modalTitle').textContent = approved
-        ? (isDeliveryPayment ? 'Pedido confirmado!' : 'Pagamento aprovado!')
-        : 'Pagamento recusado';
-
-    document.getElementById('modalSubtitle').textContent = approved
-        ? (isDeliveryPayment
-            ? 'Seu pedido foi enviado ao supermercado. O pagamento será feito na entrega.'
-            : 'Seu pedido foi confirmado e enviado ao supermercado.')
-        : 'A transação não foi autorizada. Tente novamente com outro método.';
-
-    document.getElementById('receiptOrderNumber').textContent = response.orderNumber;
-    document.getElementById('receiptTransaction').textContent = response.transactionId;
-    document.getElementById('receiptMethod').textContent = getPaymentMethodLabel(response.method);
-    document.getElementById('receiptTotal').textContent = formatCurrency(response.total);
-    document.getElementById('receiptDate').textContent = response.date.toLocaleString('pt-BR');
-    document.getElementById('receiptStatusText').textContent = approved
-        ? (isDeliveryPayment ? 'Pedido Confirmado' : 'Pagamento Confirmado')
-        : 'Pagamento Recusado';
-
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
 }
@@ -734,4 +666,5 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleAddressConfig();
     updatePaymentPanels();
     updateCheckoutReview();
+    conferirCheckout();
 });

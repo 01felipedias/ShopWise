@@ -6,7 +6,7 @@
     <title>ShopWise - Efetuar Pagamento</title>
 
     <!-- CSS global do sistema -->
-    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="../styles/feed.css?v=20261009-recursos">
 
     <!-- CSS exclusivo do checkout/pagamento -->
     <link rel="stylesheet" href="../styles/checkout.css">
@@ -75,10 +75,12 @@
                 <div class="checkout-page-header">
                     <div>
                         <h2 class="section-title payment-title">Efetuar Pagamento</h2>
-                        <p class="payment-subtitle">Revise o pedido, escolha a forma de pagamento e finalize sua compra com segurança.</p>
+                        <p class="payment-subtitle">Confira a compra no supermercado escolhido e confirme seu pedido.</p>
                     </div>
                 </div>
 
+                <p class="gateway-status" id="checkoutNotice" role="status" aria-live="polite">Conferindo o carrinho...</p>
+                <a href="login.html?next=checkout" id="checkoutLoginLink" class="btn-primary-link" hidden>Entrar como cliente</a>
                 <div class="checkout-progress" aria-label="Progresso da compra">
                     <div class="progress-step done">
                         <span>1</span>
@@ -125,7 +127,7 @@
                                     <input type="radio" name="deliveryMethod" value="pickup" onchange="toggleAddressConfig()">
                                     <div class="option-content">
                                         <h4>Retirar no Mercado</h4>
-                                        <p>Grátis - Super Quaresma</p>
+                                        <p id="pickupMarketDescription">Grátis - supermercado escolhido</p>
                                     </div>
                                 </label>
                             </div>
@@ -141,7 +143,7 @@
                             </div>
                             <div class="checkout-input-group">
                                 <label for="deliveryAddress" class="checkout-label">Endereço completo</label>
-                                <input id="deliveryAddress" type="text" class="checkout-input" placeholder="Rua, número, bairro" value="Rua Defala Attem, 123 - Centro">
+                                <input id="deliveryAddress" type="text" class="checkout-input" maxlength="200" placeholder="Rua, número, bairro">
                             </div>
                         </div>
 
@@ -153,8 +155,8 @@
                                     <p>Retire seu pedido diretamente no mercado selecionado.</p>
                                 </div>
                             </div>
-                            <p class="pickup-market-name"><strong>Super Quaresma</strong></p>
-                            <p>Avenida Bucar Neto, Centro - Floriano, PI</p>
+                            <p class="pickup-market-name"><strong id="pickupMarketName">Supermercado</strong></p>
+                            <p id="pickupMarketAddress">Consulte o endereço do supermercado cadastrado.</p>
                             <span>Apresente o número do pedido no balcão de atendimento.</span>
                         </div>
 
@@ -168,7 +170,7 @@
                             </div>
                             <div class="checkout-input-group">
                                 <label for="orderNotes" class="checkout-label">Instruções para o mercado ou entregador</label>
-                                <textarea id="orderNotes" class="checkout-input checkout-textarea" placeholder="Ex: tomate mais verde, não buzinar, entregar na portaria..."></textarea>
+                                <textarea id="orderNotes" class="checkout-input checkout-textarea" maxlength="1000" placeholder="Ex: tomate mais verde, não buzinar, entregar na portaria..."></textarea>
                             </div>
                         </div>
 
@@ -285,7 +287,7 @@
                             </div>
 
                             <div class="gateway-status" id="gatewayStatus" aria-live="polite">
-                                Gateway ShopWise Pay pronto para processar a transação.
+                                Pagamento demonstrativo para a apresentação do ShopWise.
                             </div>
                         </div>
                     </div>
@@ -303,7 +305,7 @@
                             </div>
 
                             <div class="market-summary-box">
-                                <strong>Super Quaresma</strong>
+                                <strong id="reviewMarketName">Supermercado</strong>
                                 <span id="marketDeliveryInfo">Entrega em até 2h • Taxa R$ 5,00</span>
                             </div>
 
@@ -364,11 +366,11 @@
 
                             <div class="summary-secure-box">
                                 <span>🔐</span>
-                                <p>Transação protegida. Crédito permite parcelamento; débito é à vista; pagamento na entrega não solicita cartão.</p>
+                                <p>Simulação: crédito permite parcelamento; débito é à vista; pagamento na entrega não solicita cartão.</p>
                             </div>
 
-                            <button class="btn-finalizar" id="payButton" type="button" onclick="finalizarPedido()">
-                                Gerar pagamento PIX - R$ 22,97
+                            <button class="btn-finalizar" id="payButton" type="button" onclick="finalizarPedido()" disabled>
+                                Confirmar pedido
                             </button>
                         </div>
                     </aside>
@@ -382,7 +384,7 @@
             <span>Total</span>
             <strong id="mobileTotal">R$ 22,97</strong>
         </div>
-        <button type="button" id="mobilePayButton" onclick="finalizarPedido()">Gerar pagamento PIX</button>
+        <button type="button" id="mobilePayButton" onclick="finalizarPedido()" disabled>Confirmar pedido</button>
     </div>
 
     <div class="payment-modal-overlay" id="paymentModal" aria-hidden="true">
@@ -399,7 +401,7 @@
                     <strong id="receiptOrderNumber">SW-000000</strong>
                 </div>
                 <div class="receipt-row">
-                    <span>Transação</span>
+                                    <span>Pagamento</span>
                     <strong id="receiptTransaction">TX-000000</strong>
                 </div>
                 <div class="receipt-row">
@@ -455,6 +457,7 @@
         </div>
     </div>
 
-    <script src="../utils/checkout.js"></script>
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/checkout.js?v=20261009-revisao"></script>
 </body>
 </html>

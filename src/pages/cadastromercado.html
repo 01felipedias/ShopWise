@@ -1,141 +1,55 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Supermercado ShopWise</title>
-
-    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <title>Cadastro de Supermercado - ShopWise</title>
+    <link rel="stylesheet" href="../styles/style.css">
 </head>
-
 <body>
-
     <header class="header-cadastro">
-        <img src="{% static 'assets/img/logoshopwise.png' %}" alt="Logo ShopWise">
+        <img src="../assets/img/logoshopwise.png" alt="ShopWise">
     </header>
-
     <main class="form-mercado">
-
         <div class="card-login">
-
-            <h2>Cadastro de Supermercado</h2>
-            <p class="subtitulo">
-                Preencha os dados da sua loja para continuar
-            </p>
-
-           <form id="form-supermercado">
-
-                <h3>Informações da Loja</h3>
-
+            <h2>Cadastre seu supermercado</h2>
+            <p class="subtitulo">Escolha o tipo de cadastro</p>
+            <nav class="cadastro-tipos" aria-label="Tipo de conta">
+                <a href="cadastrousuario.html">Cliente</a>
+                <a class="active" aria-current="page" href="cadastromercado.html">Supermercado</a>
+            </nav>
+            <form data-shopwise-cadastro data-tipo="supermercado" data-login="login-supermercado.html">
                 <div class="input-group">
-                    <input name="responsavel" type="text" placeholder="Nome do responsável">
+                    <label class="cadastro-label" for="nome">Nome do responsável</label>
+                    <input id="nome" name="nome" type="text" maxlength="150" autocomplete="name" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="cnpj" type="text" placeholder="CNPJ" >
+                    <label class="cadastro-label" for="email">E-mail comercial</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="razaosocial" type="text" placeholder="Razão Social" >
+                    <label class="cadastro-label" for="supermercado_nome">Nome do supermercado</label>
+                    <input id="supermercado_nome" name="supermercado_nome" type="text" maxlength="100" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="nomeloja" type="text" placeholder="Nome da Loja" >
+                    <label class="cadastro-label" for="supermercado_endereco">Endereço do supermercado</label>
+                    <input id="supermercado_endereco" name="supermercado_endereco" type="text" maxlength="200" required>
                 </div>
-
                 <div class="input-group">
-                    <input name="emailcomercial" type="email" placeholder="Email Comercial" >
+                    <label class="cadastro-label" for="senha">Senha</label>
+                    <input id="senha" name="password" type="password" autocomplete="new-password" required>
                 </div>
-                
                 <div class="input-group">
-                    <input name="senha" type="password" placeholder="Senha" required>
+                    <label class="cadastro-label" for="confirmacao">Confirme a senha</label>
+                    <input id="confirmacao" name="confirm_password" type="password" autocomplete="new-password" required>
                 </div>
-
-                <div class="input-group">
-                    <input name="telefone" type="tel" placeholder="Telefone para contato" >
-                </div>
-
-                <h3>Localização da Loja</h3>
-
-                <div class="input-group">
-                    <input name="cep" type="text" placeholder="CEP" >
-                </div>
-
-                <div class="linha">
-                    <input name="estado" type="text" placeholder="Estado" >
-                    <input name="cidade" type="text" placeholder="Cidade" >
-                </div>
-
-                <div class="input-group">
-                    <input name="bairro" type="text" placeholder="Bairro" >
-                </div>
-
-                <div class="input-group">
-                    <input name="endereco" type="text" placeholder="Endereço" >
-                </div>
-
-                <div class="linha">
-                    <input name="numloja" type="text" placeholder="Número" >
-                    <input name="complemento" type="text" placeholder="Complemento" >
-                </div>
-
-                <button type="submit" class="btn-verde">
-                    Cadastrar Supermercado
-                </button>
-
+                <p class="login-message" role="alert" aria-live="polite"></p>
+                <button type="submit" class="btn-verde">Cadastrar supermercado</button>
             </form>
-            <div class="bottom-links">
-                <a href="login-supermercado.html">Já possui conta? Entrar</a>
-            </div>
+            <div class="bottom-links"><a href="login-supermercado.html">Já possui conta? Entrar</a></div>
         </div>
-
     </main>
-
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/cadastro-api.js?v=20261009-revisao"></script>
 </body>
-<script>
-    const form = document.getElementById('form-supermercado');
-
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-
-        const dadosSupermercado = {
-            nome: form.elements['nomeloja'].value,
-            responsavel: form.elements['responsavel'].value,
-            cnpj: form.elements['cnpj'].value,
-            razao_social: form.elements['razaosocial'].value,
-            email_comercial: form.elements['emailcomercial'].value,
-            senha: form.elements['senha'].value,
-            telefone: form.elements['telefone'].value,
-            cep: form.elements['cep'].value,
-            estado: form.elements['estado'].value,
-            cidade: form.elements['cidade'].value,
-            bairro: form.elements['bairro'].value,
-            endereco: form.elements['endereco'].value,
-            numero: form.elements['numloja'].value,
-            complemento: form.elements['complemento'].value
-        };
-
-        try {
-            const resposta = await fetch('/api/supermercados/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dadosSupermercado)
-            });
-
-            if (resposta.ok) {
-                alert('Supermercado cadastrado com sucesso!');
-                window.location.href = 'manter-produtos.html';
-            } else {
-                alert('Erro ao cadastrar supermercado.');
-            }
-
-        } catch (erro) {
-            console.error(erro);
-            alert('Não foi possível conectar com a API.');
-        }
-    });
-</script>
 </html>

@@ -116,6 +116,7 @@
     box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
 }
 
+
 .mp-form-actions {
     display: flex;
     gap: 1rem;
@@ -180,3 +181,15 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+.mp-product-thumb { width: 44px; height: 44px; object-fit: contain; vertical-align: middle; margin-right: 10px; }
+.mp-table .mp-action-link {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 0.5rem 0.75rem;
+    margin-right: 8px;
+}
+.mp-table .mp-edit-link { color: #187a41; border-color: #2ecc71; background: #f2fcf5; }
+.mp-table .mp-edit-link:hover { background: #2ecc71; color: #fff; }
+.mp-message { margin-top: 12px; color: #276d45; font-size: .9rem; }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopWise - Carrinho</title>
 
-    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="../styles/feed.css?v=20261009-pedidos-api">
 </head>
 
 <body>
@@ -22,9 +22,14 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="feedproduto.html" class="nav-item active" aria-label="Página Inicial">
+                <a href="feedproduto.html" class="nav-item" aria-label="Página Inicial">
                     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     <span>Início</span>
+                </a>
+
+                <a href="carrinho.html" class="nav-item active" aria-label="Meu Carrinho">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path></svg>
+                    <span>Carrinho</span>
                 </a>
                 
                 <a href="AlertaPreco.html" class="nav-item" aria-label="Seus Alertas">
@@ -79,6 +84,20 @@
             <h1 class="page-title">
                 Carrinho de Compras
             </h1>
+            <p id="cartStatus" class="cart-status" role="status" aria-live="polite"></p>
+
+            <section class="cart-comparison" aria-labelledby="cartComparisonTitle">
+                <div class="cart-comparison-header">
+                    <div class="cart-comparison-intro">
+                        <span class="cart-comparison-icon" aria-hidden="true">📊</span>
+                        <div>
+                            <h2 id="cartComparisonTitle">Compare o preço do seu carrinho</h2>
+                            <p>Descubra em qual supermercado sua compra fica mais barata.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="cart-compare-button" id="compareCartButton" aria-haspopup="dialog">Comparar preços</button>
+                </div>
+            </section>
 
             <div class="cart-layout">
 
@@ -96,18 +115,18 @@
 
                     <div class="summary-row">
                         <span>Entrega</span>
-                        <strong>Grátis</strong>
+                        <strong>Calculada no checkout</strong>
                     </div>
 
                     <hr style="margin:20px 0">
 
                     <div class="summary-total">
-                        <span>Total</span>
+                        <span>Total dos produtos</span>
                         <strong id="total">R$ 0,00</strong>
                     </div>
 
-                    <button class="btn-verde" onclick="irParaCheckout()">Realizar Pedido</button>
-                    </button>
+                    <button class="btn-verde" id="checkoutButton" onclick="irParaCheckout()" disabled>Realizar Pedido</button>
+                    <p class="cart-demo-note">Escolha um supermercado para confirmar o pedido. O pagamento é demonstrativo.</p>
 
 
                 </aside>
@@ -119,6 +138,25 @@
     </div>
 
 </div>
-<script src="../utils/carrinho.js"></script>
+<div class="modal-overlay" id="cartComparisonOverlay" aria-hidden="true">
+    <div class="modal cart-comparison-modal" role="dialog" aria-modal="true" aria-labelledby="cartComparisonModalTitle" aria-describedby="cartComparisonDescription">
+        <div class="modal-header">
+            <div class="modal-header-info">
+                <h2 id="cartComparisonModalTitle">Comparação do carrinho</h2>
+                <p id="cartComparisonDescription">Os mesmos produtos e quantidades em cada supermercado</p>
+            </div>
+            <button type="button" class="modal-close" id="closeCartComparison" aria-label="Fechar comparação">×</button>
+        </div>
+        <div class="modal-body">
+            <p id="cartComparisonStatus" class="cart-comparison-highlight" role="status" aria-live="polite"></p>
+            <div id="cartComparisonResults"></div>
+            <div class="cart-comparison-footer">
+                <p>Totais dos produtos, sem entrega ou cupons. Supermercados com itens faltando não entram na comparação de menor total.</p>
+                <button type="button" class="cart-compare-button" id="refreshCartComparison">Atualizar preços</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../utils/carrinho.js?v=20261009-sem-upload"></script>
 </body>
 </html>

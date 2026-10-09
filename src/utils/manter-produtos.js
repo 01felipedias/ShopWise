@@ -1,249 +1,256 @@
-// ==================================================
-// SHOPWISE - MANTER PRODUTOS
-// Integração com Django REST API
-// ==================================================
+(() => {
+    const form = document.getElementById('mpFormProduto');
+    if (!form) return;
 
-(function () {
-    console.log("Módulo Manter Produtos conectado à API.");
+    let autenticacao;
+    try {
+        autenticacao = JSON.parse(sessionStorage.getItem('shopwise_auth'));
+    } catch {
+        autenticacao = null;
+    }
+    if (autenticacao?.tipo !== 'supermercado' || !autenticacao.token || !autenticacao.supermercados?.length) {
+        location.replace('login-supermercado.html');
+        return;
+    }
 
-    const formProduto = document.getElementById('mpFormProduto');
-    const tabelaProdutos = document.getElementById('mpTabelaProdutos');
+    const mercado = autenticacao.supermercados[0];
+    const tabela = document.getElementById('mpTabelaProdutos');
+    const mensagem = document.getElementById('mpMensagem');
+    const nomeInput = document.getElementById('mpNome');
+    const categoriaInput = document.getElementById('mpCategoria');
+    const precoInput = document.getElementById('mpPreco');
+    const estoqueInput = document.getElementById('mpEstoque');
+    const salvar = document.getElementById('mpSalvar');
+    const tituloFormulario = document.getElementById('mpTituloFormulario');
+    let produtos = [];
+    let precos = [];
+    let precoEmEdicao = null;
 
-    // Manual vs API
-    const btnManual = document.getElementById('btnManual');
-    const btnApi = document.getElementById('btnApi');
+    document.getElementById('sairMercado').addEventListener('click', (evento) => {
+        evento.preventDefault();
+        sessionStorage.removeItem('shopwise_auth');
+        location.assign('login-supermercado.html');
+    });
+
+    const manual = document.getElementById('btnManual');
+    const api = document.getElementById('btnApi');
     const sessaoManual = document.getElementById('sessaoManual');
     const sessaoApi = document.getElementById('sessaoApi');
+    manual.addEventListener('click', () => {
+        manual.classList.add('active');
+        api.classList.remove('active');
+        sessaoManual.style.display = '';
+        sessaoApi.style.display = 'none';
+    });
+    api.addEventListener('click', () => {
+        api.classList.add('active');
+        manual.classList.remove('active');
+        sessaoManual.style.display = 'none';
+        sessaoApi.style.display = '';
+    });
 
-    // ==========================================
-    // NAVEGAÇÃO MANUAL VS API
-    // ==========================================
-
-    if (btnManual && btnApi && sessaoManual && sessaoApi) {
-
-        btnManual.addEventListener('click', () => {
-            btnManual.classList.add('active');
-            btnApi.classList.remove('active');
-
-            sessaoManual.style.display = 'block';
-            sessaoApi.style.display = 'none';
-        });
-
-        btnApi.addEventListener('click', () => {
-            btnApi.classList.add('active');
-            btnManual.classList.remove('active');
-
-            sessaoApi.style.display = 'block';
-            sessaoManual.style.display = 'none';
-        });
+    function erroApi(dados) {
+        if (typeof dados?.detail === 'string') return dados.detail;
+        if (!dados || typeof dados !== 'object') return 'Não foi possível concluir a operação.';
+        return ShopWiseMensagens.dados(dados, 'Não foi possível concluir a operação.');
     }
 
-    // ==========================================
-    // LISTAR PRODUTOS DO BANCO
-    // ==========================================
-
-    async function carregarProdutos() {
-
-        if (!tabelaProdutos) return;
-
-        try {
-
-            const supermercadoLogado = JSON.parse(
-                localStorage.getItem('shopwise_supermercado')
-            );
-
-            if (!supermercadoLogado) {
-                window.location.href = 'login-supermercado.html';
-                return;
+    async function requisicao(caminho, opcoes = {}) {
+        const resposta = await fetch(caminho, {
+            ...opcoes,
+            headers: {
+                Authorization: `Token ${autenticacao.token}`,
+                ...(opcoes.body ? { 'Content-Type': 'application/json' } : {}),
+            },
+        });
+        if (resposta.status >= 500) throw new Error(ShopWiseMensagens.servidor);
+        const dados = resposta.status === 204 ? null : await resposta.json();
+        if (resposta.status === 401) {
+            sessionStorage.removeItem('shopwise_auth');
+            const entrar = document.createElement('a');
+            entrar.href = 'login-supermercado.html';
+            entrar.textContent = 'Entrar novamente';
+            if (!document.getElementById('mpEntrarNovamente')) {
+                entrar.id = 'mpEntrarNovamente';
+                mensagem.after(entrar);
             }
-
-            const resposta = await fetch(
-                `/api/produtos/?supermercado=${supermercadoLogado.id}`
-            );
-
-            if (!resposta.ok) {
-                throw new Error('Erro ao buscar produtos.');
-            }
-
-            const produtos = await resposta.json();
-
-            tabelaProdutos.innerHTML = '';
-
-            if (produtos.length === 0) {
-                tabelaProdutos.innerHTML = `
-                    <tr>
-                        <td colspan="5"
-                            style="text-align:center; color:#777; padding:2rem;">
-                            Nenhum produto cadastrado no estoque ainda.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            produtos.forEach(produto => {
-
-                const tr = document.createElement('tr');
-
-                tr.innerHTML = `
-                    <td>
-                        <strong>${produto.nome}</strong><br>
-                        <small style="color:#666;">
-                            ${produto.descricao || 'Sem descrição'}
-                        </small>
-                    </td>
-
-                    <td style="text-transform:capitalize;">
-                        ${produto.categoria}
-                    </td>
-
-                    <td>
-                        R$ ${parseFloat(produto.preco)
-                            .toFixed(2)
-                            .replace('.', ',')}
-                    </td>
-
-                    <td>
-                        ${produto.estoque} un.
-                    </td>
-
-                    <td>
-                        <a class="mp-action-link"
-                           href="#"
-                           onclick="window.removerProdutoMp(${produto.id}); return false;">
-                            Excluir
-                        </a>
-                    </td>
-                `;
-
-                tabelaProdutos.appendChild(tr);
-            });
-
-        } catch (erro) {
-
-            console.error(erro);
-
-            tabelaProdutos.innerHTML = `
-                <tr>
-                    <td colspan="5"
-                        style="text-align:center; color:red; padding:2rem;">
-                        Não foi possível carregar os produtos.
-                    </td>
-                </tr>
-            `;
+            throw new Error('Sua sessão foi encerrada. Os campos preenchidos foram mantidos nesta tela. Entre novamente para continuar.');
         }
+        if (!resposta.ok) throw new Error(erroApi(dados));
+        return dados;
     }
 
-    // ==========================================
-    // CADASTRAR PRODUTO
-    // ==========================================
+    const normalizar = (valor) => String(valor || '').normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('pt-BR');
 
-    if (formProduto) {
-
-        formProduto.addEventListener('submit', async function (event) {
-
-            event.preventDefault();
-
-            const nome = document.getElementById('mpNome').value.trim();
-            const categoria = document.getElementById('mpCategoria').value;
-            const preco = document.getElementById('mpPreco').value;
-            const estoque = document.getElementById('mpEstoque').value;
-            const descricao = document.getElementById('mpDescricao').value.trim();
-
-            if (!nome || !categoria || !preco || !estoque) {
-                alert("Por favor, preencha todos os campos obrigatórios (*).");
-                return;
-            }
-
-            const supermercadoLogado = JSON.parse(
-                localStorage.getItem('shopwise_supermercado')
-            );
-
-            if (!supermercadoLogado) {
-                alert('Você precisa fazer login como supermercado.');
-                window.location.href = 'login-supermercado.html';
-                return;
-            }
-
-            const novoProduto = {
-                supermercado: supermercadoLogado.id,
-                nome: nome,
-                categoria: categoria,
-                preco: preco,
-                estoque: parseInt(estoque),
-                descricao: descricao
-            };
-            try {
-
-                const resposta = await fetch('/api/produtos/', {
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-
-                    body: JSON.stringify(novoProduto)
-                });
-
-                if (!resposta.ok) {
-                    const erroApi = await resposta.json();
-                    console.error(erroApi);
-                    throw new Error('Erro ao cadastrar produto.');
-                }
-
-                alert("✅ Produto cadastrado com sucesso!");
-
-                formProduto.reset();
-
-                await carregarProdutos();
-
-            } catch (erro) {
-
-                console.error(erro);
-
-                alert("Não foi possível cadastrar o produto.");
-            }
-        });
+    function encontrarProduto(nome) {
+        return produtos.find((produto) => normalizar(produto.nome) === normalizar(nome));
     }
 
-    // ==========================================
-    // EXCLUIR PRODUTO
-    // ==========================================
-
-    window.removerProdutoMp = async function (id) {
-
-        const confirmar = confirm(
-            "Tem certeza que deseja remover este produto do estoque?"
+    function preencherCategoria(produto) {
+        if (!produto) return;
+        const opcao = Array.from(categoriaInput.options).find((item) =>
+            normalizar(item.textContent) === normalizar(produto.categoria)
         );
+        if (opcao) categoriaInput.value = opcao.value;
+    }
 
-        if (!confirmar) return;
+    function renderizar() {
+        const meusPrecos = precos.filter((preco) => preco.supermercado === mercado.id);
+        document.getElementById('produtosExistentes').replaceChildren(...produtos.map((produto) => {
+            const opcao = document.createElement('option');
+            opcao.value = produto.nome;
+            return opcao;
+        }));
 
-        try {
-
-            const resposta = await fetch(`/api/produtos/${id}/`, {
-                method: 'DELETE'
-            });
-
-            if (!resposta.ok) {
-                throw new Error('Erro ao excluir produto.');
-            }
-
-            alert("Produto excluído com sucesso!");
-
-            await carregarProdutos();
-
-        } catch (erro) {
-
-            console.error(erro);
-
-            alert("Não foi possível excluir o produto.");
+        tabela.replaceChildren();
+        if (!meusPrecos.length) {
+            const celula = tabela.insertRow().insertCell();
+            celula.colSpan = 5;
+            celula.textContent = 'Nenhum produto cadastrado no estoque ainda.';
+            return;
         }
-    };
 
-    // ==========================================
-    // CARREGAR AO ABRIR A PÁGINA
-    // ==========================================
+        for (const preco of meusPrecos) {
+            const produto = produtos.find((item) => item.id === preco.produto);
+            if (!produto) continue;
+            const linha = tabela.insertRow();
+            const nomeCelula = linha.insertCell();
+            const caminhoFoto = (produto.imagem ? `../assets/${produto.imagem}` : null);
+            if (caminhoFoto) {
+                const foto = document.createElement('img');
+                foto.className = 'mp-product-thumb';
+                foto.src = caminhoFoto;
+                foto.alt = '';
+                nomeCelula.append(foto);
+            }
+            const nome = document.createElement('strong');
+            nome.textContent = produto.nome;
+            nomeCelula.append(nome);
+            linha.insertCell().textContent = produto.categoria || 'Outros';
+            linha.insertCell().textContent = Number(preco.valor).toLocaleString('pt-BR', {
+                style: 'currency', currency: 'BRL',
+            });
+            linha.insertCell().textContent = preco.estoque === null ? 'Não informado' : `${preco.estoque} un.`;
 
-    carregarProdutos();
+            const acoes = linha.insertCell();
+            const editar = document.createElement('button');
+            editar.type = 'button';
+            editar.className = 'mp-action-link mp-edit-link';
+            editar.textContent = 'Editar';
+            editar.setAttribute('aria-label', `Editar preço e estoque de ${produto.nome}`);
+            editar.dataset.editar = preco.id;
+            const remover = document.createElement('button');
+            remover.type = 'button';
+            remover.className = 'mp-action-link';
+            remover.textContent = 'Excluir';
+            remover.dataset.remover = preco.id;
+            acoes.append(editar, remover);
+        }
+    }
 
+    async function carregar() {
+        [produtos, precos] = await Promise.all([
+            requisicao('/api/produtos/'),
+            requisicao('/api/precos/'),
+        ]);
+        renderizar();
+    }
+
+    nomeInput.addEventListener('change', () => preencherCategoria(encontrarProduto(nomeInput.value)));
+    form.addEventListener('reset', () => {
+        precoEmEdicao = null;
+        nomeInput.readOnly = false;
+        categoriaInput.disabled = false;
+        salvar.textContent = 'Cadastrar Produto';
+        tituloFormulario.textContent = 'Novo Produto';
+    });
+
+    form.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        mensagem.textContent = '';
+        const nome = nomeInput.value.trim();
+        const valor = Number(precoInput.value);
+        const estoque = Number(estoqueInput.value);
+        if (!nome || (!precoEmEdicao && !categoriaInput.value) || !Number.isFinite(valor) || valor <= 0 ||
+            estoqueInput.value === '' || !Number.isInteger(estoque) || estoque < 0) {
+            const campo = !nome ? nomeInput : (!precoEmEdicao && !categoriaInput.value) ? categoriaInput : (!Number.isFinite(valor) || valor <= 0) ? precoInput : estoqueInput;
+            mensagem.textContent = campo === nomeInput ? 'Informe o nome do produto.' : campo === categoriaInput ? 'Selecione a categoria do produto.' : campo === precoInput ? 'Informe um preço maior que zero.' : 'Informe o estoque em unidades inteiras, a partir de zero.';
+            campo.focus();
+            return;
+        }
+
+        salvar.disabled = true;
+        try {
+            let produto = precoEmEdicao
+                ? produtos.find((item) => item.id === precoEmEdicao.produto)
+                : encontrarProduto(nome);
+            if (!produto && !precoEmEdicao) {
+                produto = await requisicao('/api/produtos/', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        nome,
+                        categoria: categoriaInput.options[categoriaInput.selectedIndex].text,
+                    }),
+                });
+                produtos.push(produto);
+            }
+            const existente = precoEmEdicao || precos.find((preco) =>
+                preco.produto === produto.id && preco.supermercado === mercado.id
+            );
+            await requisicao(existente ? `/api/precos/${existente.id}/` : '/api/precos/', {
+                method: existente ? 'PUT' : 'POST',
+                body: JSON.stringify({
+                    produto: produto.id,
+                    supermercado: mercado.id,
+                    valor: valor.toFixed(2),
+                    estoque,
+                }),
+            });
+            form.reset();
+            await carregar();
+            mensagem.textContent = 'Produto salvo no estoque do seu supermercado.';
+        } catch (erro) {
+            mensagem.textContent = ShopWiseMensagens.falha(erro);
+        } finally {
+            salvar.disabled = false;
+        }
+    });
+
+    tabela.addEventListener('click', async (evento) => {
+        const editar = evento.target.closest('[data-editar]');
+        const remover = evento.target.closest('[data-remover]');
+        if (editar) {
+            const preco = precos.find((item) => item.id === Number(editar.dataset.editar));
+            const produto = produtos.find((item) => item.id === preco?.produto);
+            if (!preco || !produto) return;
+            nomeInput.value = produto.nome;
+            preencherCategoria(produto);
+            precoInput.value = preco.valor;
+            estoqueInput.value = preco.estoque ?? '';
+            precoEmEdicao = preco;
+            nomeInput.readOnly = true;
+            categoriaInput.disabled = true;
+            salvar.textContent = 'Salvar alterações';
+            tituloFormulario.textContent = 'Editar produto do estoque';
+            manual.click();
+            mensagem.textContent = `Editando ${produto.nome}. Altere o preço ou o estoque e salve.`;
+            sessaoManual.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            precoInput.focus();
+        }
+        if (remover && window.confirm('Excluir o preço e o estoque deste produto do seu supermercado?')) {
+            try {
+                await requisicao(`/api/precos/${remover.dataset.remover}/`, { method: 'DELETE' });
+                await carregar();
+                mensagem.textContent = 'Produto removido do seu estoque.';
+            } catch (erro) {
+                mensagem.textContent = ShopWiseMensagens.falha(erro);
+            }
+        }
+    });
+
+    carregar().catch((erro) => {
+        tabela.innerHTML = '<tr><td colspan="5">Não foi possível carregar os produtos.</td></tr>';
+        mensagem.textContent = ShopWiseMensagens.falha(erro);
+    });
 })();

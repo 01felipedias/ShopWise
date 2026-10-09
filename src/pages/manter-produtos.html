@@ -1,12 +1,12 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Produtos - ShopWise Lojista</title>
-    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/manter-produtos.css' %}">
+    <title>Meus Produtos - ShopWise Supermercado</title>
+    <link rel="stylesheet" href="../styles/feed.css">
+    <link rel="stylesheet" href="../styles/manter-produtos.css?v=20261009-sem-foto">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <a href="#">
-                   <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo">
+                   <img src="../assets/img/logoshopwise.png" alt="ShopWise" class="sidebar-full-logo">
                 </a>
             </div>
 
@@ -37,7 +37,7 @@
                     <span>Meus Produtos</span>
                 </a>
 
-                <a href="#" class="nav-item" aria-label="Pedidos Recebidos">
+                <a href="pedidos.html" class="nav-item" aria-label="Pedidos Recebidos">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -54,7 +54,7 @@
                     <span>Perfil da Loja</span>
                 </a>
 
-                <a href="login.html" class="nav-item" aria-label="Sair" style="margin-top: auto;">
+                <a href="login-supermercado.html" class="nav-item" id="sairMercado" aria-label="Sair" style="margin-top: auto;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
@@ -87,7 +87,7 @@
                         <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Conecte com seu sistema de gestão para atualização automática.</p>
                     </div>
 
-                    <div class="mp-opcao-card" id="btnPedidos" onclick="abrirPedido(1)" style="cursor:pointer;">
+                    <div class="mp-opcao-card" id="btnPedidos" role="link" tabindex="0" onclick="location.href='pedidos.html'" onkeydown="if(event.key==='Enter') location.href='pedidos.html'">
                         <div class="mp-opcao-icone">📋</div>
                         <h3>Acompanhar Pedidos</h3>
                         <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Gerencie e atualize o status dos pedidos recebidos.</p>
@@ -98,21 +98,20 @@
                 <section class="mp-card" id="sessaoApi" style="display: none; text-align: center; padding: 4rem 2rem;">
                     <h2 class="mp-card-title" style="border: none;">Conecte seu ERP ao ShopWise</h2>
                     <p style="color: #666; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-                        Gere sua chave de acesso seguro (Token API) para automatizar a atualização de preços e o controle de estoque em tempo real direto do seu sistema de gestão.
+                        A integração automática com sistemas de gestão ainda não está disponível. Use o cadastro manual para informar seus preços e estoque.
                     </p>
-                    <button class="mp-btn mp-btn-salvar" onclick="alert('Chave API gerada com sucesso: SHPW-984J-293K-M291. As instruções foram enviadas para o seu e-mail comercial.')">Gerar Chave de API</button>
-                    <button class="mp-btn mp-btn-cancelar">Ver Documentação</button>
                 </section>
 
                 <!-- TELA DE CADASTRO MANUAL -->
                 <section class="mp-card" id="sessaoManual">
-                    <h2 class="mp-card-title">Novo Produto</h2>
+                    <h2 class="mp-card-title" id="mpTituloFormulario">Novo Produto</h2>
                     <form id="mpFormProduto" class="mp-form">
                         
                         <div class="mp-form-row">
                             <div class="mp-input-group">
                                 <label for="mpNome" class="mp-label">Nome do Produto *</label>
-                                <input type="text" id="mpNome" class="mp-input" placeholder="Ex: Feijão Carioca Kicaldo 1kg" required>
+                                <input type="text" id="mpNome" class="mp-input" list="produtosExistentes" maxlength="100" placeholder="Ex: Feijão" required>
+                                <datalist id="produtosExistentes"></datalist>
                             </div>
                             
                             <div class="mp-input-group">
@@ -130,24 +129,20 @@
                         <div class="mp-form-row">
                             <div class="mp-input-group">
                                 <label for="mpPreco" class="mp-label">Preço Atual (R$) *</label>
-                                <input type="number" id="mpPreco" class="mp-input" step="0.01" placeholder="Ex: 6.49" required>
+                                <input type="number" id="mpPreco" class="mp-input" min="0.01" step="0.01" placeholder="Ex: 6.49" required>
                             </div>
 
                             <div class="mp-input-group">
                                 <label for="mpEstoque" class="mp-label">Estoque (unidades) *</label>
-                                <input type="number" id="mpEstoque" class="mp-input" placeholder="Ex: 150" required>
+                                <input type="number" id="mpEstoque" class="mp-input" min="0" step="1" placeholder="Ex: 150" required>
                             </div>
                         </div>
 
-                        <div class="mp-input-group">
-                            <label for="mpDescricao" class="mp-label">Descrição Breve</label>
-                            <textarea id="mpDescricao" class="mp-input" rows="2" placeholder="Ex: Feijão carioca tipo 1."></textarea>
-                        </div>
-
                         <div class="mp-form-actions">
-                            <button type="submit" class="mp-btn mp-btn-salvar">Cadastrar Produto</button>
+                            <button type="submit" class="mp-btn mp-btn-salvar" id="mpSalvar">Cadastrar Produto</button>
                             <button type="reset" class="mp-btn mp-btn-cancelar">Limpar</button>
                         </div>
+                        <p id="mpMensagem" class="mp-message" role="status" aria-live="polite"></p>
                     </form>
                 </section>
 
@@ -176,86 +171,7 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL PEDIDO ══════ -->
-    <div class="modal-overlay" id="modalPedidoOverlay" onclick="fecharPedidoOverlay(event)" style="display: none;">
-      <div class="modal-pedido">
-
-        <div class="modal-ped-header">
-          <div class="modal-ped-icon">📋</div>
-          <div>
-            <h2 id="pedTitulo">Pedido #00124</h2>
-            <p id="pedSubtitulo">João Silva • Recebido às 14:32</p>
-          </div>
-          <button class="modal-close-ped" onclick="fecharPedido()">✕</button>
-        </div>
-
-        <div class="modal-ped-body">
-
-          <div>
-            <p class="secao-titulo">Status do pedido</p>
-            <div class="stepper" id="stepper">
-              <div class="step" id="step-0">
-                <div class="step-circle">📥</div>
-                <div class="step-label">Recebido</div>
-              </div>
-              <div class="step" id="step-1">
-                <div class="step-circle">📦</div>
-                <div class="step-label">Em separação</div>
-              </div>
-              <div class="step" id="step-2">
-                <div class="step-circle">🚚</div>
-                <div class="step-label">Saiu p/ entrega</div>
-              </div>
-              <div class="step" id="step-3">
-                <div class="step-circle">✅</div>
-                <div class="step-label">Entregue</div>
-              </div>
-              <div class="stepper-progress" id="stepperProgress"></div>
-            </div>
-          </div>
-
-          <div class="status-actions">
-            <h3 id="acaoTitulo">O que deseja fazer?</h3>
-            <div class="acoes-btns">
-              <button class="btn-acao btn-avancar" id="btnAvancar" onclick="avancarStatus()">▶ Avançar status</button>
-              <button class="btn-acao btn-cancelar" id="btnCancelar" onclick="cancelarPedido()">✕ Cancelar pedido</button>
-            </div>
-          </div>
-
-          <div id="secaoItens">
-            <p class="secao-titulo">Itens do pedido</p>
-            <div class="itens-lista" id="itensList"></div>
-            <div class="progresso-separacao" id="progressoSep" style="display:none">
-              <span id="sepTexto">0 de 3 separados</span>
-              <div class="prog-track"><div class="prog-fill" id="sepFill" style="width:0%"></div></div>
-            </div>
-          </div>
-
-          <div>
-            <p class="secao-titulo">Cliente</p>
-            <div class="cliente-card">
-              <div class="cliente-avatar" id="clienteAvatar">J</div>
-              <div class="cliente-info">
-                <h4 id="clienteNome">João Silva</h4>
-                <p id="clienteEndereco">Rua das Palmeiras, 45 — Centro<br>📱 (89) 99999-1234</p>
-              </div>
-              <button class="btn-notificar" id="btnNotificar" onclick="notificarCliente()">🔔 Notificar cliente</button>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="modal-ped-footer">
-          <button class="btn-fechar-ped" onclick="fecharPedido()">Fechar</button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <script src="{% static 'utils/manter-produtos.js' %}"></script>
-    <!-- <script src="{% static 'utils/pedidos.js' %}"></script> -->
+    <script src="../utils/mensagens-api.js?v=20261009-revisao"></script>
+<script src="../utils/manter-produtos.js?v=20261009-sem-upload"></script>
 </body>
 </html>

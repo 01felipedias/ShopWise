@@ -1323,3 +1323,4 @@
         width: 100%;
     }
 }
+#checkoutLoginLink[hidden] { display: none !important; }

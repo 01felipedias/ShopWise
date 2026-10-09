@@ -4,6 +4,13 @@
    os estilos específicos de rastreamento/status do pedido.
    ======================================================== */
 
+.orders-hero [hidden] { display: none !important; }
+#ordersStatus { margin-top: 16px; color: #667575; }
+.orders-empty { padding: 18px; color: #667575; }
+.order-detail-item { display: flex; gap: 16px; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #e1e1e1; flex-wrap: wrap; }
+.order-card-actions { flex-wrap: wrap; }
+#acompStepper::before { left: 16.667%; right: 16.667%; }
+#acompProgress { left: 16.667%; }
 /* Cabeçalho da página de pedidos */
 .orders-hero {
     background: #ffffff;

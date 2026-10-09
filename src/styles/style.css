@@ -204,6 +204,42 @@ input {
     text-decoration: underline;
 }
 
+.cadastro-label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+}
+
+.cadastro-tipos {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.cadastro-tipos a {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #2ECC71;
+    border-radius: 10px;
+    color: #238c50;
+    text-align: center;
+    text-decoration: none;
+}
+
+.cadastro-tipos a.active {
+    background: #2ECC71;
+    color: white;
+}
+
+.login-message:not(:empty) {
+    margin-bottom: 16px;
+    color: #a33131;
+}
+
+.login-message-success:not(:empty) {
+    color: #238c50;
+}
+
 /*----------------------------------- FIM CSS PAG LOGIN-------------------------------------------- */
 /*___________________________________PAG SENHA_______________________________________________________*/
 /* Reset Global */
