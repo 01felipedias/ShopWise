@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
 from produtos.views import (
@@ -34,7 +34,7 @@ from produtos.views import (
 # =========================
 
 def inicio(request):
-    return render(request, 'index.html')
+    return redirect('login_usuario')
 
 
 def cadastro_mercado(request):
