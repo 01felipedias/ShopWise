@@ -25,6 +25,7 @@ from produtos.views import (
     StatusPedidoSupermercado,
     PerfilSupermercado,
     LogoutSupermercado,
+    TesteToken,
 )
 
 
@@ -85,13 +86,23 @@ def perfil(request):
 
 
 urlpatterns = [
-    # Administração
-    path('admin/', admin.site.urls),
+
+    # =========================
+    # ADMINISTRAÇÃO
+    # =========================
+    path(
+        'admin/',
+        admin.site.urls
+    ),
 
     # =========================
     # FRONTEND
     # =========================
-    path('', inicio, name='inicio'),
+    path(
+        '',
+        inicio,
+        name='inicio'
+    ),
 
     # Supermercado
     path(
@@ -108,6 +119,13 @@ urlpatterns = [
         'manter-produtos.html',
         manter_produtos,
         name='manter_produtos'
+    ),
+    path(
+        'perfil-supermercado.html',
+        TemplateView.as_view(
+            template_name='perfil-supermercado.html'
+        ),
+        name='perfil_supermercado'
     ),
 
     # Cliente
@@ -126,29 +144,36 @@ urlpatterns = [
         feed_produto,
         name='feed_produto'
     ),
-    path('carrinho.html',
-         carrinho,
-         name='carrinho'),
-
-    path('checkout.html',
-         checkout,
-         name='checkout'),
-
-    path('pedidos.html',
-         pedidos,
-         name='pedidos'),
-
-    path('AlertaPreco.html',
-         alerta_preco,
-         name='alerta_preco'),
-
-    path('avaliacao.html',
-         avaliacao,
-         name='avaliacao'),
-
-    path('perfil.html',
-         perfil,
-         name='perfil'),
+    path(
+        'carrinho.html',
+        carrinho,
+        name='carrinho'
+    ),
+    path(
+        'checkout.html',
+        checkout,
+        name='checkout'
+    ),
+    path(
+        'pedidos.html',
+        pedidos,
+        name='pedidos'
+    ),
+    path(
+        'AlertaPreco.html',
+        alerta_preco,
+        name='alerta_preco'
+    ),
+    path(
+        'avaliacao.html',
+        avaliacao,
+        name='avaliacao'
+    ),
+    path(
+        'perfil.html',
+        perfil,
+        name='perfil'
+    ),
 
     # =========================
     # API - SUPERMERCADO
@@ -165,29 +190,14 @@ urlpatterns = [
         'api/login-supermercado/',
         LoginSupermercado.as_view()
     ),
-    path('api/feed/produtos/',
-         FeedProdutos.as_view()),
-
-    path('api/pedidos/',
-         PedidoList.as_view()),
-
-    path('api/cupons/',
-         CupomList.as_view()),
-
-    path(
-        'api/pedidos/<int:pedido_id>/status-pix/',
-        StatusPagamentoPix.as_view()),
-
     path(
         'api/perfil-supermercado/',
-        PerfilSupermercado.as_view()),
-
+        PerfilSupermercado.as_view()
+    ),
     path(
         'api/logout-supermercado/',
         LogoutSupermercado.as_view()
     ),
-
-
 
     # =========================
     # API - PRODUTOS
@@ -200,8 +210,10 @@ urlpatterns = [
         'api/produtos/<int:pk>/',
         ProdutoDetalhe.as_view()
     ),
-
-
+    path(
+        'api/feed/produtos/',
+        FeedProdutos.as_view()
+    ),
 
     # =========================
     # API - CLIENTE
@@ -215,6 +227,46 @@ urlpatterns = [
         LoginCliente.as_view()
     ),
     path(
+        'api/perfil/',
+        PerfilCliente.as_view()
+    ),
+    path(
+        'api/logout-cliente/',
+        LogoutCliente.as_view()
+    ),
+
+    # =========================
+    # API - PEDIDOS
+    # =========================
+    path(
+        'api/pedidos/',
+        PedidoList.as_view()
+    ),
+    path(
+        'api/pedidos/<int:pedido_id>/status-pix/',
+        StatusPagamentoPix.as_view()
+    ),
+    path(
+        'api/pedidos-supermercado/',
+        PedidosSupermercadoList.as_view()
+    ),
+    path(
+        'api/pedidos-supermercado/<int:pedido_id>/status/',
+        StatusPedidoSupermercado.as_view()
+    ),
+
+    # =========================
+    # API - CUPONS
+    # =========================
+    path(
+        'api/cupons/',
+        CupomList.as_view()
+    ),
+
+    # =========================
+    # API - ALERTAS
+    # =========================
+    path(
         'api/alertas-preco/',
         AlertaPrecoList.as_view()
     ),
@@ -226,32 +278,20 @@ urlpatterns = [
         'api/notificacoes/<int:notificacao_id>/marcar-lida/',
         NotificacaoMarcarLida.as_view()
     ),
+
+    # =========================
+    # API - AVALIAÇÕES
+    # =========================
     path(
         'api/avaliacoes/',
         AvaliacaoList.as_view()
     ),
-    path(
-        'api/perfil/',
-        PerfilCliente.as_view()
-    ),
-    path(
-        'api/logout-cliente/',
-        LogoutCliente.as_view()
-    ),
-    path(
-        'api/pedidos-supermercado/',
-        PedidosSupermercadoList.as_view()
-    ),
-    path(
-        'api/pedidos-supermercado/<int:pedido_id>/status/',
-        StatusPedidoSupermercado.as_view()
-    ),
 
+    # =========================
+    # API - AUTHTOKEN
+    # =========================
     path(
-        'perfil-supermercado.html',
-        TemplateView.as_view(
-            template_name='perfil-supermercado.html')
+        'api/teste-token/',
+        TesteToken.as_view()
     ),
-
-
 ]

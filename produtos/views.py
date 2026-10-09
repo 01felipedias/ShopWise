@@ -1,12 +1,16 @@
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Q, F
 from django.utils import timezone
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import get_object_or_404
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 
 from .models import (
     Supermercado,
@@ -241,7 +245,9 @@ class LoginSupermercado(APIView):
 
         if not email or not senha:
             return Response(
-                {'erro': 'E-mail e senha são obrigatórios.'},
+                {
+                    'erro': 'E-mail e senha são obrigatórios.'
+                },
                 status=400
             )
 
@@ -254,14 +260,36 @@ class LoginSupermercado(APIView):
             or not supermercado.verificar_senha(senha)
         ):
             return Response(
-                {'erro': 'E-mail ou senha inválidos.'},
+                {
+                    'erro': 'E-mail ou senha inválidos.'
+                },
                 status=401
             )
 
+        # Mantém a autenticação por sessão que já existia
         request.session['supermercado_id'] = supermercado.id
+
+        # Cria um usuário do Django para representar
+        # este supermercado no sistema de AuthToken
+        usuario_token, criado = User.objects.get_or_create(
+            username=f'supermercado_{supermercado.id}',
+            defaults={
+                'email': supermercado.email_comercial
+            }
+        )
+
+        if criado:
+            usuario_token.set_unusable_password()
+            usuario_token.save()
+
+        # Cria o token caso ainda não exista
+        token, _ = Token.objects.get_or_create(
+            user=usuario_token
+        )
 
         return Response({
             'mensagem': 'Login realizado com sucesso.',
+            'token': token.key,
             'supermercado': {
                 'id': supermercado.id,
                 'nome': supermercado.nome,
@@ -281,13 +309,20 @@ class ClienteList(APIView):
 
         if not senha:
             return Response(
-                {'erro': 'A senha é obrigatória.'},
+                {
+                    'erro': 'A senha é obrigatória.'
+                },
                 status=400
             )
 
-        if confirma_senha is not None and senha != confirma_senha:
+        if (
+            confirma_senha is not None
+            and senha != confirma_senha
+        ):
             return Response(
-                {'erro': 'As senhas não coincidem.'},
+                {
+                    'erro': 'As senhas não coincidem.'
+                },
                 status=400
             )
 
@@ -296,16 +331,22 @@ class ClienteList(APIView):
         if serializer.is_valid():
             cliente = serializer.save()
 
-            return Response({
-                'mensagem': 'Cliente cadastrado com sucesso.',
-                'cliente': {
-                    'id': cliente.id,
-                    'nome': cliente.nome,
-                    'email': cliente.email
-                }
-            }, status=201)
+            return Response(
+                {
+                    'mensagem': 'Cliente cadastrado com sucesso.',
+                    'cliente': {
+                        'id': cliente.id,
+                        'nome': cliente.nome,
+                        'email': cliente.email
+                    }
+                },
+                status=201
+            )
 
-        return Response(serializer.errors, status=400)
+        return Response(
+            serializer.errors,
+            status=400
+        )
 
 
 class LoginCliente(APIView):
@@ -317,7 +358,9 @@ class LoginCliente(APIView):
 
         if not email or not senha:
             return Response(
-                {'erro': 'E-mail e senha são obrigatórios.'},
+                {
+                    'erro': 'E-mail e senha são obrigatórios.'
+                },
                 status=400
             )
 
@@ -325,16 +368,40 @@ class LoginCliente(APIView):
             email__iexact=email
         ).first()
 
-        if not cliente or not cliente.verificar_senha(senha):
+        if (
+            not cliente
+            or not cliente.verificar_senha(senha)
+        ):
             return Response(
-                {'erro': 'E-mail ou senha inválidos.'},
+                {
+                    'erro': 'E-mail ou senha inválidos.'
+                },
                 status=401
             )
 
+        # Mantém a autenticação por sessão
         request.session['cliente_id'] = cliente.id
+
+        # Cria um usuário Django para representar o cliente
+        usuario_token, criado = User.objects.get_or_create(
+            username=f'cliente_{cliente.id}',
+            defaults={
+                'email': cliente.email
+            }
+        )
+
+        if criado:
+            usuario_token.set_unusable_password()
+            usuario_token.save()
+
+        # Cria ou recupera o AuthToken
+        token, _ = Token.objects.get_or_create(
+            user=usuario_token
+        )
 
         return Response({
             'mensagem': 'Login realizado com sucesso.',
+            'token': token.key,
             'cliente': {
                 'id': cliente.id,
                 'nome': cliente.nome,
@@ -1983,4 +2050,15 @@ class LogoutSupermercado(APIView):
         return Response({
             'mensagem':
                 'Logout do supermercado realizado com sucesso.'
+        })
+
+
+class TesteToken(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            'mensagem': 'Token válido. Acesso autorizado.',
+            'usuario': request.user.username
         })
