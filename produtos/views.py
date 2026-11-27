@@ -1519,21 +1519,11 @@ class LogoutCliente(APIView):
 
 
 class PedidosSupermercadoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
 
     def get(self, request):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         itens = (
             ItemPedido.objects
@@ -1638,21 +1628,11 @@ class PedidosSupermercadoList(APIView):
 
 
 class StatusPedidoSupermercado(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
 
     def patch(self, request, pedido_id):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         pedido = get_object_or_404(
             Pedido.objects.distinct(),
@@ -1751,21 +1731,11 @@ class StatusPedidoSupermercado(APIView):
 
 
 class PerfilSupermercado(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
 
     def get(self, request):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         supermercado = get_object_or_404(
             Supermercado,
@@ -1836,18 +1806,7 @@ class PerfilSupermercado(APIView):
         })
 
     def put(self, request):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         supermercado = get_object_or_404(
             Supermercado,
