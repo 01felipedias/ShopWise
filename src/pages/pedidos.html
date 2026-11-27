@@ -814,7 +814,7 @@
 
             const mercados = mercadosPedido(pedido);
             const indice = progressoStatus[pedido.status] ?? 0;
-            const progresso = ["0%", "33%", "66%", "100%"][indice];
+            const progresso = ["0%", "26.67%", "53.33%", "80%"][indice];
             const info = informacaoStatus(pedido);
             const estadosPorLoja = document.getElementById("acompSupermercados");
             if (estadosPorLoja) {

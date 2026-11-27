@@ -2579,9 +2579,12 @@ button.btn-secondary-link{border:1px solid rgba(46,204,113,.35);}
 .modal-pedido {
   background: var(--white);
   border-radius: 20px;
-  width: 100%; max-width: 700px;
+  width: 100%;
+  max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
   box-shadow: 0 25px 60px rgba(0,0,0,.2);
   transform: translateY(30px) scale(.97);
   transition: transform .35s cubic-bezier(.34,1.56,.64,1);
