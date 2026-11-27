@@ -531,13 +531,11 @@ class CupomList(APIView):
 
 
 class PedidoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response({'erro': 'Cliente não autenticado.'}, status=401)
+        cliente_id = request.cliente_id
 
         pedidos = (
             Pedido.objects
@@ -577,10 +575,7 @@ class PedidoList(APIView):
         return Response(dados)
 
     def post(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response({'erro': 'Cliente não autenticado.'}, status=401)
+        cliente_id = request.cliente_id
 
         itens = request.data.get('itens', [])
         tipo_entrega = request.data.get('tipo_entrega')
@@ -864,16 +859,11 @@ class PedidoList(APIView):
 
 
 class StatusPagamentoPix(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request, pedido_id):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         pedido = get_object_or_404(
             Pedido,
@@ -998,16 +988,11 @@ class StatusPagamentoPix(APIView):
 
 
 class AlertaPrecoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         alertas = (
             AlertaPreco.objects
@@ -1047,13 +1032,7 @@ class AlertaPrecoList(APIView):
         return Response(dados)
 
     def post(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         produto_id = request.data.get('produto_id')
         preco_alvo = request.data.get('preco_alvo')
@@ -1142,16 +1121,11 @@ class AlertaPrecoList(APIView):
 
 
 class NotificacaoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         notificacoes = (
             Notificacao.objects
@@ -1200,16 +1174,11 @@ class NotificacaoList(APIView):
 
 
 class NotificacaoMarcarLida(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def post(self, request, notificacao_id):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         notificacao = get_object_or_404(
             Notificacao,
@@ -1230,16 +1199,11 @@ class NotificacaoMarcarLida(APIView):
 
 
 class AvaliacaoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         avaliacoes = (
             Avaliacao.objects
@@ -1311,13 +1275,7 @@ class AvaliacaoList(APIView):
         })
 
     def post(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         item_pedido_id = request.data.get(
             'item_pedido_id'
