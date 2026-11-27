@@ -51,7 +51,7 @@
         listElement.innerHTML = visible.map(order => {
             const selected = Number(order.id) === Number(selectedId);
             return `<button class="orders-list-item${selected ? ' selected' : ''}" type="button" data-order-id="${escapeHtml(order.id)}" aria-pressed="${selected}">
-                <span class="orders-row-top"><strong class="orders-number">Pedido #${String(order.id).padStart(5, '0')}</strong><span class="orders-date">${dateTime(order.criado_em)}</span></span>
+                <span class="orders-row-top"><strong class="orders-number">Pedido ${String(order.id).padStart(5, '0')}</strong><span class="orders-date">${dateTime(order.criado_em)}</span></span>
                 <span class="orders-row-bottom"><span class="orders-customer">${escapeHtml(order.cliente?.nome || 'Cliente')}</span><span class="orders-badge status-${escapeHtml(order.status)}">${escapeHtml(statusLabel(order.status))}</span></span>
                 <span class="orders-row-bottom"><span class="orders-customer">${Number(order.itens?.length || 0)} produto(s)</span><strong class="orders-amount">${money(order.subtotal_supermercado)}</strong></span>
             </button>`;
@@ -84,7 +84,7 @@
         const address = order.tipo_entrega === 'pickup' ? 'Retirada no supermercado' : (order.endereco_entrega || 'Endereço não informado');
         const payment = { pix: 'PIX', cartao: 'Cartão', dinheiro: 'Dinheiro' }[order.forma_pagamento] || order.forma_pagamento || '—';
 
-        detailElement.innerHTML = `<header class="order-detail-header"><div><h2>Pedido #${String(order.id).padStart(5, '0')}</h2><p>Recebido em ${dateTime(order.criado_em)} · ${items.length} produto(s)</p></div><strong class="order-detail-total">${money(order.subtotal_supermercado)}</strong></header>
+        detailElement.innerHTML = `<header class="order-detail-header"><div><h2>Pedido ${String(order.id).padStart(5, '0')}</h2><p>Recebido em ${dateTime(order.criado_em)} · ${items.length} produto(s)</p></div><strong class="order-detail-total">${money(order.subtotal_supermercado)}</strong></header>
             ${stepper}
             ${paymentPending ? '<p class="order-payment-note">Aguardando a confirmação do pagamento. As ações de preparo ficam disponíveis após a confirmação.</p>' : ''}
             <section class="order-section"><h3>Produtos</h3>${items.length ? items.map(item => `<div class="order-item"><span>${escapeHtml(item.quantidade)}× ${escapeHtml(item.nome)}</span><strong>${money(item.subtotal)}</strong></div>`).join('') : '<p class="orders-empty">Este pedido não possui itens.</p>'}</section>
@@ -93,7 +93,7 @@
 
         document.getElementById('advanceOrder')?.addEventListener('click', () => updateStatus(order, nextStatus));
         document.getElementById('cancelOrder')?.addEventListener('click', async () => {
-            const confirmed = await window.showConfirm(`O pedido #${order.id} será cancelado. Essa ação não pode ser desfeita.`, { title: 'Cancelar pedido?', confirmText: 'Cancelar pedido', danger: true });
+            const confirmed = await window.showConfirm(`O pedido ${order.id} será cancelado. Essa ação não pode ser desfeita.`, { title: 'Cancelar pedido?', confirmText: 'Cancelar pedido', danger: true });
             if (confirmed) await updateStatus(order, 'cancelado');
         });
     }

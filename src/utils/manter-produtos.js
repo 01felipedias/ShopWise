@@ -653,7 +653,7 @@
 
         if (mpFormTitulo) {
             mpFormTitulo.textContent =
-                `Editar Produto #${produto.id}`;
+                `Editar Produto ${produto.id}`;
         }
 
         if (mpBtnSalvar) {

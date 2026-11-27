@@ -117,7 +117,7 @@
         recentOrders.innerHTML = sortedOrders.slice(0, 5).map(order => {
             const items = Array.isArray(order.itens) ? order.itens.reduce((sum, item) => sum + Number(item.quantidade || 0), 0) : 0;
             const date = order.criado_em ? new Date(order.criado_em).toLocaleDateString('pt-BR') : '';
-            return `<article class="seller-order-row"><div class="seller-order-main"><strong>Pedido #${escapeHtml(order.id)}</strong><span>${escapeHtml(order.cliente?.nome || 'Cliente')} · ${items} item(ns) · ${date}</span></div><span class="seller-order-status status-${escapeHtml(order.status)}">${escapeHtml(statusLabels[order.status] || order.status || 'Em andamento')}</span><strong class="seller-order-total">${money(order.subtotal_supermercado)}</strong></article>`;
+            return `<article class="seller-order-row"><div class="seller-order-main"><strong>Pedido ${escapeHtml(order.id)}</strong><span>${escapeHtml(order.cliente?.nome || 'Cliente')} · ${items} item(ns) · ${date}</span></div><span class="seller-order-status status-${escapeHtml(order.status)}">${escapeHtml(statusLabels[order.status] || order.status || 'Em andamento')}</span><strong class="seller-order-total">${money(order.subtotal_supermercado)}</strong></article>`;
         }).join('');
     }
 
