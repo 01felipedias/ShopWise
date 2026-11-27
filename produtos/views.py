@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import (
     TokenAuthentication,
@@ -157,6 +158,7 @@ class SupermercadoDetalhe(APIView):
 
 
 class ProdutoList(APIView):
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
     authentication_classes = [
         TokenAuthentication,
         SessionAuthentication,
@@ -168,7 +170,8 @@ class ProdutoList(APIView):
         supermercado_id = request.supermercado_id
 
         produtos = Produto.objects.filter(
-            supermercado_id=supermercado_id
+            supermercado_id=supermercado_id,
+            ativo=True,
         )
 
         serializer = ProdutoSerializer(produtos, many=True)
@@ -192,6 +195,7 @@ class ProdutoList(APIView):
 
 
 class ProdutoDetalhe(APIView):
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
     authentication_classes = [
         TokenAuthentication,
         SessionAuthentication,
@@ -205,7 +209,8 @@ class ProdutoDetalhe(APIView):
         produto = get_object_or_404(
             Produto,
             pk=pk,
-            supermercado_id=supermercado_id
+            supermercado_id=supermercado_id,
+            ativo=True,
         )
 
         return produto
@@ -483,7 +488,8 @@ class FeedProdutos(APIView):
 
     def get(self, request):
         produtos = Produto.objects.filter(
-            supermercado__isnull=False
+            supermercado__isnull=False,
+            ativo=True,
         ).select_related('supermercado').annotate(
             media_avaliacoes=Avg('avaliacoes__nota'),
             total_avaliacoes=Count('avaliacoes')
@@ -507,6 +513,7 @@ class FeedProdutos(APIView):
                 'preco': str(produto.preco),
                 'estoque': produto.estoque,
                 'descricao': produto.descricao,
+                'imagem': produto.imagem.url if produto.imagem else None,
                 'media_avaliacoes': (
                     round(produto.media_avaliacoes, 2)
                     if produto.media_avaliacoes is not None
@@ -927,7 +934,7 @@ class PedidoList(APIView):
                             Produto.objects
                             .select_for_update()
                             .select_related('supermercado')
-                            .get(pk=produto_id, supermercado__isnull=False)
+                            .get(pk=produto_id, supermercado__isnull=False, ativo=True)
                         )
                     except Produto.DoesNotExist:
                         return Response(
@@ -2369,7 +2376,8 @@ class PerfilSupermercado(APIView):
         )
 
         produtos = Produto.objects.filter(
-            supermercado_id=supermercado_id
+            supermercado_id=supermercado_id,
+            ativo=True,
         )
 
         subpedidos = PedidoPorSupermercado.objects.filter(

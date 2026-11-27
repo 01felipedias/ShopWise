@@ -67,7 +67,10 @@
     const greeting = document.getElementById('storeGreeting');
     let storedStore = null;
     try { storedStore = JSON.parse(localStorage.getItem('shopwise_supermercado') || 'null'); } catch (_) {}
-    if (storedStore?.nome) greeting.textContent = `Olá, ${storedStore.nome}`;
+    const storeName = storedStore?.nome || '';
+    if (storeName) {
+        greeting.textContent = `Olá, ${storeName}`;
+    }
 
     const statusLabels = { pendente: 'Pendente', aguardando_pagamento: 'Aguardando pagamento', confirmado: 'Confirmado', preparando: 'Em preparação', enviado: 'Enviado', concluido: 'Concluído', cancelado: 'Cancelado' };
     const money = value => Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });

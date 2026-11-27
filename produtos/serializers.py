@@ -34,6 +34,18 @@ class ProdutoSerializer(serializers.ModelSerializer):
         model = Produto
         fields = '__all__'
 
+    def validate_imagem(self, imagem):
+        if imagem and imagem.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError(
+                'A imagem deve ter no máximo 5 MB.'
+            )
+        formato = getattr(getattr(imagem, 'image', None), 'format', None)
+        if imagem and formato not in {'JPEG', 'PNG', 'WEBP'}:
+            raise serializers.ValidationError(
+                'Use uma imagem JPG, PNG ou WebP.'
+            )
+        return imagem
+
 
 class ClienteSerializer(serializers.ModelSerializer):
     senha = serializers.CharField(write_only=True, required=True)

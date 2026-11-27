@@ -90,6 +90,16 @@
             font-weight: bold;
 
             flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid #e1ebe5;
+            background: #fff;
+        }
+
+        .perfil-avatar img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .perfil-loja-nome {
@@ -1193,10 +1203,25 @@
                 .toUpperCase();
 
 
-            document.getElementById(
-                'perfilAvatar'
-            ).textContent =
-                inicial || 'S';
+            const avatar = document.getElementById('perfilAvatar');
+            const nomeNormalizado = String(dados.nome || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+            const logo = nomeNormalizado.includes('sao jorge') || nomeNormalizado === 'jorge'
+                ? "{% static 'assets/sao-jorge-super.png' %}"
+                : nomeNormalizado.includes('quaresma')
+                    ? "{% static 'assets/quaresma-logo.png' %}"
+                    : '';
+
+            if (logo) {
+                const imagem = document.createElement('img');
+                imagem.src = logo;
+                imagem.alt = `Logo ${texto(dados.nome)}`;
+                avatar.replaceChildren(imagem);
+            } else {
+                avatar.textContent = inicial || 'S';
+            }
 
 
             document.getElementById(

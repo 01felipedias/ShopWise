@@ -725,6 +725,55 @@ body {
     gap: 4px;
 }
 
+.product-market-line {
+    min-height: 36px;
+    gap: 8px;
+    margin-top: 2px;
+    margin-bottom: 9px;
+}
+
+.product-market-logo {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    overflow: hidden;
+    border: 1px solid #e3ece7;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.product-market-logo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 2px;
+}
+
+.product-market-copy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px 5px;
+    min-width: 0;
+}
+
+.product-market-name {
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.product-market-category {
+    color: #728078;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
 .price-row {
     display: flex;
     justify-content: space-between;
@@ -1582,8 +1631,8 @@ body {
 }
 
 .store-logo img {
-    width: 38px;
-    height: 38px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
 }
 
@@ -2826,6 +2875,39 @@ button.btn-secondary-link{border:1px solid rgba(46,204,113,.35);}
     display: block;
     margin-top: .2rem;
     color: #718078;
+}
+
+.price-compare-store {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    min-width: 0;
+}
+
+.price-compare-store-copy {
+    min-width: 0;
+}
+
+.price-compare-logo,
+.price-compare-logo-fallback {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border: 1px solid #e5eee8;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.price-compare-logo {
+    object-fit: contain;
+}
+
+.price-compare-logo-fallback {
+    display: grid;
+    place-items: center;
+    color: #159451;
+    font-size: 1.2rem;
+    font-weight: 800;
 }
 
 .price-compare-value {
