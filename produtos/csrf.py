@@ -84,6 +84,32 @@ class ShopWiseCSRFMiddleware(CsrfViewMiddleware):
                 request, callback, args, kwargs
             )
 
+        origem = request.META.get('HTTP_ORIGIN')
+
+        if origem:
+            origem_local = (
+                f'{request.scheme}://{request.get_host()}'
+            )
+
+            origens_permitidas = {
+                origem_local,
+                *settings.CORS_ALLOWED_ORIGINS,
+                *settings.CSRF_TRUSTED_ORIGINS,
+            }
+
+            if origem not in origens_permitidas:
+                return self._reject(
+                    request, 'Origem nao autorizada.'
+                )
+
+        if (
+            request.META.get('HTTP_SEC_FETCH_SITE') == 'cross-site'
+            and request.content_type != 'application/json'
+        ):
+            return self._reject(
+                request, 'Requisicao externa nao autorizada.'
+            )
+
         usa_cookie = (
             settings.SESSION_COOKIE_NAME in request.COOKIES
             or settings.CSRF_COOKIE_NAME in request.COOKIES
