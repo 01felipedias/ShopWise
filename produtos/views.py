@@ -315,6 +315,7 @@ class LoginSupermercado(APIView):
             )
 
         # Mantém a autenticação por sessão que já existia
+        request.session.flush()
         request.session['supermercado_id'] = supermercado.id
 
         # Cria um usuário do Django para representar
@@ -428,6 +429,7 @@ class LoginCliente(APIView):
             )
 
         # Mantém a autenticação por sessão
+        request.session.flush()
         request.session['cliente_id'] = cliente.id
 
         # Cria um usuário Django para representar o cliente
@@ -1508,10 +1510,22 @@ class PerfilCliente(APIView):
 
 
 class LogoutCliente(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [ClienteAutenticado]
 
     def post(self, request):
-        request.session.pop('cliente_id', None)
+        conta_id = request.cliente_id
+
+        Token.objects.filter(
+            user__username=f'cliente_{conta_id}'
+        ).delete()
+
+        if request.session.get('cliente_id') == conta_id:
+            request.session.flush()
 
         return Response({
             'mensagem': 'Logout realizado com sucesso.'
@@ -1997,17 +2011,25 @@ class PerfilSupermercado(APIView):
 
 
 class LogoutSupermercado(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [SupermercadoAutenticado]
 
     def post(self, request):
-        request.session.pop(
-            'supermercado_id',
-            None
-        )
+        conta_id = request.supermercado_id
+
+        Token.objects.filter(
+            user__username=f'supermercado_{conta_id}'
+        ).delete()
+
+        if request.session.get('supermercado_id') == conta_id:
+            request.session.flush()
 
         return Response({
-            'mensagem':
-                'Logout do supermercado realizado com sucesso.'
+            'mensagem': 'Logout realizado com sucesso.'
         })
 
 
