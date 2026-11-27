@@ -65,37 +65,260 @@
 
     function renderDetail(order) {
         if (!order) {
-            detailElement.innerHTML = '<div class="orders-empty order-detail-empty">Selecione um pedido para ver os detalhes.</div>';
+            detailElement.innerHTML =
+                '<div class="orders-empty order-detail-empty">Selecione um pedido para ver os detalhes.</div>';
             return;
         }
+
         const statusIndex = progression.indexOf(order.status);
+
         const steps = [
-            ['confirmado', 'Recebido'], ['preparando', 'Preparando'],
-            ['enviado', 'Em entrega'], ['concluido', 'Concluído']
+            ['confirmado', 'Recebido', '✅'],
+            ['preparando', 'Preparando', '📦'],
+            ['enviado', 'Em entrega', '🚚'],
+            ['concluido', 'Concluído', '🏠']
         ];
+
         const stepper = order.status === 'cancelado'
             ? '<p class="order-payment-note">Este pedido foi cancelado.</p>'
-            : `<div class="order-status-steps">${steps.map(([key, title], index) => `<div class="order-status-step${statusIndex >= index && statusIndex >= 0 ? ' complete' : ''}"><i>${statusIndex >= index && statusIndex >= 0 ? '✓' : index + 1}</i><span>${title}</span></div>`).join('')}</div>`;
-        const paymentPending = order.status === 'aguardando_pagamento' || order.pagamento_status === 'pending';
-        const canUpdate = !paymentPending && !['cancelado', 'concluido'].includes(order.status);
-        const nextStatus = { confirmado: 'preparando', preparando: 'enviado', enviado: 'concluido' }[order.status];
-        const nextText = { preparando: 'Avançar para preparação', enviado: 'Marcar como saiu para entrega', concluido: 'Concluir pedido' }[nextStatus];
-        const items = Array.isArray(order.itens) ? order.itens : [];
-        const address = order.tipo_entrega === 'pickup' ? 'Retirada no supermercado' : (order.endereco_entrega || 'Endereço não informado');
-        const payment = { pix: 'PIX', cartao: 'Cartão', dinheiro: 'Dinheiro' }[order.forma_pagamento] || order.forma_pagamento || '—';
+            : `
+                <div class="order-status-steps">
+                    ${steps.map(([key, title, icon], index) => {
+                        let classe = '';
 
-        detailElement.innerHTML = `<header class="order-detail-header"><div><h2>Pedido ${String(order.id).padStart(5, '0')}</h2><p>Recebido em ${dateTime(order.criado_em)} · ${items.length} produto(s)</p></div><strong class="order-detail-total">${money(order.subtotal_supermercado)}</strong></header>
+                        if (index < statusIndex) {
+                            classe = ' complete';
+                        } else if (index === statusIndex) {
+                            classe = ' active';
+                        }
+
+                        return `
+                            <div class="order-status-step${classe}">
+                                <i>${icon}</i>
+                                <span>${title}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+        const paymentPending =
+            order.status === 'aguardando_pagamento' ||
+            order.pagamento_status === 'pending';
+
+        const canUpdate =
+            !paymentPending &&
+            !['cancelado', 'concluido'].includes(order.status);
+
+        const nextStatus = {
+            confirmado: 'preparando',
+            preparando: 'enviado',
+            enviado: 'concluido'
+        }[order.status];
+
+        const nextText = {
+            preparando: 'Avançar para preparação',
+            enviado: 'Marcar como saiu para entrega',
+            concluido: 'Concluir pedido'
+        }[nextStatus];
+
+        const items = Array.isArray(order.itens)
+            ? order.itens
+            : [];
+
+        const address =
+            order.tipo_entrega === 'pickup'
+                ? 'Retirada no supermercado'
+                : (order.endereco_entrega || 'Endereço não informado');
+
+        const payment = {
+            pix: 'PIX',
+            cartao: 'Cartão',
+            dinheiro: 'Dinheiro'
+        }[order.forma_pagamento] || order.forma_pagamento || '—';
+
+        detailElement.innerHTML = `
+            <header class="order-detail-header">
+                <div>
+                    <h2>Pedido ${String(order.id).padStart(5, '0')}</h2>
+                    <p>
+                        Recebido em ${dateTime(order.criado_em)}
+                        · ${items.length} produto(s)
+                    </p>
+                </div>
+
+                <strong class="order-detail-total">
+                    ${money(order.subtotal_supermercado)}
+                </strong>
+            </header>
+
             ${stepper}
-            ${paymentPending ? '<p class="order-payment-note">Aguardando a confirmação do pagamento. As ações de preparo ficam disponíveis após a confirmação.</p>' : ''}
-            <section class="order-section"><h3>Produtos</h3>${items.length ? items.map(item => `<div class="order-item"><span>${escapeHtml(item.quantidade)}× ${escapeHtml(item.nome)}</span><strong>${money(item.subtotal)}</strong></div>`).join('') : '<p class="orders-empty">Este pedido não possui itens.</p>'}</section>
-            <section class="order-section"><h3>Dados do pedido</h3><div class="order-meta"><div><span>Cliente</span><strong>${escapeHtml(order.cliente?.nome || '—')}</strong></div><div><span>Pagamento</span><strong>${escapeHtml(payment)}${order.pagamento_status ? ` · ${escapeHtml(order.pagamento_status)}` : ''}</strong></div><div><span>Recebimento</span><strong>${order.tipo_entrega === 'pickup' ? 'Retirada' : 'Entrega'}</strong></div><div><span>${order.tipo_entrega === 'pickup' ? 'Loja' : 'Endereço'}</span><strong>${escapeHtml(address)}</strong></div><div><span>E-mail</span><strong>${escapeHtml(order.cliente?.email || '—')}</strong></div><div><span>CEP do cliente</span><strong>${escapeHtml(order.cliente?.cep || '—')}</strong></div></div>${order.observacoes ? `<p class="order-notes"><strong>Observações:</strong> ${escapeHtml(order.observacoes)}</p>` : ''}</section>
-            <div class="order-actions">${canUpdate && nextStatus ? `<button class="order-action-button" type="button" id="advanceOrder">${nextText}</button>` : ''}${canUpdate ? '<button class="order-action-button secondary" type="button" id="cancelOrder">Cancelar pedido</button>' : ''}</div>`;
 
-        document.getElementById('advanceOrder')?.addEventListener('click', () => updateStatus(order, nextStatus));
-        document.getElementById('cancelOrder')?.addEventListener('click', async () => {
-            const confirmed = await window.showConfirm(`O pedido ${order.id} será cancelado. Essa ação não pode ser desfeita.`, { title: 'Cancelar pedido?', confirmText: 'Cancelar pedido', danger: true });
-            if (confirmed) await updateStatus(order, 'cancelado');
-        });
+            ${paymentPending
+                ? `
+                    <p class="order-payment-note">
+                        Aguardando a confirmação do pagamento.
+                        As ações de preparo ficam disponíveis após a confirmação.
+                    </p>
+                `
+                : ''
+            }
+
+            <section class="order-section">
+                <h3>Produtos</h3>
+
+                ${
+                    items.length
+                        ? items.map(item => `
+                            <div class="order-item">
+                                <span>
+                                    ${escapeHtml(item.quantidade)}×
+                                    ${escapeHtml(item.nome)}
+                                </span>
+
+                                <strong>
+                                    ${money(item.subtotal)}
+                                </strong>
+                            </div>
+                        `).join('')
+                        : '<p class="orders-empty">Este pedido não possui itens.</p>'
+                }
+            </section>
+
+            <section class="order-section">
+                <h3>Dados do pedido</h3>
+
+                <div class="order-meta">
+
+                    <div>
+                        <span>Cliente</span>
+                        <strong>
+                            ${escapeHtml(order.cliente?.nome || '—')}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Pagamento</span>
+                        <strong>
+                            ${escapeHtml(payment)}
+                            ${
+                                order.pagamento_status
+                                    ? ` · ${escapeHtml(order.pagamento_status)}`
+                                    : ''
+                            }
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Recebimento</span>
+                        <strong>
+                            ${
+                                order.tipo_entrega === 'pickup'
+                                    ? 'Retirada'
+                                    : 'Entrega'
+                            }
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>
+                            ${
+                                order.tipo_entrega === 'pickup'
+                                    ? 'Loja'
+                                    : 'Endereço'
+                            }
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(address)}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>E-mail</span>
+                        <strong>
+                            ${escapeHtml(order.cliente?.email || '—')}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>CEP do cliente</span>
+                        <strong>
+                            ${escapeHtml(order.cliente?.cep || '—')}
+                        </strong>
+                    </div>
+
+                </div>
+
+                ${
+                    order.observacoes
+                        ? `
+                            <p class="order-notes">
+                                <strong>Observações:</strong>
+                                ${escapeHtml(order.observacoes)}
+                            </p>
+                        `
+                        : ''
+                }
+            </section>
+
+            <div class="order-actions">
+
+                ${
+                    canUpdate && nextStatus
+                        ? `
+                            <button
+                                class="order-action-button"
+                                type="button"
+                                id="advanceOrder"
+                            >
+                                ${nextText}
+                            </button>
+                        `
+                        : ''
+                }
+
+                ${
+                    canUpdate
+                        ? `
+                            <button
+                                class="order-action-button secondary"
+                                type="button"
+                                id="cancelOrder"
+                            >
+                                Cancelar pedido
+                            </button>
+                        `
+                        : ''
+                }
+
+            </div>
+        `;
+
+        document
+            .getElementById('advanceOrder')
+            ?.addEventListener(
+                'click',
+                () => updateStatus(order, nextStatus)
+            );
+
+        document
+            .getElementById('cancelOrder')
+            ?.addEventListener('click', async () => {
+
+                const confirmed = await window.showConfirm(
+                    `O pedido ${order.id} será cancelado. Essa ação não pode ser desfeita.`,
+                    {
+                        title: 'Cancelar pedido?',
+                        confirmText: 'Cancelar pedido',
+                        danger: true
+                    }
+                );
+
+                if (confirmed) {
+                    await updateStatus(order, 'cancelado');
+                }
+            });
     }
 
     async function updateStatus(order, status) {
