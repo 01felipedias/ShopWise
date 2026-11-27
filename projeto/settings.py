@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+from urllib.parse import parse_qs, unquote, urlparse
+
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,11 +45,14 @@ MERCADO_PAGO_PUBLIC_KEY = os.getenv(
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5pvw4vmiu*2@%l(8d)i2ok#xbsw5a$x$b2-2=a)s$2h5&aq+jz'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Use environment variables for deployment; keep the current local setup working.
+DEBUG = os.getenv('SHOPWISE_DEBUG', 'true').strip().lower() in {'1', 'true', 'yes', 'on'}
+SECRET_KEY = os.getenv('SHOPWISE_SECRET_KEY')
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured('Defina SHOPWISE_SECRET_KEY no ambiente de produção.')
+    # Chave apenas para desenvolvimento local. Nunca usar em produção.
+    SECRET_KEY = 'django-insecure-5pvw4vmiu*2@%l(8d)i2ok#xbsw5a$x$b2-2=a)s$2h5&aq+jz'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
@@ -55,6 +61,9 @@ ALLOWED_HOSTS += [
     for host in os.getenv('SHOPWISE_ALLOWED_HOSTS', '').split(',')
     if host.strip()
 ]
+render_hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
+if render_hostname and render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_hostname)
 
 
 # Application definition
@@ -83,6 +92,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+if not DEBUG:
+    MIDDLEWARE.insert(2, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'projeto.urls'
 
@@ -110,12 +121,39 @@ WSGI_APPLICATION = 'projeto.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
+if DATABASE_URL:
+    database_url = urlparse(DATABASE_URL)
+    if database_url.scheme not in {'postgres', 'postgresql'} or not database_url.hostname or not database_url.path.strip('/'):
+        raise ImproperlyConfigured('DATABASE_URL deve ser uma URL PostgreSQL válida.')
+
+    database_options = {}
+    ssl_modes = parse_qs(database_url.query).get('sslmode')
+    if ssl_modes:
+        database_options['sslmode'] = ssl_modes[0]
+    elif not DEBUG:
+        database_options['sslmode'] = 'require'
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': unquote(database_url.path.lstrip('/')),
+            'USER': unquote(database_url.username or ''),
+            'PASSWORD': unquote(database_url.password or ''),
+            'HOST': database_url.hostname,
+            'PORT': database_url.port or 5432,
+            'OPTIONS': database_options,
+        }
     }
-}
+else:
+    if not DEBUG:
+        raise ImproperlyConfigured('Defina DATABASE_URL para usar PostgreSQL em produção.')
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -152,7 +190,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+if not DEBUG:
+    STORAGES['staticfiles']['BACKEND'] = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'src',
@@ -188,3 +237,9 @@ CORS_ALLOWED_ORIGINS += [
 CORS_ALLOW_CREDENTIALS = False
 
 CORS_URLS_REGEX = r'^/api/.*$'
+
+# O proxy da hospedagem termina HTTPS antes de encaminhar a requisição ao Django.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG

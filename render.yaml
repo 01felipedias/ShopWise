@@ -1,0 +1,26 @@
+databases:
+  - name: shopwise-db
+    databaseName: shopwise
+    user: shopwise
+    region: virginia
+    plan: free
+
+services:
+  - type: web
+    name: shopwise
+    runtime: python
+    region: virginia
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn projeto.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SHOPWISE_DEBUG
+        value: "false"
+      - key: SHOPWISE_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shopwise-db
+          property: connectionString
+      - key: SHOPWISE_CORS_ORIGINS
+        sync: false

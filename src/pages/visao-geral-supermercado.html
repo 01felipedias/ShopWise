@@ -32,28 +32,32 @@
             <header class="mp-header seller-dashboard-header">
                 <p class="seller-dashboard-eyebrow">PAINEL DO SUPERMERCADO</p>
                 <h1 class="mp-title" id="storeGreeting">Visão Geral</h1>
-                <p class="mp-subtitle">Acompanhe seus produtos e pedidos em um só lugar.</p>
+                <p class="mp-subtitle">Resumo da operação da sua loja.</p>
             </header>
 
             <section class="seller-metrics" aria-label="Resumo da loja">
-                <article class="seller-metric"><span class="seller-metric-label">Produtos cadastrados</span><strong id="productCount">—</strong><span class="seller-metric-note">no seu catálogo</span></article>
-                <article class="seller-metric"><span class="seller-metric-label">Estoque baixo</span><strong id="lowStockCount">—</strong><span class="seller-metric-note">10 unidades ou menos</span></article>
-                <article class="seller-metric"><span class="seller-metric-label">Pedidos em andamento</span><strong id="openOrderCount">—</strong><span class="seller-metric-note">aguardando conclusão</span></article>
+                <article class="seller-metric"><span class="seller-metric-label">Produtos cadastrados</span><strong id="productCount">—</strong><span class="seller-metric-note">no catálogo da loja</span></article>
+                <article class="seller-metric" id="lowStockMetric"><span class="seller-metric-label">Estoque baixo</span><strong id="lowStockCount">—</strong><span class="seller-metric-note" id="lowStockNote">até 10 unidades</span></article>
+                <article class="seller-metric"><span class="seller-metric-label">Pedidos em andamento</span><strong id="openOrderCount">—</strong><span class="seller-metric-note">ainda não concluídos</span></article>
             </section>
 
-            <section class="seller-dashboard-panel" aria-labelledby="recentOrdersTitle">
+            <div class="seller-dashboard-grid">
+            <section class="seller-dashboard-panel seller-orders-panel" aria-labelledby="recentOrdersTitle">
                 <div class="seller-panel-heading">
-                    <div><h2 id="recentOrdersTitle">Pedidos recentes</h2><p>Atualizações dos pedidos enviados à sua loja.</p></div>
+                    <div><h2 id="recentOrdersTitle">Pedidos</h2><p>Pedidos em andamento aparecem primeiro.</p></div>
                     <a class="seller-link-button" href="pedidos-supermercado.html">Gerenciar pedidos</a>
                 </div>
                 <div class="seller-orders" id="recentOrders" aria-live="polite"><p class="seller-dashboard-empty">Carregando pedidos…</p></div>
             </section>
 
-            <section class="seller-shortcuts" aria-label="Atalhos">
-                <a href="manter-produtos.html"><span class="seller-shortcut-icon">▦</span><span><strong>Meus produtos</strong><small>Atualize preços e estoque</small></span><span aria-hidden="true">›</span></a>
-                <a href="gerenciar-cupons.html"><span class="seller-shortcut-icon">%</span><span><strong>Cupons</strong><small>Crie e acompanhe ofertas</small></span><span aria-hidden="true">›</span></a>
-                <a href="perfil-supermercado.html"><span class="seller-shortcut-icon">♙</span><span><strong>Perfil da loja</strong><small>Confira seus dados comerciais</small></span><span aria-hidden="true">›</span></a>
+            <section class="seller-dashboard-panel seller-stock-panel" aria-labelledby="lowStockTitle">
+                <div class="seller-panel-heading seller-stock-heading">
+                    <div><h2 id="lowStockTitle">Atenção ao estoque</h2><p id="stockPanelDescription">Produtos com 10 unidades ou menos.</p></div>
+                </div>
+                <div class="seller-stock-list" id="lowStockProducts" aria-live="polite"><p class="seller-dashboard-empty">Carregando estoque…</p></div>
             </section>
+            </div>
+
             <p class="seller-dashboard-feedback" id="dashboardFeedback" role="status" aria-live="polite"></p>
         </div>
     </main>
@@ -84,14 +88,33 @@
         const productList = Array.isArray(products) ? products : [];
         const orderList = Array.isArray(orders) ? orders : [];
         document.getElementById('productCount').textContent = productList.length;
-        document.getElementById('lowStockCount').textContent = productList.filter(item => Number(item.estoque) <= 10).length;
+        const lowStockProducts = productList.filter(item => Number(item.estoque) <= 10).sort((a, b) => Number(a.estoque) - Number(b.estoque));
+        const lowStockCount = document.getElementById('lowStockCount');
+        const lowStockNote = document.getElementById('lowStockNote');
+        const lowStockMetric = document.getElementById('lowStockMetric');
+        lowStockCount.textContent = lowStockProducts.length;
+        lowStockNote.textContent = lowStockProducts.length ? 'precisam de reposição' : 'Tudo em dia';
+        lowStockMetric.classList.toggle('has-low-stock', lowStockProducts.length > 0);
+        const stockList = document.getElementById('lowStockProducts');
+        if (lowStockProducts.length) {
+            stockList.innerHTML = lowStockProducts.slice(0, 5).map(product => `<article class="seller-stock-row"><span class="seller-stock-name">${escapeHtml(product.nome || product.name || 'Produto')}</span><strong>${escapeHtml(product.estoque)} un.</strong></article>`).join('');
+            if (lowStockProducts.length > 5) stockList.insertAdjacentHTML('beforeend', `<p class="seller-stock-more">Mais ${lowStockProducts.length - 5} produto(s) com estoque baixo.</p>`);
+        } else {
+            stockList.innerHTML = '<div class="seller-stock-clear"><span class="seller-stock-check" aria-hidden="true">✓</span><div><strong>Estoque em dia</strong><p>Nenhum produto precisa de reposição agora.</p></div></div>';
+        }
         document.getElementById('openOrderCount').textContent = orderList.filter(item => !['concluido', 'cancelado'].includes(item.status)).length;
         const recentOrders = document.getElementById('recentOrders');
         if (!orderList.length) {
             recentOrders.innerHTML = '<p class="seller-dashboard-empty">Ainda não há pedidos para sua loja. Quando chegarem, você poderá acompanhá-los por aqui.</p>';
             return;
         }
-        recentOrders.innerHTML = orderList.slice(0, 5).map(order => {
+        const sortedOrders = [...orderList].sort((a, b) => {
+            const aDone = ['concluido', 'cancelado'].includes(a.status);
+            const bDone = ['concluido', 'cancelado'].includes(b.status);
+            if (aDone !== bDone) return Number(aDone) - Number(bDone);
+            return new Date(b.criado_em || 0) - new Date(a.criado_em || 0);
+        });
+        recentOrders.innerHTML = sortedOrders.slice(0, 5).map(order => {
             const items = Array.isArray(order.itens) ? order.itens.reduce((sum, item) => sum + Number(item.quantidade || 0), 0) : 0;
             const date = order.criado_em ? new Date(order.criado_em).toLocaleDateString('pt-BR') : '';
             return `<article class="seller-order-row"><div class="seller-order-main"><strong>Pedido #${escapeHtml(order.id)}</strong><span>${escapeHtml(order.cliente?.nome || 'Cliente')} · ${items} item(ns) · ${date}</span></div><span class="seller-order-status status-${escapeHtml(order.status)}">${escapeHtml(statusLabels[order.status] || order.status || 'Em andamento')}</span><strong class="seller-order-total">${money(order.subtotal_supermercado)}</strong></article>`;
@@ -105,6 +128,7 @@
         document.getElementById('productCount').textContent = '—';
         document.getElementById('lowStockCount').textContent = '—';
         document.getElementById('openOrderCount').textContent = '—';
+        document.getElementById('lowStockProducts').innerHTML = '<p class="seller-dashboard-empty">Não foi possível carregar o estoque.</p>';
     });
 })();
 </script>

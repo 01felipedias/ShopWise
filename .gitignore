@@ -4,6 +4,7 @@
 
 # Banco de dados local do Django
 db.sqlite3
+staticfiles/
 
 # Arquivos temporários do Python
 __pycache__/
