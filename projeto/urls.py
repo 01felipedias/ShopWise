@@ -85,7 +85,22 @@ def perfil(request):
     return render(request, 'perfil.html')
 
 
+from produtos.seguranca import (
+    AlterarSenhaCliente,
+    AlterarSenhaSupermercado,
+)
+
+
 urlpatterns = [
+    path(
+        'api/alterar-senha-cliente/',
+        AlterarSenhaCliente.as_view()
+    ),
+    path(
+        'api/alterar-senha-supermercado/',
+        AlterarSenhaSupermercado.as_view()
+    ),
+
 
     # =========================
     # ADMINISTRAÇÃO

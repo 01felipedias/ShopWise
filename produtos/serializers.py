@@ -10,6 +10,13 @@ class SupermercadoSerializer(serializers.ModelSerializer):
         model = Supermercado
         fields = '__all__'
 
+    def validate_senha(self, value):
+        if self.instance is not None:
+            raise serializers.ValidationError(
+                'Utilize a API especifica de alteracao de senha.'
+            )
+        return value
+
     def create(self, validated_data):
         senha = validated_data.pop('senha', None)
 
