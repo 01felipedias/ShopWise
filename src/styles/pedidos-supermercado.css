@@ -355,6 +355,18 @@
     color: #fff;
 }
 
+.order-status-step.active {
+    color: #198b4e;
+    font-weight: 700;
+}
+
+.order-status-step.active i {
+    border-color: #20a460;
+    background: #ffffff;
+    color: #198b4e;
+    box-shadow: 0 0 0 4px rgba(32, 164, 96, 0.14);
+}
+
 .order-payment-note {
     margin: 0 0 1rem;
     padding: .8rem .9rem;
