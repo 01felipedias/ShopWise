@@ -36,35 +36,43 @@ class Command(BaseCommand):
 
         self._get_or_create_customer()
 
-        # Preserva os registros antigos para que pedidos já feitos continuem
-        # íntegros, mas tira do catálogo os itens de demonstração sem foto real.
-        Produto.objects.filter(
-            supermercado=sao_jorge,
-            nome__iexact='Arroz',
-        ).update(ativo=False)
-        Produto.objects.filter(
-            supermercado=quaresma,
-            nome__iexact='Arroz',
-        ).update(ativo=False)
-        Produto.objects.filter(
-            supermercado=sao_jorge,
-            nome__iexact='suco del valle',
-        ).update(ativo=False)
-        Produto.objects.filter(
-            supermercado=sao_jorge,
-            nome__iexact='Feijão preto',
-        ).update(ativo=False)
-        Produto.objects.filter(
-            supermercado=quaresma,
-            nome__iexact='Feijão preto',
-        ).update(ativo=False)
+        # Não desativa nem remove produtos já cadastrados: a carga só acrescenta
+        # os itens de demonstração que ainda não existem.
         Produto.objects.filter(
             supermercado=sao_jorge,
             nome__iexact='feijao carioca',
-            descricao='tipo 1',
+            tamanho_embalagem='1kg',
+            preco=Decimal('2.99'),
         ).update(ativo=False)
 
         products = (
+            {
+                'store': sao_jorge,
+                'name': 'Arroz',
+                'size': '1 kg',
+                'category': 'mercearia',
+                'price': Decimal('3.50'),
+                'stock': 100,
+                'description': 'Arroz branco tipo 1, pacote de 1kg',
+            },
+            {
+                'store': quaresma,
+                'name': 'Arroz',
+                'size': '1 kg',
+                'category': 'mercearia',
+                'price': Decimal('3.99'),
+                'stock': 100,
+                'description': 'Arroz branco tipo 1, pacote de 1kg',
+            },
+            {
+                'store': sao_jorge,
+                'name': 'suco del valle',
+                'size': '',
+                'category': 'bebidas',
+                'price': Decimal('3.50'),
+                'stock': 100,
+                'description': 'Suco Del Valle 500ml',
+            },
             {
                 'store': sao_jorge,
                 'name': 'Café 3 Corações',

@@ -218,6 +218,8 @@
 
         const nome = normalizarTextoProduto(produto.nome);
         const imagens = window.SHOPWISE_PRODUCT_IMAGES || {};
+        if (nome.includes('arroz')) return imagens.arroz || '';
+        if (nome.includes('suco del valle')) return imagens.suco_del_valle || '';
         if (nome.includes('feijao preto')) return imagens.feijao_preto || '';
         if (nome.includes('feijao')) return imagens.feijao || '';
         if (nome.includes('leite')) return imagens.leite || '';
