@@ -13,11 +13,18 @@
 
 python -m pip install -r requirements.txt
 python manage.py migrate
+python manage.py seed_demo_data
 python manage.py runserver
+
+Os dados de demonstração (mercados, cliente e produtos) estão descritos em
+[DADOS_DEMO.md](DADOS_DEMO.md).
 
 URL base local:
 
 http://127.0.0.1:8000/api/
+
+No cadastro de produtos, o endpoint `POST /api/produtos/` aceita
+`multipart/form-data` para enviar uma imagem JPG, PNG ou WebP de até 5 MB.
 
 ## Autenticacao
 

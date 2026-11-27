@@ -158,6 +158,23 @@
                             <textarea id="mpDescricao" class="mp-input" rows="2" placeholder="Ex: Feijão carioca tipo 1."></textarea>
                         </div>
 
+                        <div class="mp-input-group">
+                            <label for="mpImagem" class="mp-label">Foto do produto</label>
+                            <div class="mp-image-picker">
+                                <input type="file" id="mpImagem" class="mp-image-input" accept="image/jpeg,image/png,image/webp">
+                                <label class="mp-image-pick-button" for="mpImagem">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+                                    <span>Escolher foto</span>
+                                </label>
+                                <span class="mp-image-file-name" id="mpImagemNome">Nenhuma foto selecionada</span>
+                            </div>
+                            <small class="mp-image-help">JPG, PNG ou WebP. Até 5 MB. A foto é opcional.</small>
+                            <div class="mp-image-preview" id="mpImagemPreview" hidden>
+                                <img id="mpImagemPreviewImg" alt="Prévia da foto do produto">
+                                <span id="mpImagemPreviewTexto"></span>
+                            </div>
+                        </div>
+
                         <div class="mp-form-actions">
                             <button type="submit" class="mp-btn mp-btn-salvar" id="mpBtnSalvar">
                                 Cadastrar Produto
@@ -212,6 +229,21 @@
         </div>
     </dialog>
 
+    <script>
+        window.SHOPWISE_PRODUCT_IMAGES = {
+            feijao: "{% static 'assets/feijao-kicaldo.png' %}",
+            feijao_preto: "{% static 'assets/feijao-fugini.png' %}",
+            leite: "{% static 'assets/leite-ninho.png' %}",
+            queijo: "{% static 'assets/queijo-itambe.png' %}",
+            iogurte: "{% static 'assets/iogurte-yopro.png' %}",
+            flocao: "{% static 'assets/flocao-bsb.png' %}",
+            sabao: "{% static 'assets/sabao-omo.png' %}",
+            cafe: "{% static 'assets/cafe-3coracoes.png' %}",
+            carne: "{% static 'assets/CarbeBoa.jpeg' %}",
+            refrigerante: "{% static 'assets/coca-cola.png' %}",
+            detergente: "{% static 'assets/detergente-ype.png' %}"
+        };
+    </script>
     <script src="{% static 'utils/manter-produtos.js' %}"></script>
     <script src="{% static 'utils/seller-mobile-nav.js' %}"></script>
     <!-- <script src="{% static 'utils/pedidos.js' %}"></script> -->

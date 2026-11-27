@@ -337,6 +337,17 @@
             return produto.supermercado?.nome || "Supermercado";
         }
 
+        function obterLogoMercado(nome) {
+            const mercado = normalizarTexto(nome);
+            if (mercado.includes("sao jorge") || mercado === "jorge") {
+                return "{% static 'assets/sao-jorge-super.png' %}";
+            }
+            if (mercado.includes("quaresma")) {
+                return "{% static 'assets/quaresma-logo.png' %}";
+            }
+            return "";
+        }
+
         function chaveComparacao(produto) {
             const tamanho = normalizarTexto(produto.tamanho_embalagem);
             if (!tamanho) return null;
@@ -367,18 +378,28 @@
 
             document.getElementById("priceCompareTitle").textContent =
                 `Comparar preço${produto.tamanho_embalagem ? ` · ${produto.nome} ${produto.tamanho_embalagem}` : ` · ${produto.nome}`}`;
-            container.innerHTML = `${ofertas.length < 2 ? '<p class="price-compare-empty">Ainda não há ofertas deste produto em outros supermercados.</p>' : ""}${ofertas.map((oferta, indice) => `
-                <article class="price-compare-offer ${indice === 0 ? "price-compare-best" : ""}">
-                    <div>
-                        <strong>${escaparHtml(obterNomeMercado(oferta))}</strong>
-                        <small>${Number(oferta.estoque) > 0 ? `${Number(oferta.estoque)} unidades disponíveis` : "Sem estoque"}</small>
-                    </div>
-                    <strong class="price-compare-value">R$ ${formatarPreco(oferta.preco)}</strong>
-                    <button class="btn-add" type="button" onclick="adicionarCarrinho(${Number(oferta.id)}); fecharComparacaoPrecos()" ${Number(oferta.estoque) <= 0 ? "disabled" : ""}>
-                        ${Number(oferta.estoque) > 0 ? (ofertas.length < 2 ? "Adicionar" : "Escolher") : "Indisponível"}
-                    </button>
-                </article>
-            `).join("")}`;
+            container.innerHTML = `${ofertas.length < 2 ? '<p class="price-compare-empty">Ainda não há ofertas deste produto em outros supermercados.</p>' : ""}${ofertas.map((oferta, indice) => {
+                const nomeLoja = obterNomeMercado(oferta);
+                const logoLoja = obterLogoMercado(nomeLoja);
+                const inicialLoja = escaparHtml(nomeLoja.charAt(0).toUpperCase());
+                return `
+                    <article class="price-compare-offer ${indice === 0 ? "price-compare-best" : ""}">
+                        <div class="price-compare-store">
+                            ${logoLoja
+                                ? `<img class="price-compare-logo" src="${logoLoja}" alt="Logo ${escaparHtml(nomeLoja)}">`
+                                : `<span class="price-compare-logo-fallback" aria-hidden="true">${inicialLoja}</span>`}
+                            <div class="price-compare-store-copy">
+                                <strong>${escaparHtml(nomeLoja)}</strong>
+                                <small>${Number(oferta.estoque) > 0 ? `${Number(oferta.estoque)} unidades disponíveis` : "Sem estoque"}</small>
+                            </div>
+                        </div>
+                        <strong class="price-compare-value">R$ ${formatarPreco(oferta.preco)}</strong>
+                        <button class="btn-add" type="button" onclick="adicionarCarrinho(${Number(oferta.id)}); fecharComparacaoPrecos()" ${Number(oferta.estoque) <= 0 ? "disabled" : ""}>
+                            ${Number(oferta.estoque) > 0 ? (ofertas.length < 2 ? "Adicionar" : "Escolher") : "Indisponível"}
+                        </button>
+                    </article>
+                `;
+            }).join("")}`;
             dialogo.showModal();
         }
 
@@ -390,8 +411,11 @@
         window.fecharComparacaoPrecos = fecharComparacaoPrecos;
 
         function obterImagemProduto(produto) {
+            if (produto.imagem) return produto.imagem;
+
             const nome = normalizarTexto(produto.nome);
             const imagens = [
+                ["feijao preto", "{% static 'assets/feijao-fugini.png' %}"],
                 ["feijao", "{% static 'assets/feijao-kicaldo.png' %}"],
                 ["leite", "{% static 'assets/leite-ninho.png' %}"],
                 ["queijo", "{% static 'assets/queijo-itambe.png' %}"],
@@ -399,6 +423,7 @@
                 ["flocao", "{% static 'assets/flocao-bsb.png' %}"],
                 ["sabao", "{% static 'assets/sabao-omo.png' %}"],
                 ["cafe", "{% static 'assets/cafe-3coracoes.png' %}"],
+                ["carne", "{% static 'assets/CarbeBoa.jpeg' %}"],
                 ["refrigerante", "{% static 'assets/coca-cola.png' %}"],
                 ["coca-cola", "{% static 'assets/coca-cola.png' %}"],
                 ["detergente", "{% static 'assets/detergente-ype.png' %}"]
@@ -524,15 +549,16 @@
 
             container.innerHTML = lojasFloriano.map((loja) => {
                 const inicial = escaparHtml(loja.nome.charAt(0).toUpperCase());
+                const logo = obterLogoMercado(loja.nome);
                 const avaliacaoTexto = loja.totalAvaliacoes
                     ? `${Number(loja.mediaAvaliacoes).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ★ · ${loja.totalAvaliacoes} avaliação(ões)`
                     : "Sem avaliações";
                 return `
                     <a class="store-item" role="button" tabindex="0" title="${escaparHtml(loja.nome)}"
                        data-loja="${escaparHtml(loja.nome)}">
-                        <div class="store-logo"
-                             style="display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;">
-                            ${inicial}
+                        <div class="store-logo">${logo
+                            ? `<img src="${logo}" alt="Logo ${escaparHtml(loja.nome)}" loading="lazy">`
+                            : inicial}
                         </div>
                         <div class="store-text">
                             <span class="store-name">${escaparHtml(loja.nome)}</span>
@@ -546,10 +572,12 @@
 
         function criarHtmlProduto(produto) {
             const nome = escaparHtml(produto.nome);
-            const mercado = escaparHtml(obterNomeMercado(produto));
+            const nomeMercado = obterNomeMercado(produto);
+            const mercado = escaparHtml(nomeMercado);
+            const logoMercado = obterLogoMercado(nomeMercado);
+            const inicialMercado = escaparHtml(nomeMercado.charAt(0).toUpperCase());
             const categoria = escaparHtml(produto.categoria || "Sem categoria");
             const tamanhoEmbalagem = escaparHtml(produto.tamanho_embalagem || "");
-            const ofertasComparaveis = obterOfertasComparaveis(produto);
             const descricao = escaparHtml(produto.descricao || "");
             const estoque = Number(produto.estoque || 0);
             const imagem = obterImagemProduto(produto);
@@ -577,8 +605,15 @@
                             </button>
                         </div>
 
-                        <div class="savings-text">
-                            ${mercado} • ${categoria}
+                        <div class="savings-text product-market-line">
+                            <span class="product-market-logo" aria-hidden="true">${logoMercado
+                                ? `<img src="${logoMercado}" alt="">`
+                                : inicialMercado}
+                            </span>
+                            <span class="product-market-copy">
+                                <span class="product-market-name">${mercado}</span>
+                                <span class="product-market-category">· ${categoria}</span>
+                            </span>
                         </div>
 
                         <h3 class="product-name">${nome}</h3>

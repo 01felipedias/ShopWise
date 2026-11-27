@@ -35,6 +35,21 @@
     const mpTamanhoEmbalagem =
         document.getElementById('mpTamanhoEmbalagem');
 
+    const mpImagem =
+        document.getElementById('mpImagem');
+
+    const mpImagemPreview =
+        document.getElementById('mpImagemPreview');
+
+    const mpImagemPreviewImg =
+        document.getElementById('mpImagemPreviewImg');
+
+    const mpImagemPreviewTexto =
+        document.getElementById('mpImagemPreviewTexto');
+
+    const mpImagemNome =
+        document.getElementById('mpImagemNome');
+
     const mpFormTitulo =
         document.getElementById('mpFormTitulo');
 
@@ -73,6 +88,7 @@
     let produtosCarregados = [];
 
     let produtoEmEdicaoId = null;
+    let urlImagemTemporaria = null;
 
 
     const feedbackDialog = document.getElementById('mpFeedbackDialog');
@@ -171,6 +187,75 @@
             }
         );
     }
+
+    function mostrarPreviewImagem(url, texto) {
+        if (!mpImagemPreview || !mpImagemPreviewImg) return;
+        mpImagemPreviewImg.src = url;
+        mpImagemPreviewTexto.textContent = texto || '';
+        mpImagemPreview.hidden = false;
+    }
+
+    function limparPreviewImagem() {
+        if (urlImagemTemporaria) {
+            URL.revokeObjectURL(urlImagemTemporaria);
+            urlImagemTemporaria = null;
+        }
+        if (mpImagemPreviewImg) mpImagemPreviewImg.removeAttribute('src');
+        if (mpImagemPreviewTexto) mpImagemPreviewTexto.textContent = '';
+        if (mpImagemPreview) mpImagemPreview.hidden = true;
+        if (mpImagemNome) mpImagemNome.textContent = 'Nenhuma foto selecionada';
+    }
+
+    function normalizarTextoProduto(valor) {
+        return String(valor ?? '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+    }
+
+    function obterImagemProduto(produto) {
+        if (produto.imagem) return produto.imagem;
+
+        const nome = normalizarTextoProduto(produto.nome);
+        const imagens = window.SHOPWISE_PRODUCT_IMAGES || {};
+        if (nome.includes('feijao preto')) return imagens.feijao_preto || '';
+        if (nome.includes('feijao')) return imagens.feijao || '';
+        if (nome.includes('leite')) return imagens.leite || '';
+        if (nome.includes('queijo')) return imagens.queijo || '';
+        if (nome.includes('iogurte')) return imagens.iogurte || '';
+        if (nome.includes('flocao')) return imagens.flocao || '';
+        if (nome.includes('sabao')) return imagens.sabao || '';
+        if (nome.includes('cafe')) return imagens.cafe || '';
+        if (nome.includes('carne')) return imagens.carne || '';
+        if (nome.includes('refrigerante') || nome.includes('coca-cola')) return imagens.refrigerante || '';
+        if (nome.includes('detergente')) return imagens.detergente || '';
+        return '';
+    }
+
+    if (mpImagem) {
+        mpImagem.addEventListener('change', function () {
+            const arquivo = mpImagem.files?.[0];
+            if (!arquivo) return;
+            if (!arquivo.type.startsWith('image/')) {
+                mpImagem.value = '';
+                limparPreviewImagem();
+                mostrarFeedback('Arquivo inválido', 'Selecione um arquivo de imagem JPG, PNG ou WebP.');
+                return;
+            }
+            if (arquivo.size > 5 * 1024 * 1024) {
+                mpImagem.value = '';
+                limparPreviewImagem();
+                mostrarFeedback('Imagem muito grande', 'A foto deve ter no máximo 5 MB.');
+                return;
+            }
+            if (urlImagemTemporaria) URL.revokeObjectURL(urlImagemTemporaria);
+            urlImagemTemporaria = URL.createObjectURL(arquivo);
+            if (mpImagemNome) mpImagemNome.textContent = arquivo.name;
+            mostrarPreviewImagem(urlImagemTemporaria, arquivo.name);
+        });
+    }
+
+    formProduto?.addEventListener('reset', limparPreviewImagem);
 
     async function obterJsonResposta(
         resposta
@@ -451,29 +536,16 @@
 
                 linha.innerHTML = `
                     <td>
-                        <strong>
-                            ${
-                                escaparHtml(
-                                    produto.nome
-                                )
-                            }
-                        </strong>
-
-                        <br>
-
-                        <small
-                            style="
-                                color:#666;
-                            "
-                        >
-                            ${
-                                escaparHtml(
-                                    produto
-                                        .descricao ||
-                                    'Sem descrição'
-                                )
-                            }
-                        </small>
+                        <div class="mp-product-cell">
+                            ${obterImagemProduto(produto)
+                                ? `<img class="mp-product-thumb" src="${escaparHtml(obterImagemProduto(produto))}" alt="Foto de ${escaparHtml(produto.nome)}" loading="lazy">`
+                                : `<span class="mp-product-placeholder" aria-hidden="true">${escaparHtml((produto.nome || 'P').charAt(0).toUpperCase())}</span>`}
+                            <div>
+                                <strong>${escaparHtml(produto.nome)}</strong>
+                                <br>
+                                <small style="color:#666;">${escaparHtml(produto.descricao || 'Sem descrição')}</small>
+                            </div>
+                        </div>
                     </td>
 
                     <td
@@ -651,6 +723,14 @@
                 produto.tamanho_embalagem || '';
         }
 
+        if (mpImagem) mpImagem.value = '';
+        if (produto.imagem) {
+            mostrarPreviewImagem(produto.imagem, 'Foto atual. Escolha outra para substituir.');
+            if (mpImagemNome) mpImagemNome.textContent = 'Foto atual salva';
+        } else {
+            limparPreviewImagem();
+        }
+
         if (mpFormTitulo) {
             mpFormTitulo.textContent =
                 `Editar Produto ${produto.id}`;
@@ -790,19 +870,17 @@
                     return;
                 }
 
-                const dadosProduto = {
-                    supermercado:
-                        supermercado.id,
-                    nome,
-                    tamanho_embalagem: tamanhoEmbalagem,
-                    categoria,
-                    preco:
-                        precoNumero
-                            .toFixed(2),
-                    estoque:
-                        estoqueNumero,
-                    descricao
-                };
+                const dadosProduto = new FormData();
+                dadosProduto.append('supermercado', supermercado.id);
+                dadosProduto.append('nome', nome);
+                dadosProduto.append('tamanho_embalagem', tamanhoEmbalagem);
+                dadosProduto.append('categoria', categoria);
+                dadosProduto.append('preco', precoNumero.toFixed(2));
+                dadosProduto.append('estoque', estoqueNumero);
+                dadosProduto.append('descricao', descricao);
+                if (mpImagem?.files?.[0]) {
+                    dadosProduto.append('imagem', mpImagem.files[0]);
+                }
 
                 const editando =
                     produtoEmEdicaoId !==
@@ -840,15 +918,7 @@
                                 method:
                                     metodo,
 
-                                headers: {
-                                    'Content-Type':
-                                        'application/json'
-                                },
-
-                                body:
-                                    JSON.stringify(
-                                        dadosProduto
-                                    )
+                                body: dadosProduto
                             }
                         );
 
