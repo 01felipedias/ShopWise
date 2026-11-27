@@ -184,6 +184,9 @@ class ProdutoList(APIView):
         dados = request.data.copy()
         dados['supermercado'] = supermercado_id
 
+        if 'ativo' not in dados:
+            dados['ativo'] = True
+
         serializer = ProdutoSerializer(data=dados)
 
         if serializer.is_valid():
@@ -229,6 +232,9 @@ class ProdutoDetalhe(APIView):
 
         dados = request.data.copy()
         dados['supermercado'] = request.supermercado_id
+
+        if 'ativo' not in dados:
+            dados['ativo'] = produto.ativo
 
         serializer = ProdutoSerializer(
             produto,

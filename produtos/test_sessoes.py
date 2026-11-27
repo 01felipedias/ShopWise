@@ -124,3 +124,48 @@ class TestesSessoes(TestCase):
         self.assertIsNone(
             resposta.get('Access-Control-Allow-Origin')
         )
+
+
+    def test_produto_multipart_permanece_ativo(self):
+        csrf = self.login_web()
+
+        dados = {
+            'nome': 'Produto Teste Render',
+            'categoria': 'bebidas',
+            'preco': '5.99',
+            'estoque': 50
+        }
+
+        resposta = self.api.post(
+            '/api/produtos/',
+            dados,
+            format='multipart',
+            HTTP_X_CSRFTOKEN=csrf
+        )
+
+        self.assertEqual(resposta.status_code, 201)
+        self.assertTrue(resposta.data['ativo'])
+
+        pid = resposta.data['id']
+
+        resposta = self.api.get('/api/produtos/')
+        self.assertIn(pid, [p['id'] for p in resposta.data])
+
+        dados['preco'] = '8.99'
+
+        resposta = self.api.put(
+            f'/api/produtos/{pid}/',
+            dados,
+            format='multipart',
+            HTTP_X_CSRFTOKEN=csrf
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertTrue(resposta.data['ativo'])
+
+        resposta = self.api.delete(
+            f'/api/produtos/{pid}/',
+            HTTP_X_CSRFTOKEN=csrf
+        )
+
+        self.assertEqual(resposta.status_code, 204)
