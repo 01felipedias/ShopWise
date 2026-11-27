@@ -363,7 +363,7 @@
 
         try {
             const resposta =
-                await fetch(
+                await shopwiseFetch(
                     '/api/produtos/'
                 );
 
@@ -833,7 +833,7 @@
                     }
 
                     const resposta =
-                        await fetch(
+                        await shopwiseFetch(
                             url,
                             {
                                 method:
@@ -950,7 +950,7 @@
 
         try {
             const resposta =
-                await fetch(
+                await shopwiseFetch(
                     `/api/produtos/${id}/`,
                     {
                         method:
@@ -1828,7 +1828,7 @@
     async function abrirPedidosSupermercado() {
         try {
             const resposta =
-                await fetch(
+                await shopwiseFetch(
                     '/api/pedidos-supermercado/'
                 );
 
@@ -1953,7 +1953,7 @@
 
         try {
             const resposta =
-                await fetch(
+                await shopwiseFetch(
                     `/api/pedidos-supermercado/${pedidoAtual.id}/status/`,
                     {
                         method:

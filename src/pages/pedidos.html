@@ -185,6 +185,7 @@
         }
     </style>
 
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -573,7 +574,7 @@
             await Promise.all(
                 pendentes.map(async pedido => {
                     try {
-                        const resposta = await fetch(
+                        const resposta = await shopwiseFetch(
                             `/api/pedidos/${pedido.id}/status-pix/`
                         );
 
@@ -606,7 +607,7 @@
             });
 
             try {
-                const resposta = await fetch("/api/pedidos/");
+                const resposta = await shopwiseFetch("/api/pedidos/");
                 const dados = await resposta.json();
 
                 if (resposta.status === 401) {

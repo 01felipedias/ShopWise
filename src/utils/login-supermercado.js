@@ -9,7 +9,7 @@
             const senha = loginForm.elements['senha'].value;
 
             try {
-                const resposta = await fetch('/api/login-supermercado/', {
+                const resposta = await shopwiseFetch('/api/login-supermercado/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

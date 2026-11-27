@@ -1,3 +1,6 @@
+from django.middleware.csrf import rotate_token
+from .csrf import assinatura_sessao
+
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -10,7 +13,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import get_object_or_404
 from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import (
+    TokenAuthentication,
+    SessionAuthentication,
+)
+
+from .permissions import (
+    SupermercadoAutenticado,
+    ClienteAutenticado,
+)
 
 from .models import (
     Supermercado,
@@ -41,9 +52,15 @@ class SupermercadoList(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        supermercados = Supermercado.objects.all()
-        serializer = SupermercadoSerializer(supermercados, many=True)
-        return Response(serializer.data)
+        supermercados = Supermercado.objects.values(
+            'id',
+            'nome',
+            'cidade',
+            'estado',
+            'bairro'
+        )
+
+        return Response(list(supermercados))
 
     def post(self, request):
         serializer = SupermercadoSerializer(data=request.data)
@@ -134,33 +151,29 @@ class SupermercadoDetalhe(APIView):
         )
 
 
+
+
 class ProdutoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [SupermercadoAutenticado]
 
     def get(self, request):
-        supermercado_id = request.session.get('supermercado_id')
-
-        if not supermercado_id:
-            return Response(
-                {'erro': 'Supermercado não autenticado.'},
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         produtos = Produto.objects.filter(
             supermercado_id=supermercado_id
         )
 
         serializer = ProdutoSerializer(produtos, many=True)
+
         return Response(serializer.data)
 
     def post(self, request):
-        supermercado_id = request.session.get('supermercado_id')
-
-        if not supermercado_id:
-            return Response(
-                {'erro': 'Supermercado não autenticado.'},
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         dados = request.data.copy()
         dados['supermercado'] = supermercado_id
@@ -174,17 +187,17 @@ class ProdutoList(APIView):
         return Response(serializer.errors, status=400)
 
 
+
 class ProdutoDetalhe(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [SupermercadoAutenticado]
 
     def obter_produto(self, request, pk):
-        supermercado_id = request.session.get('supermercado_id')
-
-        if not supermercado_id:
-            return None, Response(
-                {'erro': 'Supermercado não autenticado.'},
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         produto = get_object_or_404(
             Produto,
@@ -192,27 +205,22 @@ class ProdutoDetalhe(APIView):
             supermercado_id=supermercado_id
         )
 
-        return produto, None
+        return produto
 
     def get(self, request, pk):
-        produto, erro = self.obter_produto(request, pk)
-
-        if erro is not None:
-            return erro
+        produto = self.obter_produto(request, pk)
 
         serializer = ProdutoSerializer(produto)
+
         return Response(serializer.data)
 
     def put(self, request, pk):
-        produto, erro = self.obter_produto(request, pk)
-
-        if erro is not None:
-            return erro
+        produto = self.obter_produto(request, pk)
 
         preco_anterior = produto.preco
 
         dados = request.data.copy()
-        dados['supermercado'] = request.session['supermercado_id']
+        dados['supermercado'] = request.supermercado_id
 
         serializer = ProdutoSerializer(
             produto,
@@ -278,12 +286,10 @@ class ProdutoDetalhe(APIView):
         )
 
     def delete(self, request, pk):
-        produto, erro = self.obter_produto(request, pk)
-
-        if erro is not None:
-            return erro
+        produto = self.obter_produto(request, pk)
 
         produto.delete()
+
         return Response(status=204)
 
 
@@ -318,7 +324,11 @@ class LoginSupermercado(APIView):
             )
 
         # Mantém a autenticação por sessão que já existia
-        request.session['supermercado_id'] = supermercado.id
+        if getattr(request, 'shopwise_browser_login', False):
+            request.session.flush()
+            request.session['supermercado_id'] = supermercado.id
+            request.session['shopwise_auth_hash'] = assinatura_sessao('supermercado', supermercado)
+            rotate_token(request._request)
 
         # Cria um usuário do Django para representar
         # este supermercado no sistema de AuthToken
@@ -431,7 +441,11 @@ class LoginCliente(APIView):
             )
 
         # Mantém a autenticação por sessão
-        request.session['cliente_id'] = cliente.id
+        if getattr(request, 'shopwise_browser_login', False):
+            request.session.flush()
+            request.session['cliente_id'] = cliente.id
+            request.session['shopwise_auth_hash'] = assinatura_sessao('cliente', cliente)
+            rotate_token(request._request)
 
         # Cria um usuário Django para representar o cliente
         usuario_token, criado = User.objects.get_or_create(
@@ -534,13 +548,11 @@ class CupomList(APIView):
 
 
 class PedidoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response({'erro': 'Cliente não autenticado.'}, status=401)
+        cliente_id = request.cliente_id
 
         pedidos = (
             Pedido.objects
@@ -580,10 +592,7 @@ class PedidoList(APIView):
         return Response(dados)
 
     def post(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response({'erro': 'Cliente não autenticado.'}, status=401)
+        cliente_id = request.cliente_id
 
         itens = request.data.get('itens', [])
         tipo_entrega = request.data.get('tipo_entrega')
@@ -867,16 +876,11 @@ class PedidoList(APIView):
 
 
 class StatusPagamentoPix(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request, pedido_id):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         pedido = get_object_or_404(
             Pedido,
@@ -1001,16 +1005,11 @@ class StatusPagamentoPix(APIView):
 
 
 class AlertaPrecoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         alertas = (
             AlertaPreco.objects
@@ -1050,13 +1049,7 @@ class AlertaPrecoList(APIView):
         return Response(dados)
 
     def post(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         produto_id = request.data.get('produto_id')
         preco_alvo = request.data.get('preco_alvo')
@@ -1145,16 +1138,11 @@ class AlertaPrecoList(APIView):
 
 
 class NotificacaoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         notificacoes = (
             Notificacao.objects
@@ -1203,16 +1191,11 @@ class NotificacaoList(APIView):
 
 
 class NotificacaoMarcarLida(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def post(self, request, notificacao_id):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         notificacao = get_object_or_404(
             Notificacao,
@@ -1233,16 +1216,11 @@ class NotificacaoMarcarLida(APIView):
 
 
 class AvaliacaoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         avaliacoes = (
             Avaliacao.objects
@@ -1314,13 +1292,7 @@ class AvaliacaoList(APIView):
         })
 
     def post(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         item_pedido_id = request.data.get(
             'item_pedido_id'
@@ -1438,16 +1410,15 @@ class AvaliacaoList(APIView):
 
 
 class PerfilCliente(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [ClienteAutenticado]
 
     def get(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         cliente = get_object_or_404(
             Cliente,
@@ -1483,13 +1454,7 @@ class PerfilCliente(APIView):
         })
 
     def put(self, request):
-        cliente_id = request.session.get('cliente_id')
-
-        if not cliente_id:
-            return Response(
-                {'erro': 'Cliente não autenticado.'},
-                status=401
-            )
+        cliente_id = request.cliente_id
 
         cliente = get_object_or_404(
             Cliente,
@@ -1560,10 +1525,22 @@ class PerfilCliente(APIView):
 
 
 class LogoutCliente(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [ClienteAutenticado]
 
     def post(self, request):
-        request.session.pop('cliente_id', None)
+        conta_id = request.cliente_id
+
+        Token.objects.filter(
+            user__username=f'cliente_{conta_id}'
+        ).delete()
+
+        if request.session.get('cliente_id') == conta_id:
+            request.session.flush()
 
         return Response({
             'mensagem': 'Logout realizado com sucesso.'
@@ -1571,21 +1548,11 @@ class LogoutCliente(APIView):
 
 
 class PedidosSupermercadoList(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
 
     def get(self, request):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         itens = (
             ItemPedido.objects
@@ -1690,21 +1657,11 @@ class PedidosSupermercadoList(APIView):
 
 
 class StatusPedidoSupermercado(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
 
     def patch(self, request, pedido_id):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         pedido = get_object_or_404(
             Pedido.objects.distinct(),
@@ -1803,21 +1760,11 @@ class StatusPedidoSupermercado(APIView):
 
 
 class PerfilSupermercado(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
 
     def get(self, request):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         supermercado = get_object_or_404(
             Supermercado,
@@ -1888,18 +1835,7 @@ class PerfilSupermercado(APIView):
         })
 
     def put(self, request):
-        supermercado_id = request.session.get(
-            'supermercado_id'
-        )
-
-        if not supermercado_id:
-            return Response(
-                {
-                    'erro':
-                    'Supermercado não autenticado.'
-                },
-                status=401
-            )
+        supermercado_id = request.supermercado_id
 
         supermercado = get_object_or_404(
             Supermercado,
@@ -2090,17 +2026,25 @@ class PerfilSupermercado(APIView):
 
 
 class LogoutSupermercado(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [
+        TokenAuthentication,
+        SessionAuthentication,
+    ]
+
+    permission_classes = [SupermercadoAutenticado]
 
     def post(self, request):
-        request.session.pop(
-            'supermercado_id',
-            None
-        )
+        conta_id = request.supermercado_id
+
+        Token.objects.filter(
+            user__username=f'supermercado_{conta_id}'
+        ).delete()
+
+        if request.session.get('supermercado_id') == conta_id:
+            request.session.flush()
 
         return Response({
-            'mensagem':
-                'Logout do supermercado realizado com sucesso.'
+            'mensagem': 'Logout realizado com sucesso.'
         })
 
 

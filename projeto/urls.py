@@ -85,7 +85,26 @@ def perfil(request):
     return render(request, 'perfil.html')
 
 
+from produtos.seguranca import (
+    AlterarSenhaCliente,
+    AlterarSenhaSupermercado,
+)
+
+
+from produtos.csrf import csrf_cookie
+
 urlpatterns = [
+    path('api/csrf/', csrf_cookie),
+
+    path(
+        'api/alterar-senha-cliente/',
+        AlterarSenhaCliente.as_view()
+    ),
+    path(
+        'api/alterar-senha-supermercado/',
+        AlterarSenhaSupermercado.as_view()
+    ),
+
 
     # =========================
     # ADMINISTRAÇÃO

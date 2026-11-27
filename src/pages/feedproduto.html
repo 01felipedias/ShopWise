@@ -9,6 +9,7 @@
     
     <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/baners.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 
 <body>
@@ -756,7 +757,7 @@
             }
 
             try {
-                const resposta = await fetch("/api/feed/produtos/", {
+                const resposta = await shopwiseFetch("/api/feed/produtos/", {
                     method: "GET",
                     credentials: "same-origin",
                     headers: {

@@ -7,6 +7,7 @@
     <title>Cadastro de Supermercado ShopWise</title>
 
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 
 <body>
@@ -129,7 +130,7 @@
         };
 
         try {
-            const resposta = await fetch('/api/supermercados/', {
+            const resposta = await shopwiseFetch('/api/supermercados/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -138,8 +139,9 @@
             });
 
             if (resposta.ok) {
-                alert('Supermercado cadastrado com sucesso!');
-                window.location.href = 'manter-produtos.html';
+                localStorage.removeItem('shopwise_supermercado');
+                alert('Supermercado cadastrado com sucesso! Faça login.');
+                window.location.href = 'login-supermercado.html';
             } else {
                 alert('Erro ao cadastrar supermercado.');
             }
