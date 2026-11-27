@@ -10,6 +10,7 @@
     <title>Cadastro ShopWise</title>
 
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 
 <body>
@@ -176,7 +177,7 @@ formCadastro.addEventListener('submit', async function(event) {
 
     try {
 
-        const resposta = await fetch('/api/clientes/', {
+        const resposta = await shopwiseFetch('/api/clientes/', {
 
             method: 'POST',
 

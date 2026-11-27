@@ -11,6 +11,7 @@
 
     <!-- CSS exclusivo do checkout/pagamento -->
     <link rel="stylesheet" href="{% static 'styles/checkout.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 <body>
     <div class="app-layout">
@@ -649,7 +650,7 @@ async function carregarCupons() {
     const feedback = document.getElementById("couponFeedback");
 
     try {
-        const resposta = await fetch("/api/cupons/");
+        const resposta = await shopwiseFetch("/api/cupons/");
         if (!resposta.ok) {
             throw new Error("Falha ao buscar cupons.");
         }
@@ -800,7 +801,7 @@ function pararMonitoramentoPix() {
 
 async function consultarStatusPixAutomaticamente(pedidoId, total, pagamentoInicial) {
     try {
-        const resposta = await fetch(
+        const resposta = await shopwiseFetch(
             `/api/pedidos/${pedidoId}/status-pix/`,
             { method: "GET" }
         );
@@ -947,7 +948,7 @@ async function finalizarPedido() {
     botaoMobile.textContent = "Processando...";
 
     try {
-        const resposta = await fetch("/api/pedidos/", {
+        const resposta = await shopwiseFetch("/api/pedidos/", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload)

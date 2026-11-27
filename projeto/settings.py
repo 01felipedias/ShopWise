@@ -48,12 +48,19 @@ SECRET_KEY = 'django-insecure-5pvw4vmiu*2@%l(8d)i2ok#xbsw5a$x$b2-2=a)s$2h5&aq+jz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+
+ALLOWED_HOSTS += [
+    host.strip()
+    for host in os.getenv('SHOPWISE_ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,10 +74,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'produtos.csrf.ShopWiseCSRFMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -159,3 +167,24 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+
+# Integracao com Ionic + Angular
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8100',
+    'http://127.0.0.1:8100',
+    'http://localhost:4200',
+    'http://127.0.0.1:4200',
+] if DEBUG else []
+
+CORS_ALLOWED_ORIGINS += [
+    origem.strip()
+    for origem in os.getenv('SHOPWISE_CORS_ORIGINS', '').split(',')
+    if origem.strip()
+]
+
+CORS_ALLOW_CREDENTIALS = False
+
+CORS_URLS_REGEX = r'^/api/.*$'

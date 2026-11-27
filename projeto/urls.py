@@ -91,7 +91,11 @@ from produtos.seguranca import (
 )
 
 
+from produtos.csrf import csrf_cookie
+
 urlpatterns = [
+    path('api/csrf/', csrf_cookie),
+
     path(
         'api/alterar-senha-cliente/',
         AlterarSenhaCliente.as_view()

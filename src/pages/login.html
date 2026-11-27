@@ -10,6 +10,7 @@
     <title>ShopWise - Login</title>
 
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 
 <body>
@@ -150,7 +151,7 @@ formLogin.addEventListener('submit', async function(event) {
 
     try {
 
-        const resposta = await fetch('/api/login-cliente/', {
+        const resposta = await shopwiseFetch('/api/login-cliente/', {
 
             method: 'POST',
 

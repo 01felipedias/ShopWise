@@ -1,3 +1,6 @@
+from django.middleware.csrf import rotate_token
+from .csrf import assinatura_sessao
+
 from decimal import Decimal
 
 from django.contrib.auth.models import User
@@ -315,8 +318,11 @@ class LoginSupermercado(APIView):
             )
 
         # Mantém a autenticação por sessão que já existia
-        request.session.flush()
-        request.session['supermercado_id'] = supermercado.id
+        if getattr(request, 'shopwise_browser_login', False):
+            request.session.flush()
+            request.session['supermercado_id'] = supermercado.id
+            request.session['shopwise_auth_hash'] = assinatura_sessao('supermercado', supermercado)
+            rotate_token(request._request)
 
         # Cria um usuário do Django para representar
         # este supermercado no sistema de AuthToken
@@ -429,8 +435,11 @@ class LoginCliente(APIView):
             )
 
         # Mantém a autenticação por sessão
-        request.session.flush()
-        request.session['cliente_id'] = cliente.id
+        if getattr(request, 'shopwise_browser_login', False):
+            request.session.flush()
+            request.session['cliente_id'] = cliente.id
+            request.session['shopwise_auth_hash'] = assinatura_sessao('cliente', cliente)
+            rotate_token(request._request)
 
         # Cria um usuário Django para representar o cliente
         usuario_token, criado = User.objects.get_or_create(

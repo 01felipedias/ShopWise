@@ -190,6 +190,7 @@
             }
         }
     </style>
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 
 <body>
@@ -1409,7 +1410,7 @@
             try {
 
                 const resposta =
-                    await fetch(
+                    await shopwiseFetch(
                         '/api/perfil-supermercado/'
                     );
 
@@ -1628,7 +1629,7 @@
 
 
                     const resposta =
-                        await fetch(
+                        await shopwiseFetch(
                             '/api/perfil-supermercado/',
                             {
                                 method: 'PUT',
@@ -1736,7 +1737,7 @@
                 try {
 
                     const resposta =
-                        await fetch(
+                        await shopwiseFetch(
                             '/api/logout-supermercado/',
                             {
                                 method: 'POST'

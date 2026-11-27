@@ -52,6 +52,7 @@
         }
     </style>
 
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 <body>
 
@@ -293,7 +294,7 @@
             const lista = document.getElementById("notificationsList");
 
             try {
-                const resposta = await fetch("/api/notificacoes/");
+                const resposta = await shopwiseFetch("/api/notificacoes/");
                 const dados = await resposta.json();
 
                 if (resposta.status === 401) {
@@ -322,7 +323,7 @@
 
         async function marcarNotificacaoLida(id) {
             try {
-                const resposta = await fetch(
+                const resposta = await shopwiseFetch(
                     `/api/notificacoes/${id}/marcar-lida/`,
                     {
                         method: "POST",
@@ -409,7 +410,7 @@
             const lista = document.getElementById("alertsList");
 
             try {
-                const resposta = await fetch("/api/alertas-preco/");
+                const resposta = await shopwiseFetch("/api/alertas-preco/");
                 const dados = await resposta.json();
 
                 if (resposta.status === 401) {
