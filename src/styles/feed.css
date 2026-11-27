@@ -128,6 +128,14 @@ body {
     gap: 20px;
 }
 
+.sidebar-nav > button.nav-item {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
 .nav-item:hover, .nav-item.active {
     color: var(--white); 
     background-color: rgba(0, 0, 0, 0.1); 
@@ -760,6 +768,65 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
     margin-bottom: 15px;
+}
+
+.price-row {
+    gap: 10px;
+}
+
+.price-alert-icon {
+    display: inline-grid;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    place-items: center;
+    padding: 7px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: #e6b93f;
+    cursor: pointer;
+    transition: color .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.price-alert-icon svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.price-alert-icon:hover,
+.price-alert-icon:focus-visible {
+    border-color: #f2e3b5;
+    background: #fffaf0;
+    color: #c99b24;
+    outline: none;
+}
+
+.btn-price-compare {
+    width: 100%;
+    margin-top: 8px;
+    padding: 9px 12px;
+    border: 1px solid #d7e7dd;
+    border-radius: 8px;
+    background: #f8fbf9;
+    color: #276a45;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.btn-price-compare:hover,
+.btn-price-compare:focus-visible {
+    border-color: #a8d7b9;
+    background: #eff9f3;
+    outline: none;
 }
 
 .btn-add {
@@ -1543,6 +1610,12 @@ body {
     color: #00b978;
     font-size: 14px;
     font-weight: 900;
+}
+
+.store-rating {
+    color: #7b6a22;
+    font-size: 12px;
+    font-weight: 750;
 }
 
 .offers-filter-panel {
@@ -2693,4 +2766,175 @@ button.btn-secondary-link{border:1px solid rgba(46,204,113,.35);}
   .modal-ped-footer { padding: 0 20px 20px; }
   .cliente-card { flex-wrap: wrap; }
   .btn-notificar { margin-left: 0; }
+}
+.price-compare-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    width: min(560px, calc(100vw - 32px));
+    min-width: 0;
+    max-width: 560px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    color: #24312a;
+    box-shadow: 0 24px 70px rgba(15, 45, 29, .25);
+}
+
+.price-compare-dialog::backdrop {
+    background: rgba(16, 32, 24, .48);
+}
+
+.price-compare-content {
+    position: relative;
+    padding: 1.5rem;
+}
+
+.price-compare-content h2 {
+    margin: 0 2rem 1rem 0;
+    padding-bottom: .85rem;
+    border-bottom: 1px solid #e5eee8;
+    font-size: 1.35rem;
+}
+
+.price-compare-close {
+    position: absolute;
+    top: .75rem;
+    right: .9rem;
+    border: 0;
+    background: transparent;
+    color: #526158;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.price-compare-offer {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding: .9rem 0;
+    border-top: 1px solid #e5eee8;
+}
+
+.price-compare-offer small {
+    display: block;
+    margin-top: .2rem;
+    color: #718078;
+}
+
+.price-compare-value {
+    white-space: nowrap;
+}
+
+.price-compare-empty {
+    margin: 0 0 .5rem;
+    color: #718078;
+    font-size: .9rem;
+    line-height: 1.5;
+}
+
+#mpFeedbackDialog .mp-feedback-message {
+    margin: 0;
+    color: #536158;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+#mpFeedbackDialog .mp-feedback-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 132px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid #dce4df;
+    border-radius: 10px;
+    background: #e9ecea;
+    color: #35433a;
+    font: inherit;
+    font-size: .92rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button:hover {
+    transform: translateY(-1px);
+    background: #dfe4e1;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button:focus-visible {
+    outline: 3px solid rgba(46, 204, 113, .28);
+    outline-offset: 2px;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button.danger {
+    border-color: #e22d2d;
+    background: #e22d2d;
+    color: #fff;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button.danger:hover {
+    border-color: #c91f1f;
+    background: #c91f1f;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button:not(.secondary):not(.danger) {
+    border-color: #20b962;
+    background: #20b962;
+    color: #fff;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button:not(.secondary):not(.danger):hover {
+    border-color: #149a4d;
+    background: #149a4d;
+}
+
+#mpFeedbackDialog .mp-feedback-actions .mp-feedback-button[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 520px) {
+    #mpFeedbackDialog .mp-feedback-actions {
+        flex-direction: column;
+    }
+
+    #mpFeedbackDialog .mp-feedback-actions .mp-feedback-button {
+        width: 100%;
+    }
+}
+
+.price-compare-best .price-compare-value {
+    color: #159451;
+}
+
+.price-compare-offer .btn-add {
+    padding: .55rem .85rem;
+}
+
+@media (max-width: 520px) {
+    .price-compare-offer {
+        grid-template-columns: 1fr auto;
+        gap: .65rem;
+    }
+
+    .price-compare-offer .btn-add {
+        grid-column: 1 / -1;
+    }
 }

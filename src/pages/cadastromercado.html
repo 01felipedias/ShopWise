@@ -7,6 +7,7 @@
     <title>Cadastro de Supermercado ShopWise</title>
 
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
 </head>
 
 <body>
@@ -84,9 +85,23 @@
                     Cadastrar Supermercado
                 </button>
 
+                <p class="auth-feedback" id="authFeedback" role="alert" aria-live="polite" hidden></p>
+
             </form>
             <div class="bottom-links">
                 <a href="login-supermercado.html">Já possui conta? Entrar</a>
+            </div>
+            <div style="text-align: center; margin-top: 16px;">
+                    <a
+                        href="login.html"
+                        style="
+                            color: #2ECC71;
+                            text-decoration: none;
+                            font-weight: 600;
+                        "
+                    >
+                        Voltar para o login do usuário
+                    </a>
             </div>
         </div>
 
@@ -95,6 +110,17 @@
 </body>
 <script>
     const form = document.getElementById('form-supermercado');
+    const authFeedback = document.getElementById('authFeedback');
+
+    function mostrarFeedbackCadastro(mensagem) {
+        authFeedback.textContent = mensagem;
+        authFeedback.hidden = false;
+    }
+
+    function mensagemErroApi(dados) {
+        if (dados.erro) return dados.erro;
+        return Object.values(dados).flat().join(' ') || 'Não foi possível realizar o cadastro.';
+    }
 
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -117,24 +143,25 @@
         };
 
         try {
-            const resposta = await fetch('/api/supermercados/', {
+            const resposta = await shopwiseFetch('/api/supermercados/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(dadosSupermercado)
             });
+            const dados = await resposta.json().catch(() => ({}));
 
             if (resposta.ok) {
-                alert('Supermercado cadastrado com sucesso!');
-                window.location.href = 'manter-produtos.html';
+                localStorage.removeItem('shopwise_supermercado');
+                window.location.href = 'login-supermercado.html';
             } else {
-                alert('Erro ao cadastrar supermercado.');
+                mostrarFeedbackCadastro(mensagemErroApi(dados));
             }
 
         } catch (erro) {
             console.error(erro);
-            alert('Não foi possível conectar com a API.');
+            mostrarFeedbackCadastro('Não foi possível conectar com o servidor. Tente novamente.');
         }
     });
 </script>

@@ -1,5 +1,11 @@
 (function () {
     const loginForm = document.getElementById('lsLoginForm');
+    const authFeedback = document.getElementById('authFeedback');
+
+    function mostrarFeedbackLogin(mensagem) {
+        authFeedback.textContent = mensagem;
+        authFeedback.hidden = false;
+    }
 
     if (loginForm) {
         loginForm.addEventListener('submit', async function (event) {
@@ -9,7 +15,7 @@
             const senha = loginForm.elements['senha'].value;
 
             try {
-                const resposta = await fetch('/api/login-supermercado/', {
+                const resposta = await shopwiseFetch('/api/login-supermercado/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -23,7 +29,7 @@
                 const dados = await resposta.json();
 
                 if (!resposta.ok) {
-                    alert(dados.erro || 'E-mail ou senha inválidos.');
+                    mostrarFeedbackLogin(dados.erro || 'E-mail ou senha inválidos.');
                     return;
                 }
 
@@ -33,12 +39,11 @@
                     JSON.stringify(dados.supermercado)
                 );
 
-                alert('Login realizado com sucesso!');
                 window.location.href = 'manter-produtos.html';
 
             } catch (erro) {
                 console.error(erro);
-                alert('Não foi possível conectar com o servidor.');
+                mostrarFeedbackLogin('Não foi possível conectar com o servidor.');
             }
         });
     }

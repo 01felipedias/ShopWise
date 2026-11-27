@@ -1,0 +1,137 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visão Geral | ShopWise</title>
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/manter-produtos.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/visao-geral-supermercado.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/seller-mobile-nav.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
+</head>
+<body>
+<div class="app-layout">
+    <button class="seller-mobile-menu" id="sellerMobileMenu" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">☰</button>
+    <div class="sidebar-overlay" id="sellerSidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo"><a href="visao-geral-supermercado.html" aria-label="ShopWise - visão geral"><img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo"></a></div>
+        <nav class="sidebar-nav" aria-label="Navegação do lojista">
+            <a href="visao-geral-supermercado.html" class="nav-item active" aria-current="page" aria-label="Visão Geral"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Visão Geral</span></a>
+            <a href="manter-produtos.html" class="nav-item" aria-label="Meus Produtos"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg><span>Meus Produtos</span></a>
+            <a href="gerenciar-cupons.html" class="nav-item" aria-label="Cupons"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"></path><path d="M13 5v2m0 4v2m0 4v2"></path></svg><span>Cupons</span></a>
+            <a href="pedidos-supermercado.html" class="nav-item" aria-label="Pedidos"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><path d="M3 6h18M16 10a4 4 0 0 1-8 0"></path></svg><span>Pedidos</span></a>
+            <a href="perfil-supermercado.html" class="nav-item" aria-label="Perfil da Loja"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Perfil da Loja</span></a>
+            <a href="login-supermercado.html" class="nav-item seller-logout" aria-label="Sair"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><path d="M21 12H9"></path></svg><span>Sair</span></a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="mp-container seller-dashboard">
+            <header class="mp-header seller-dashboard-header">
+                <p class="seller-dashboard-eyebrow">PAINEL DO SUPERMERCADO</p>
+                <h1 class="mp-title" id="storeGreeting">Visão Geral</h1>
+                <p class="mp-subtitle">Resumo da operação da sua loja.</p>
+            </header>
+
+            <section class="seller-metrics" aria-label="Resumo da loja">
+                <article class="seller-metric"><span class="seller-metric-label">Produtos cadastrados</span><strong id="productCount">—</strong><span class="seller-metric-note">no catálogo da loja</span></article>
+                <article class="seller-metric" id="lowStockMetric"><span class="seller-metric-label">Estoque baixo</span><strong id="lowStockCount">—</strong><span class="seller-metric-note" id="lowStockNote">até 10 unidades</span></article>
+                <article class="seller-metric"><span class="seller-metric-label">Pedidos em andamento</span><strong id="openOrderCount">—</strong><span class="seller-metric-note">ainda não concluídos</span></article>
+            </section>
+
+            <div class="seller-dashboard-grid">
+            <section class="seller-dashboard-panel seller-orders-panel" aria-labelledby="recentOrdersTitle">
+                <div class="seller-panel-heading">
+                    <div><h2 id="recentOrdersTitle">Pedidos</h2><p>Pedidos em andamento aparecem primeiro.</p></div>
+                    <a class="seller-link-button" href="pedidos-supermercado.html">Gerenciar pedidos</a>
+                </div>
+                <div class="seller-orders" id="recentOrders" aria-live="polite"><p class="seller-dashboard-empty">Carregando pedidos…</p></div>
+            </section>
+
+            <section class="seller-dashboard-panel seller-stock-panel" aria-labelledby="lowStockTitle">
+                <div class="seller-panel-heading seller-stock-heading">
+                    <div><h2 id="lowStockTitle">Atenção ao estoque</h2><p id="stockPanelDescription">Produtos com 10 unidades ou menos.</p></div>
+                </div>
+                <div class="seller-stock-list" id="lowStockProducts" aria-live="polite"><p class="seller-dashboard-empty">Carregando estoque…</p></div>
+            </section>
+            </div>
+
+            <p class="seller-dashboard-feedback" id="dashboardFeedback" role="status" aria-live="polite"></p>
+        </div>
+    </main>
+</div>
+<script>
+(() => {
+    const greeting = document.getElementById('storeGreeting');
+    let storedStore = null;
+    try { storedStore = JSON.parse(localStorage.getItem('shopwise_supermercado') || 'null'); } catch (_) {}
+    if (storedStore?.nome) greeting.textContent = `Olá, ${storedStore.nome}`;
+
+    const statusLabels = { pendente: 'Pendente', aguardando_pagamento: 'Aguardando pagamento', confirmado: 'Confirmado', preparando: 'Em preparação', enviado: 'Enviado', concluido: 'Concluído', cancelado: 'Cancelado' };
+    const money = value => Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+
+    async function loadDashboard() {
+        const response = await Promise.all([
+            shopwiseFetch('/api/produtos/'),
+            shopwiseFetch('/api/pedidos-supermercado/')
+        ]);
+        if (response.some(item => item.status === 401 || item.status === 403)) {
+            window.location.replace('login-supermercado.html');
+            return;
+        }
+        const [productsResponse, ordersResponse] = response;
+        if (!productsResponse.ok || !ordersResponse.ok) throw new Error('Não foi possível carregar o resumo da loja. Atualize a página para tentar novamente.');
+        const [products, orders] = await Promise.all([productsResponse.json(), ordersResponse.json()]);
+        const productList = Array.isArray(products) ? products : [];
+        const orderList = Array.isArray(orders) ? orders : [];
+        document.getElementById('productCount').textContent = productList.length;
+        const lowStockProducts = productList.filter(item => Number(item.estoque) <= 10).sort((a, b) => Number(a.estoque) - Number(b.estoque));
+        const lowStockCount = document.getElementById('lowStockCount');
+        const lowStockNote = document.getElementById('lowStockNote');
+        const lowStockMetric = document.getElementById('lowStockMetric');
+        lowStockCount.textContent = lowStockProducts.length;
+        lowStockNote.textContent = lowStockProducts.length ? 'precisam de reposição' : 'Tudo em dia';
+        lowStockMetric.classList.toggle('has-low-stock', lowStockProducts.length > 0);
+        const stockList = document.getElementById('lowStockProducts');
+        if (lowStockProducts.length) {
+            stockList.innerHTML = lowStockProducts.slice(0, 5).map(product => `<article class="seller-stock-row"><span class="seller-stock-name">${escapeHtml(product.nome || product.name || 'Produto')}</span><strong>${escapeHtml(product.estoque)} un.</strong></article>`).join('');
+            if (lowStockProducts.length > 5) stockList.insertAdjacentHTML('beforeend', `<p class="seller-stock-more">Mais ${lowStockProducts.length - 5} produto(s) com estoque baixo.</p>`);
+        } else {
+            stockList.innerHTML = '<div class="seller-stock-clear"><span class="seller-stock-check" aria-hidden="true">✓</span><div><strong>Estoque em dia</strong><p>Nenhum produto precisa de reposição agora.</p></div></div>';
+        }
+        document.getElementById('openOrderCount').textContent = orderList.filter(item => !['concluido', 'cancelado'].includes(item.status)).length;
+        const recentOrders = document.getElementById('recentOrders');
+        if (!orderList.length) {
+            recentOrders.innerHTML = '<p class="seller-dashboard-empty">Ainda não há pedidos para sua loja. Quando chegarem, você poderá acompanhá-los por aqui.</p>';
+            return;
+        }
+        const sortedOrders = [...orderList].sort((a, b) => {
+            const aDone = ['concluido', 'cancelado'].includes(a.status);
+            const bDone = ['concluido', 'cancelado'].includes(b.status);
+            if (aDone !== bDone) return Number(aDone) - Number(bDone);
+            return new Date(b.criado_em || 0) - new Date(a.criado_em || 0);
+        });
+        recentOrders.innerHTML = sortedOrders.slice(0, 5).map(order => {
+            const items = Array.isArray(order.itens) ? order.itens.reduce((sum, item) => sum + Number(item.quantidade || 0), 0) : 0;
+            const date = order.criado_em ? new Date(order.criado_em).toLocaleDateString('pt-BR') : '';
+            return `<article class="seller-order-row"><div class="seller-order-main"><strong>Pedido #${escapeHtml(order.id)}</strong><span>${escapeHtml(order.cliente?.nome || 'Cliente')} · ${items} item(ns) · ${date}</span></div><span class="seller-order-status status-${escapeHtml(order.status)}">${escapeHtml(statusLabels[order.status] || order.status || 'Em andamento')}</span><strong class="seller-order-total">${money(order.subtotal_supermercado)}</strong></article>`;
+        }).join('');
+    }
+
+    loadDashboard().catch(error => {
+        console.error('Erro ao carregar painel do supermercado:', error);
+        document.getElementById('dashboardFeedback').textContent = error.message;
+        document.getElementById('recentOrders').innerHTML = '<p class="seller-dashboard-empty">Não foi possível carregar seus dados agora.</p>';
+        document.getElementById('productCount').textContent = '—';
+        document.getElementById('lowStockCount').textContent = '—';
+        document.getElementById('openOrderCount').textContent = '—';
+        document.getElementById('lowStockProducts').innerHTML = '<p class="seller-dashboard-empty">Não foi possível carregar o estoque.</p>';
+    });
+})();
+</script>
+<script src="{% static 'utils/seller-mobile-nav.js' %}"></script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,8 +7,10 @@
     <title>Configurar Alerta - ShopWise</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../styles/feed.css">
-    <link rel="stylesheet" href="../styles/alerta.css">
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/alerta.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 </head>
 <body>
 
@@ -176,7 +179,7 @@
         }
 
         function finalizarAlerta() {
-            alert("✅ Alerta atualizado com sucesso!");
+            showToast("Alerta atualizado com sucesso.", "success");
             window.location.href = 'AlertaPreco.html';
         }
 

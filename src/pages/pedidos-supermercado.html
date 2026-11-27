@@ -1,0 +1,68 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedidos recebidos | ShopWise</title>
+    <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/manter-produtos.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/pedidos-supermercado.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/seller-mobile-nav.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
+</head>
+<body>
+<div class="app-layout">
+    <button class="seller-mobile-menu" id="sellerMobileMenu" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">☰</button>
+    <div class="sidebar-overlay" id="sellerSidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo"><a href="visao-geral-supermercado.html" aria-label="ShopWise - visão geral"><img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo"></a></div>
+        <nav class="sidebar-nav" aria-label="Navegação do lojista">
+            <a href="visao-geral-supermercado.html" class="nav-item" aria-label="Visão Geral"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Visão Geral</span></a>
+            <a href="manter-produtos.html" class="nav-item" aria-label="Meus Produtos"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22" x2="12" y2="12"></line></svg><span>Meus Produtos</span></a>
+            <a href="gerenciar-cupons.html" class="nav-item" aria-label="Cupons"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"></path><path d="M13 5v2m0 4v2m0 4v2"></path></svg><span>Cupons</span></a>
+            <a href="pedidos-supermercado.html" class="nav-item active" aria-current="page" aria-label="Pedidos"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><path d="M3 6h18M16 10a4 4 0 0 1-8 0"></path></svg><span>Pedidos</span></a>
+            <a href="perfil-supermercado.html" class="nav-item" aria-label="Perfil da Loja"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span>Perfil da Loja</span></a>
+            <a href="login-supermercado.html" class="nav-item seller-logout" aria-label="Sair"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><path d="M21 12H9"></path></svg><span>Sair</span></a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="mp-container orders-page">
+            <header class="mp-header orders-page-header">
+                <a class="orders-back-link" href="visao-geral-supermercado.html">← Visão Geral</a>
+                <h1 class="mp-title">Pedidos recebidos</h1>
+                <p class="mp-subtitle">Acompanhe os pedidos da sua loja e atualize cada etapa.</p>
+            </header>
+
+            <section class="orders-summary" aria-label="Resumo dos pedidos">
+                <article><span>Todos os pedidos</span><strong id="allCount">—</strong></article>
+                <article><span>Em andamento</span><strong id="activeCount">—</strong></article>
+                <article><span>Concluídos</span><strong id="doneCount">—</strong></article>
+            </section>
+
+            <div class="orders-toolbar">
+                <label class="orders-search"><span class="sr-only">Buscar pedido ou cliente</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg><input id="orderSearch" type="search" placeholder="Buscar pedido ou cliente"></label>
+                <label class="orders-filter-label" for="orderFilter">Mostrar</label>
+                <select id="orderFilter" class="orders-filter"><option value="todos">Todos os pedidos</option><option value="ativos">Em andamento</option><option value="aguardando_pagamento">Aguardando pagamento</option><option value="concluido">Concluídos</option><option value="cancelado">Cancelados</option></select>
+            </div>
+
+            <div class="orders-workspace">
+                <section class="orders-list-panel" aria-labelledby="ordersListTitle">
+                    <div class="orders-list-heading"><h2 id="ordersListTitle">Sua fila</h2><span id="visibleCount"></span></div>
+                    <div class="orders-list" id="ordersList" aria-live="polite"><p class="orders-empty">Carregando pedidos…</p></div>
+                </section>
+
+                <section class="order-detail-panel" id="orderDetail" aria-live="polite">
+                    <div class="orders-empty order-detail-empty">Selecione um pedido para ver os detalhes.</div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="{% static 'utils/pedidos-supermercado.js' %}"></script>
+<script src="{% static 'utils/seller-mobile-nav.js' %}"></script>
+</body>
+</html>

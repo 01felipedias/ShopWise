@@ -41,6 +41,7 @@ class Produto(models.Model):
     )
 
     nome = models.CharField(max_length=150)
+    tamanho_embalagem = models.CharField(max_length=50, blank=True)
     categoria = models.CharField(max_length=100)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     estoque = models.PositiveIntegerField()
@@ -67,3 +68,430 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+class Cupom(models.Model):
+    supermercado = models.ForeignKey(
+        Supermercado,
+        on_delete=models.CASCADE,
+        related_name='cupons',
+        null=True,
+        blank=True,
+    )
+
+    TIPO_CHOICES = [
+        ('percentual', 'Percentual'),
+        ('valor', 'Valor fixo'),
+    ]
+
+    codigo = models.CharField(
+        max_length=50,
+        unique=True
+    )
+
+    descricao = models.CharField(
+        max_length=200,
+        blank=True
+    )
+
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_CHOICES,
+        default='percentual'
+    )
+
+    valor = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    valor_minimo = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    data_inicio = models.DateTimeField()
+
+    data_fim = models.DateTimeField()
+
+    ativo = models.BooleanField(default=True)
+
+    limite_uso = models.PositiveIntegerField(
+        null=True,
+        blank=True
+    )
+
+    usos = models.PositiveIntegerField(default=0)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.codigo
+
+
+class Pedido(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('aguardando_pagamento', 'Aguardando pagamento'),
+        ('confirmado', 'Confirmado'),
+        ('preparando', 'Preparando'),
+        ('enviado', 'Enviado'),
+        ('concluido', 'Concluído'),
+        ('cancelado', 'Cancelado'),
+    ]
+
+    TIPO_ENTREGA_CHOICES = [
+        ('delivery', 'Entrega'),
+        ('pickup', 'Retirada'),
+    ]
+
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='pedidos'
+    )
+
+    tipo_entrega = models.CharField(
+        max_length=20,
+        choices=TIPO_ENTREGA_CHOICES
+    )
+
+    endereco_entrega = models.CharField(
+        max_length=255,
+        blank=True
+    )
+
+    observacoes = models.TextField(blank=True)
+
+    forma_pagamento = models.CharField(max_length=20)
+
+    subtotal = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    desconto = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    taxa_entrega = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    total = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='confirmado'
+    )
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Pedido #{self.id} - {self.cliente.nome}'
+
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='itens'
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.PROTECT
+    )
+
+    supermercado = models.ForeignKey(
+        Supermercado,
+        on_delete=models.PROTECT
+    )
+
+    nome_produto = models.CharField(max_length=150)
+
+    preco_unitario = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    quantidade = models.PositiveIntegerField()
+
+    subtotal = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    def __str__(self):
+        return f'{self.quantidade}x {self.nome_produto}'
+
+
+class PedidoPorSupermercado(models.Model):
+    pedido = models.ForeignKey(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='subpedidos'
+    )
+
+    supermercado = models.ForeignKey(
+        Supermercado,
+        on_delete=models.PROTECT,
+        related_name='subpedidos'
+    )
+
+    status = models.CharField(
+        max_length=30,
+        choices=Pedido.STATUS_CHOICES,
+        default='confirmado'
+    )
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['pedido', 'supermercado'],
+                name='unique_pedido_supermercado'
+            )
+        ]
+
+    def __str__(self):
+        return f'Pedido #{self.pedido_id} - {self.supermercado.nome}'
+
+
+class Pagamento(models.Model):
+    pedido = models.OneToOneField(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='pagamento'
+    )
+
+    provedor = models.CharField(
+        max_length=50,
+        default='mercado_pago'
+    )
+
+    forma_pagamento = models.CharField(
+        max_length=20,
+        default='pix'
+    )
+
+    order_id = models.CharField(
+        max_length=100,
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    payment_id = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    status = models.CharField(
+        max_length=50,
+        default='pendente'
+    )
+
+    status_detail = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    qr_code = models.TextField(blank=True)
+
+    qr_code_base64 = models.TextField(blank=True)
+
+    ticket_url = models.URLField(
+        max_length=500,
+        blank=True
+    )
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Pagamento do Pedido #{self.pedido.id}'
+
+
+class AlertaPreco(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='alertas_preco'
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name='alertas_preco'
+    )
+
+    preco_alvo = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    ativo = models.BooleanField(default=True)
+
+    atingido = models.BooleanField(default=False)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['cliente', 'produto'],
+                name='alerta_unico_cliente_produto'
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f'{self.cliente.nome} - '
+            f'{self.produto.nome} - '
+            f'R$ {self.preco_alvo}'
+        )
+
+
+class Notificacao(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='notificacoes'
+    )
+
+    alerta = models.ForeignKey(
+        AlertaPreco,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='notificacoes'
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    titulo = models.CharField(max_length=150)
+    mensagem = models.TextField()
+
+    lida = models.BooleanField(default=False)
+
+    criada_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.cliente.nome} - {self.titulo}'
+
+
+class Avaliacao(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes'
+    )
+
+    pedido = models.ForeignKey(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes'
+    )
+
+    item_pedido = models.OneToOneField(
+        ItemPedido,
+        on_delete=models.CASCADE,
+        related_name='avaliacao'
+    )
+
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes'
+    )
+
+    nota = models.PositiveSmallIntegerField()
+
+    preco_correto = models.BooleanField(
+        default=True
+    )
+
+    entrega_ok = models.BooleanField(
+        default=True
+    )
+
+    comentario = models.TextField(
+        blank=True
+    )
+
+    criada_em = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    atualizada_em = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return (
+            f'{self.cliente.nome} - '
+            f'{self.produto.nome} - '
+            f'{self.nota} estrela(s)'
+        )
+
+
+class AvaliacaoSupermercado(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes_supermercado'
+    )
+
+    pedido = models.ForeignKey(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes_supermercado'
+    )
+
+    supermercado = models.ForeignKey(
+        Supermercado,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes'
+    )
+
+    nota = models.PositiveSmallIntegerField()
+    nota_produtos = models.PositiveSmallIntegerField(default=0)
+    nota_entrega = models.PositiveSmallIntegerField(default=0)
+    preco_correto = models.BooleanField(default=True)
+    entrega_ok = models.BooleanField(default=True)
+    comentario = models.TextField(blank=True)
+    criada_em = models.DateTimeField(auto_now_add=True)
+    atualizada_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['pedido', 'supermercado'],
+                name='unique_avaliacao_loja_pedido'
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f'{self.cliente.nome} - {self.supermercado.nome} - '
+            f'{self.nota} estrela(s)'
+        )

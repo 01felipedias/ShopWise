@@ -7,20 +7,26 @@
     <title>Meus Produtos - ShopWise Lojista</title>
     <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/manter-produtos.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/seller-mobile-nav.css' %}">
+    <script src="{% static 'utils/shopwise-api.js' %}"></script>
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 </head>
 <body>
 
     <div class="app-layout">
+        <button class="seller-mobile-menu" id="sellerMobileMenu" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">☰</button>
+        <div class="sidebar-overlay" id="sellerSidebarOverlay"></div>
         
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
-                <a href="#">
+                <a href="visao-geral-supermercado.html" aria-label="Visão Geral">
                    <img src="{% static 'assets/img/logoshopwise.png' %}" alt="ShopWise" class="sidebar-full-logo">
                 </a>
             </div>
 
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item" aria-label="Visão Geral">
+                <a href="visao-geral-supermercado.html" class="nav-item" aria-label="Visão Geral">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -37,7 +43,15 @@
                     <span>Meus Produtos</span>
                 </a>
 
-                <a href="#" class="nav-item" aria-label="Pedidos Recebidos">
+                <a href="gerenciar-cupons.html" class="nav-item" aria-label="Cupons">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"></path>
+                        <path d="M13 5v2m0 4v2m0 4v2"></path>
+                    </svg>
+                    <span>Cupons</span>
+                </a>
+
+                <a href="pedidos-supermercado.html" class="nav-item" aria-label="Pedidos Recebidos">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -46,7 +60,7 @@
                     <span>Pedidos</span>
                 </a>
 
-                <a href="#" class="nav-item" aria-label="Perfil da Loja">
+                <a href="perfil-supermercado.html" class="nav-item" aria-label="Perfil da Loja">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
@@ -87,11 +101,6 @@
                         <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Conecte com seu sistema de gestão para atualização automática.</p>
                     </div>
 
-                    <div class="mp-opcao-card" id="btnPedidos" onclick="abrirPedido(1)" style="cursor:pointer;">
-                        <div class="mp-opcao-icone">📋</div>
-                        <h3>Acompanhar Pedidos</h3>
-                        <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Gerencie e atualize o status dos pedidos recebidos.</p>
-                    </div>
                 </div>
 
                 <!-- TELA DA API (Escondida por padrão) -->
@@ -100,13 +109,13 @@
                     <p style="color: #666; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
                         Gere sua chave de acesso seguro (Token API) para automatizar a atualização de preços e o controle de estoque em tempo real direto do seu sistema de gestão.
                     </p>
-                    <button class="mp-btn mp-btn-salvar" onclick="alert('Chave API gerada com sucesso: SHPW-984J-293K-M291. As instruções foram enviadas para o seu e-mail comercial.')">Gerar Chave de API</button>
+                    <button class="mp-btn mp-btn-salvar" type="button" disabled title="A integração para gerar chaves ainda não está disponível">Geração de chave indisponível</button>
                     <button class="mp-btn mp-btn-cancelar">Ver Documentação</button>
                 </section>
 
                 <!-- TELA DE CADASTRO MANUAL -->
                 <section class="mp-card" id="sessaoManual">
-                    <h2 class="mp-card-title">Novo Produto</h2>
+                    <h2 class="mp-card-title" id="mpFormTitulo">Novo Produto</h2>
                     <form id="mpFormProduto" class="mp-form">
                         
                         <div class="mp-form-row">
@@ -140,13 +149,28 @@
                         </div>
 
                         <div class="mp-input-group">
+                            <label for="mpTamanhoEmbalagem" class="mp-label">Tamanho da embalagem</label>
+                            <input type="text" id="mpTamanhoEmbalagem" class="mp-input" placeholder="Ex: 1 kg, 500 ml">
+                        </div>
+
+                        <div class="mp-input-group">
                             <label for="mpDescricao" class="mp-label">Descrição Breve</label>
                             <textarea id="mpDescricao" class="mp-input" rows="2" placeholder="Ex: Feijão carioca tipo 1."></textarea>
                         </div>
 
                         <div class="mp-form-actions">
-                            <button type="submit" class="mp-btn mp-btn-salvar">Cadastrar Produto</button>
-                            <button type="reset" class="mp-btn mp-btn-cancelar">Limpar</button>
+                            <button type="submit" class="mp-btn mp-btn-salvar" id="mpBtnSalvar">
+                                Cadastrar Produto
+                            </button>
+                            <button type="reset" class="mp-btn mp-btn-cancelar" id="mpBtnLimpar">
+                                Limpar
+                            </button>
+                            <button type="button"
+                                    class="mp-btn mp-btn-cancelar"
+                                    id="mpBtnCancelarEdicao"
+                                    style="display:none;">
+                                Cancelar edição
+                            </button>
                         </div>
                     </form>
                 </section>
@@ -176,86 +200,20 @@
         </div>
     </div>
 
-    <!-- ══════ MODAL PEDIDO ══════ -->
-    <div class="modal-overlay" id="modalPedidoOverlay" onclick="fecharPedidoOverlay(event)" style="display: none;">
-      <div class="modal-pedido">
-
-        <div class="modal-ped-header">
-          <div class="modal-ped-icon">📋</div>
-          <div>
-            <h2 id="pedTitulo">Pedido #00124</h2>
-            <p id="pedSubtitulo">João Silva • Recebido às 14:32</p>
-          </div>
-          <button class="modal-close-ped" onclick="fecharPedido()">✕</button>
+    <dialog class="price-compare-dialog" id="mpFeedbackDialog" aria-labelledby="mpFeedbackTitulo">
+        <div class="price-compare-content">
+            <button class="price-compare-close" type="button" aria-label="Fechar" onclick="fecharMpFeedback(false)">×</button>
+            <h2 id="mpFeedbackTitulo">Aviso</h2>
+            <p class="mp-feedback-message" id="mpFeedbackMensagem"></p>
+            <div class="mp-feedback-actions">
+                <button class="mp-feedback-button secondary" id="mpFeedbackCancelar" type="button" onclick="fecharMpFeedback(false)" hidden>Voltar</button>
+                <button class="mp-feedback-button" id="mpFeedbackConfirmar" type="button" onclick="fecharMpFeedback(true)">Entendi</button>
+            </div>
         </div>
-
-        <div class="modal-ped-body">
-
-          <div>
-            <p class="secao-titulo">Status do pedido</p>
-            <div class="stepper" id="stepper">
-              <div class="step" id="step-0">
-                <div class="step-circle">📥</div>
-                <div class="step-label">Recebido</div>
-              </div>
-              <div class="step" id="step-1">
-                <div class="step-circle">📦</div>
-                <div class="step-label">Em separação</div>
-              </div>
-              <div class="step" id="step-2">
-                <div class="step-circle">🚚</div>
-                <div class="step-label">Saiu p/ entrega</div>
-              </div>
-              <div class="step" id="step-3">
-                <div class="step-circle">✅</div>
-                <div class="step-label">Entregue</div>
-              </div>
-              <div class="stepper-progress" id="stepperProgress"></div>
-            </div>
-          </div>
-
-          <div class="status-actions">
-            <h3 id="acaoTitulo">O que deseja fazer?</h3>
-            <div class="acoes-btns">
-              <button class="btn-acao btn-avancar" id="btnAvancar" onclick="avancarStatus()">▶ Avançar status</button>
-              <button class="btn-acao btn-cancelar" id="btnCancelar" onclick="cancelarPedido()">✕ Cancelar pedido</button>
-            </div>
-          </div>
-
-          <div id="secaoItens">
-            <p class="secao-titulo">Itens do pedido</p>
-            <div class="itens-lista" id="itensList"></div>
-            <div class="progresso-separacao" id="progressoSep" style="display:none">
-              <span id="sepTexto">0 de 3 separados</span>
-              <div class="prog-track"><div class="prog-fill" id="sepFill" style="width:0%"></div></div>
-            </div>
-          </div>
-
-          <div>
-            <p class="secao-titulo">Cliente</p>
-            <div class="cliente-card">
-              <div class="cliente-avatar" id="clienteAvatar">J</div>
-              <div class="cliente-info">
-                <h4 id="clienteNome">João Silva</h4>
-                <p id="clienteEndereco">Rua das Palmeiras, 45 — Centro<br>📱 (89) 99999-1234</p>
-              </div>
-              <button class="btn-notificar" id="btnNotificar" onclick="notificarCliente()">🔔 Notificar cliente</button>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="modal-ped-footer">
-          <button class="btn-fechar-ped" onclick="fecharPedido()">Fechar</button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    </dialog>
 
     <script src="{% static 'utils/manter-produtos.js' %}"></script>
+    <script src="{% static 'utils/seller-mobile-nav.js' %}"></script>
     <!-- <script src="{% static 'utils/pedidos.js' %}"></script> -->
 </body>
 </html>

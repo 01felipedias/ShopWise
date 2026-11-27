@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 
 from produtos.views import (
     SupermercadoList,
@@ -10,6 +11,24 @@ from produtos.views import (
     LoginSupermercado,
     ClienteList,
     LoginCliente,
+    FeedProdutos,
+    PedidoList,
+    CupomList,
+    CupomGerenciamento,
+    StatusPagamentoPix,
+    AlertaPrecoList,
+    NotificacaoList,
+    NotificacaoMarcarLida,
+    AvaliacaoList,
+    AvaliacaoSupermercadoList,
+    AvaliacoesPublicas,
+    PerfilCliente,
+    LogoutCliente,
+    PedidosSupermercadoList,
+    StatusPedidoSupermercado,
+    PerfilSupermercado,
+    LogoutSupermercado,
+    TesteToken,
 )
 
 
@@ -18,7 +37,7 @@ from produtos.views import (
 # =========================
 
 def inicio(request):
-    return render(request, 'index.html')
+    return redirect('login_usuario')
 
 
 def cadastro_mercado(request):
@@ -33,6 +52,14 @@ def manter_produtos(request):
     return render(request, 'manter-produtos.html')
 
 
+def visao_geral_supermercado(request):
+    return render(request, 'visao-geral-supermercado.html')
+
+
+def pedidos_supermercado(request):
+    return render(request, 'pedidos-supermercado.html')
+
+
 def cadastro_usuario(request):
     return render(request, 'cadastrousuario.html')
 
@@ -45,14 +72,67 @@ def feed_produto(request):
     return render(request, 'feedproduto.html')
 
 
+def carrinho(request):
+    return render(request, 'carrinho.html')
+
+
+def checkout(request):
+    return render(request, 'checkout.html')
+
+
+def pedidos(request):
+    return render(request, 'pedidos.html')
+
+
+def alerta_preco(request):
+    return render(request, 'AlertaPreco.html')
+
+
+def avaliacao(request):
+    return render(request, 'avaliacao.html')
+
+
+def perfil(request):
+    return render(request, 'perfil.html')
+
+
+from produtos.seguranca import (
+    AlterarSenhaCliente,
+    AlterarSenhaSupermercado,
+)
+
+
+from produtos.csrf import csrf_cookie
+
 urlpatterns = [
-    # Administração
-    path('admin/', admin.site.urls),
+    path('api/csrf/', csrf_cookie),
+
+    path(
+        'api/alterar-senha-cliente/',
+        AlterarSenhaCliente.as_view()
+    ),
+    path(
+        'api/alterar-senha-supermercado/',
+        AlterarSenhaSupermercado.as_view()
+    ),
+
+
+    # =========================
+    # ADMINISTRAÇÃO
+    # =========================
+    path(
+        'admin/',
+        admin.site.urls
+    ),
 
     # =========================
     # FRONTEND
     # =========================
-    path('', inicio, name='inicio'),
+    path(
+        '',
+        inicio,
+        name='inicio'
+    ),
 
     # Supermercado
     path(
@@ -69,6 +149,23 @@ urlpatterns = [
         'manter-produtos.html',
         manter_produtos,
         name='manter_produtos'
+    ),
+    path(
+        'visao-geral-supermercado.html',
+        visao_geral_supermercado,
+        name='visao_geral_supermercado'
+    ),
+    path(
+        'pedidos-supermercado.html',
+        pedidos_supermercado,
+        name='pedidos_supermercado'
+    ),
+    path(
+        'perfil-supermercado.html',
+        TemplateView.as_view(
+            template_name='perfil-supermercado.html'
+        ),
+        name='perfil_supermercado'
     ),
 
     # Cliente
@@ -87,6 +184,46 @@ urlpatterns = [
         feed_produto,
         name='feed_produto'
     ),
+    path(
+        'carrinho.html',
+        carrinho,
+        name='carrinho'
+    ),
+    path(
+        'checkout.html',
+        checkout,
+        name='checkout'
+    ),
+    path(
+        'cupons.html',
+        TemplateView.as_view(template_name='cupons.html'),
+        name='cupons'
+    ),
+    path(
+        'gerenciar-cupons.html',
+        TemplateView.as_view(template_name='gerenciar-cupons.html'),
+        name='gerenciar_cupons'
+    ),
+    path(
+        'pedidos.html',
+        pedidos,
+        name='pedidos'
+    ),
+    path(
+        'AlertaPreco.html',
+        alerta_preco,
+        name='alerta_preco'
+    ),
+    path(
+        'avaliacao.html',
+        avaliacao,
+        name='avaliacao'
+    ),
+    path(
+        'perfil.html',
+        perfil,
+        name='perfil'
+    ),
 
     # =========================
     # API - SUPERMERCADO
@@ -103,6 +240,14 @@ urlpatterns = [
         'api/login-supermercado/',
         LoginSupermercado.as_view()
     ),
+    path(
+        'api/perfil-supermercado/',
+        PerfilSupermercado.as_view()
+    ),
+    path(
+        'api/logout-supermercado/',
+        LogoutSupermercado.as_view()
+    ),
 
     # =========================
     # API - PRODUTOS
@@ -115,6 +260,10 @@ urlpatterns = [
         'api/produtos/<int:pk>/',
         ProdutoDetalhe.as_view()
     ),
+    path(
+        'api/feed/produtos/',
+        FeedProdutos.as_view()
+    ),
 
     # =========================
     # API - CLIENTE
@@ -126,5 +275,93 @@ urlpatterns = [
     path(
         'api/login-cliente/',
         LoginCliente.as_view()
+    ),
+    path(
+        'api/perfil/',
+        PerfilCliente.as_view()
+    ),
+    path(
+        'api/logout-cliente/',
+        LogoutCliente.as_view()
+    ),
+
+    # =========================
+    # API - PEDIDOS
+    # =========================
+    path(
+        'api/pedidos/',
+        PedidoList.as_view()
+    ),
+    path(
+        'api/pedidos/<int:pedido_id>/status-pix/',
+        StatusPagamentoPix.as_view()
+    ),
+    path(
+        'api/pedidos-supermercado/',
+        PedidosSupermercadoList.as_view()
+    ),
+    path(
+        'api/pedidos-supermercado/<int:pedido_id>/status/',
+        StatusPedidoSupermercado.as_view()
+    ),
+
+    # =========================
+    # API - CUPONS
+    # =========================
+    path(
+        'api/cupons/',
+        CupomList.as_view()
+    ),
+    path(
+        'api/cupons/gerenciar/',
+        CupomGerenciamento.as_view()
+    ),
+    path(
+        'api/cupons/gerenciar/<int:cupom_id>/',
+        CupomGerenciamento.as_view()
+    ),
+
+    # =========================
+    # API - ALERTAS
+    # =========================
+    path(
+        'api/alertas-preco/',
+        AlertaPrecoList.as_view()
+    ),
+    path(
+        'api/alertas-preco/<int:alerta_id>/',
+        AlertaPrecoList.as_view()
+    ),
+    path(
+        'api/notificacoes/',
+        NotificacaoList.as_view()
+    ),
+    path(
+        'api/notificacoes/<int:notificacao_id>/marcar-lida/',
+        NotificacaoMarcarLida.as_view()
+    ),
+
+    # =========================
+    # API - AVALIAÇÕES
+    # =========================
+    path(
+        'api/avaliacoes/',
+        AvaliacaoList.as_view()
+    ),
+    path(
+        'api/avaliacoes-supermercados/',
+        AvaliacaoSupermercadoList.as_view()
+    ),
+    path(
+        'api/feed/avaliacoes/',
+        AvaliacoesPublicas.as_view()
+    ),
+
+    # =========================
+    # API - AUTHTOKEN
+    # =========================
+    path(
+        'api/teste-token/',
+        TesteToken.as_view()
     ),
 ]

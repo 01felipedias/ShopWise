@@ -1,0 +1,8 @@
+asgiref==3.13.0
+Django==6.1.1
+django-cors-headers==4.9.0
+djangorestframework==3.18.1
+gunicorn>=23,<24
+psycopg[binary]>=3.1.12,<4
+sqlparse==0.6.1
+whitenoise>=6.9,<7
