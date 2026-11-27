@@ -128,10 +128,29 @@ function avancarStatus() {
   mostrarToast(msgs[p.statusAtual]);
 }
 
-function cancelarPedido() {
-  if (!confirm('Tem certeza que deseja cancelar o pedido ' + pedidoAtivo.num + '?')) return;
-  mostrarToast('❌ Pedido ' + pedidoAtivo.num + ' cancelado.');
-  fecharPedido();
+async function cancelarPedido() {
+    const confirmar = await window.showConfirm(
+        "Tem certeza que deseja cancelar o pedido " +
+        pedidoAtivo.num +
+        "? Essa ação não pode ser desfeita.",
+        {
+            title: "Cancelar pedido?",
+            confirmText: "Cancelar pedido",
+            danger: true
+        }
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    mostrarToast(
+        "❌ Pedido " +
+        pedidoAtivo.num +
+        " cancelado."
+    );
+
+    fecharPedido();
 }
 
 function notificarCliente() {

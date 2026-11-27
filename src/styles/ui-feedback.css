@@ -1,20 +1,306 @@
-.shopwise-toast-container { position: fixed; z-index: 3000; right: 22px; bottom: 22px; display: grid; gap: 10px; max-width: min(420px, calc(100vw - 32px)); pointer-events: none; }
-.shopwise-toast { padding: 14px 18px; border: 1px solid #e1e9e4; border-left: 4px solid #4585a0; border-radius: 12px; background: #fff; color: #2d3d34; box-shadow: 0 12px 34px rgba(24, 46, 33, .16); font-size: .94rem; line-height: 1.45; opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
-.shopwise-toast.show { opacity: 1; transform: translateY(0); }
-.shopwise-toast.success { border-left-color: #20a460; }
-.shopwise-toast.error { border-left-color: #d74d4d; }
-.shopwise-toast.warning { border-left-color: #d99a25; }
-.shopwise-action-dialog { width: min(500px, calc(100vw - 28px)); max-width: none; padding: 0; border: 0; border-radius: 18px; background: transparent; color: #293a31; box-shadow: 0 24px 80px rgba(0,0,0,.2); }
-.shopwise-action-dialog::backdrop { background: rgba(20, 32, 25, .42); backdrop-filter: blur(3px); }
-.shopwise-action-card { position: relative; display: grid; gap: 12px; padding: 26px; border-radius: 18px; background: #fff; }
-.shopwise-action-card h2 { margin: 0; padding-right: 30px; font-size: 1.2rem; }
-.shopwise-action-card p { margin: 0; color: #68766e; line-height: 1.5; }
-.shopwise-action-close { position: absolute; top: 15px; right: 17px; border: 0; background: transparent; color: #68766e; font-size: 1.6rem; cursor: pointer; }
-.shopwise-prompt-field { display: grid; gap: 6px; color: #47564c; font-size: .88rem; font-weight: 650; }
-.shopwise-prompt-field[hidden] { display: none; }
-.shopwise-prompt-field input { min-height: 46px; padding: 10px 12px; border: 1px solid #d5e1d9; border-radius: 10px; font: inherit; }
-.shopwise-action-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
-.shopwise-action-buttons button { min-height: 42px; padding: 0 16px; border: 1px solid #dce7e0; border-radius: 10px; background: #fff; color: #435148; font: inherit; font-weight: 700; cursor: pointer; }
-.shopwise-action-buttons .shopwise-action-confirm { border-color: #20a460; background: #20a460; color: #fff; }
-.shopwise-action-buttons .shopwise-action-confirm.danger { border-color: #d74d4d; background: #d74d4d; }
-@media (max-width: 560px) { .shopwise-toast-container { right: 12px; bottom: 12px; left: 12px; max-width: none; } }
+/* =========================================================
+   SHOPWISE - TOASTS
+   ========================================================= */
+
+.shopwise-toast-container {
+    position: fixed;
+    z-index: 3000;
+    right: 22px;
+    bottom: 22px;
+    display: grid;
+    gap: 10px;
+    max-width: min(420px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.shopwise-toast {
+    padding: 14px 18px;
+    border: 1px solid #e1e9e4;
+    border-left: 4px solid #4585a0;
+    border-radius: 12px;
+    background: #fff;
+    color: #2d3d34;
+    box-shadow: 0 12px 34px rgba(24, 46, 33, 0.16);
+    font-size: 0.94rem;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.shopwise-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.shopwise-toast.success {
+    border-left-color: #20a460;
+}
+
+.shopwise-toast.error {
+    border-left-color: #d74d4d;
+}
+
+.shopwise-toast.warning {
+    border-left-color: #d99a25;
+}
+
+
+/* =========================================================
+   SHOPWISE - CAIXA DE CONFIRMACAO
+   ========================================================= */
+
+.shopwise-action-dialog {
+    position: fixed;
+    inset: 0;
+
+    width: min(470px, calc(100vw - 32px));
+    max-width: 470px;
+    max-height: calc(100vh - 32px);
+
+    margin: auto;
+    padding: 0;
+
+    border: 0;
+    border-radius: 20px;
+
+    background: transparent;
+    color: #293a31;
+
+    box-shadow: 0 28px 80px rgba(13, 78, 43, 0.28);
+
+    overflow: visible;
+}
+
+.shopwise-action-dialog::backdrop {
+    background: rgba(18, 48, 31, 0.52);
+    backdrop-filter: blur(4px);
+}
+
+
+/* Caixa branca */
+
+.shopwise-action-card {
+    position: relative;
+
+    display: grid;
+    gap: 14px;
+
+    box-sizing: border-box;
+    width: 100%;
+
+    padding: 30px 28px 26px;
+
+    border: 1px solid #d8ebe0;
+    border-top: 6px solid #20a460;
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #effcf4 0%,
+            #ffffff 42%
+        );
+}
+
+
+/* Titulo */
+
+.shopwise-action-card h2 {
+    margin: 0;
+    padding-right: 42px;
+
+    color: #17482d;
+
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+
+/* Texto */
+
+.shopwise-action-card p {
+    margin: 0;
+
+    color: #66766d;
+
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+
+/* Botao X */
+
+.shopwise-action-close {
+    position: absolute;
+
+    top: 15px;
+    right: 17px;
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: #e1f6e9;
+    color: #16804a;
+
+    font-size: 1.5rem;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.shopwise-action-close:hover {
+    background: #ccefd9;
+    transform: rotate(90deg);
+}
+
+
+/* Campo usado em prompts */
+
+.shopwise-prompt-field {
+    display: grid;
+    gap: 6px;
+
+    color: #47564c;
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.shopwise-prompt-field[hidden] {
+    display: none;
+}
+
+.shopwise-prompt-field input {
+    min-height: 46px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #cfe2d6;
+    border-radius: 10px;
+
+    outline: none;
+    font: inherit;
+}
+
+.shopwise-prompt-field input:focus {
+    border-color: #20a460;
+    box-shadow: 0 0 0 3px rgba(32, 164, 96, 0.12);
+}
+
+
+/* =========================================================
+   BOTOES
+   ========================================================= */
+
+.shopwise-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.shopwise-action-buttons button {
+    min-height: 44px;
+
+    padding: 0 19px;
+
+    border-radius: 11px;
+
+    font: inherit;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* Voltar */
+
+.shopwise-action-cancel {
+    border: 1px solid #cce2d5;
+
+    background: #ffffff;
+    color: #267349;
+}
+
+.shopwise-action-cancel:hover {
+    background: #effaf3;
+    transform: translateY(-1px);
+}
+
+
+/* Confirmacao normal */
+
+.shopwise-action-confirm {
+    border: 1px solid #20a460;
+
+    background: #20a460;
+    color: #ffffff;
+
+    box-shadow: 0 6px 16px rgba(32, 164, 96, 0.2);
+}
+
+.shopwise-action-confirm:hover {
+    background: #18894f;
+    transform: translateY(-1px);
+}
+
+
+/* Cancelamento / acao perigosa */
+
+.shopwise-action-confirm.danger {
+    border-color: #d94b50;
+
+    background: #d94b50;
+    color: #ffffff;
+
+    box-shadow: 0 6px 16px rgba(217, 75, 80, 0.2);
+}
+
+.shopwise-action-confirm.danger:hover {
+    background: #bd3e43;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 560px) {
+
+    .shopwise-toast-container {
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        max-width: none;
+    }
+
+    .shopwise-action-dialog {
+        width: calc(100vw - 24px);
+    }
+
+    .shopwise-action-card {
+        padding: 26px 20px 22px;
+    }
+
+    .shopwise-action-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .shopwise-action-buttons button {
+        width: 100%;
+    }
+}

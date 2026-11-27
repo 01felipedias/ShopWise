@@ -13,21 +13,32 @@ function ajustarAlerta(botao) {
 }
 
 // Função para excluir o card da lista
-function excluirAlerta(botao) {
-    // Pergunta de confirmação
-    let confirmar = confirm("Tem certeza que deseja excluir este alerta?");
-    
-    if (confirmar) { 
-
-        const cardParaExcluir = botao.closest('.alert-card');
-        
-        
-        cardParaExcluir.remove();
-        
-        const lista = document.getElementById('alertsList');
-        if (lista.children.length === 0) {
-            lista.innerHTML = '<p style="text-align:center; color: #777; margin-top: 20px;">Você não tem alertas cadastrados.</p>';
+async function excluirAlerta(botao) {
+    const confirmar = await window.showConfirm(
+        "Tem certeza que deseja excluir este alerta? Essa ação não pode ser desfeita.",
+        {
+            title: "Excluir alerta?",
+            confirmText: "Excluir alerta",
+            danger: true
         }
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    const cardParaExcluir = botao.closest(".alert-card");
+
+    cardParaExcluir.remove();
+
+    const lista = document.getElementById("alertsList");
+
+    if (lista.children.length === 0) {
+        lista.innerHTML = `
+            <p style="text-align:center; color:#777; margin-top:20px;">
+                Você não tem alertas cadastrados.
+            </p>
+        `;
     }
 }
 // Função disparada ao clicar no botão de criar alerta
