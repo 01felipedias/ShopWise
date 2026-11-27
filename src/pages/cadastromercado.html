@@ -138,8 +138,9 @@
             });
 
             if (resposta.ok) {
-                alert('Supermercado cadastrado com sucesso!');
-                window.location.href = 'manter-produtos.html';
+                localStorage.removeItem('shopwise_supermercado');
+                alert('Supermercado cadastrado com sucesso! Faça login.');
+                window.location.href = 'login-supermercado.html';
             } else {
                 alert('Erro ao cadastrar supermercado.');
             }
