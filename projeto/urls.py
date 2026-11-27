@@ -14,11 +14,13 @@ from produtos.views import (
     FeedProdutos,
     PedidoList,
     CupomList,
+    CupomGerenciamento,
     StatusPagamentoPix,
     AlertaPrecoList,
     NotificacaoList,
     NotificacaoMarcarLida,
     AvaliacaoList,
+    AvaliacoesPublicas,
     PerfilCliente,
     LogoutCliente,
     PedidosSupermercadoList,
@@ -174,6 +176,16 @@ urlpatterns = [
         name='checkout'
     ),
     path(
+        'cupons.html',
+        TemplateView.as_view(template_name='cupons.html'),
+        name='cupons'
+    ),
+    path(
+        'gerenciar-cupons.html',
+        TemplateView.as_view(template_name='gerenciar-cupons.html'),
+        name='gerenciar_cupons'
+    ),
+    path(
         'pedidos.html',
         pedidos,
         name='pedidos'
@@ -281,12 +293,24 @@ urlpatterns = [
         'api/cupons/',
         CupomList.as_view()
     ),
+    path(
+        'api/cupons/gerenciar/',
+        CupomGerenciamento.as_view()
+    ),
+    path(
+        'api/cupons/gerenciar/<int:cupom_id>/',
+        CupomGerenciamento.as_view()
+    ),
 
     # =========================
     # API - ALERTAS
     # =========================
     path(
         'api/alertas-preco/',
+        AlertaPrecoList.as_view()
+    ),
+    path(
+        'api/alertas-preco/<int:alerta_id>/',
         AlertaPrecoList.as_view()
     ),
     path(
@@ -304,6 +328,10 @@ urlpatterns = [
     path(
         'api/avaliacoes/',
         AvaliacaoList.as_view()
+    ),
+    path(
+        'api/feed/avaliacoes/',
+        AvaliacoesPublicas.as_view()
     ),
 
     # =========================

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHOPWISE — checklist</title>
+<style>
+:root { color-scheme: light; }
+body { margin: 0; padding: 28px; background: #f5f7f6; color: #323b35; font-family: Consolas, "Courier New", monospace; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px; overflow-x: auto; background: #fff; border: 1px solid #e1e8e3; border-radius: 14px; box-shadow: 0 10px 30px rgba(20, 55, 34, .06); }
+pre { margin: 0; font: 14px/1.45 Consolas, "Courier New", monospace; white-space: pre; }
+.done { color: #16833d; font-weight: 650; }
+@media (max-width: 600px) { body { padding: 10px; } main { padding: 14px; } pre { font-size: 12px; } }
+</style>
+</head>
+<body><main><pre>SHOPWISE
+│
+<span class="done">├── 1. BASE DO PROJETO ✅</span>
+<span class="done">│   ├── Django ✅</span>
+<span class="done">│   ├── Django REST Framework ✅</span>
+<span class="done">│   ├── Banco SQLite ✅</span>
+<span class="done">│   ├── Migrations ✅</span>
+<span class="done">│   └── Rotas/templates ✅</span>
+│
+<span class="done">├── 2. SUPERMERCADO ✅</span>
+<span class="done">│   ├── Cadastro ✅</span>
+<span class="done">│   ├── Login ✅</span>
+<span class="done">│   ├── Sessão protegida ✅</span>
+<span class="done">│   ├── Perfil da loja ✅</span>
+<span class="done">│   ├── Editar perfil ✅</span>
+<span class="done">│   ├── Logout seguro ✅</span>
+<span class="done">│   ├── Geração de AuthToken ✅</span>
+<span class="done">│   └── Revogação de token ✅</span>
+│
+<span class="done">├── 3. CLIENTE ✅</span>
+<span class="done">│   ├── Cadastro ✅</span>
+<span class="done">│   ├── Login ✅</span>
+<span class="done">│   ├── Sessão protegida ✅</span>
+<span class="done">│   ├── Perfil ✅</span>
+<span class="done">│   ├── Editar perfil ✅</span>
+<span class="done">│   ├── Logout seguro ✅</span>
+<span class="done">│   ├── Geração de AuthToken ✅</span>
+<span class="done">│   └── Revogação de token ✅</span>
+│
+<span class="done">├── 4. PRODUTOS ✅</span>
+<span class="done">│   ├── Cadastrar ✅</span>
+<span class="done">│   ├── Listar ✅</span>
+<span class="done">│   ├── Editar ✅</span>
+<span class="done">│   ├── Atualizar preço ✅</span>
+<span class="done">│   ├── Atualizar estoque ✅</span>
+<span class="done">│   ├── Excluir ✅</span>
+<span class="done">│   ├── Autenticação por token ✅</span>
+<span class="done">│   ├── Autenticação por sessão ✅</span>
+<span class="done">│   ├── Proteção dos endpoints ✅</span>
+<span class="done">│   └── Isolamento entre supermercados ✅</span>
+│
+<span class="done">├── 5. FEED ✅</span>
+<span class="done">│   ├── Produtos reais ✅</span>
+<span class="done">│   ├── Preços reais ✅</span>
+<span class="done">│   ├── Supermercado ✅</span>
+<span class="done">│   ├── Adicionar ao carrinho ✅</span>
+<span class="done">│   └── Consulta pública preservada ✅</span>
+│
+<span class="done">├── 6. CARRINHO ✅</span>
+<span class="done">│   ├── Adicionar produtos ✅</span>
+<span class="done">│   ├── Alterar quantidade ✅</span>
+<span class="done">│   ├── Remover ✅</span>
+<span class="done">│   └── Calcular total ✅</span>
+│
+<span class="done">├── 7. CHECKOUT ✅</span>
+<span class="done">│   ├── Endereço ✅</span>
+<span class="done">│   ├── Entrega/retirada ✅</span>
+<span class="done">│   ├── Forma de pagamento ✅</span>
+<span class="done">│   ├── Criar pedido ✅</span>
+<span class="done">│   ├── Atualizar estoque ✅</span>
+<span class="done">│   └── Autenticação do cliente ✅</span>
+│
+<span class="done">├── 8. PEDIDOS DO CLIENTE ✅</span>
+<span class="done">│   ├── Histórico ✅</span>
+<span class="done">│   ├── Status ✅</span>
+<span class="done">│   ├── Itens ✅</span>
+<span class="done">│   ├── Valores ✅</span>
+<span class="done">│   ├── Autenticação por token ✅</span>
+<span class="done">│   └── Isolamento de consultas ✅</span>
+│
+<span class="done">├── 9. PEDIDOS DO SUPERMERCADO ✅</span>
+<span class="done">│   ├── Pedidos recebidos ✅</span>
+<span class="done">│   ├── Selecionar pedido ✅</span>
+<span class="done">│   ├── Ver cliente ✅</span>
+<span class="done">│   ├── Ver itens ✅</span>
+<span class="done">│   ├── Ver pagamento ✅</span>
+<span class="done">│   ├── Confirmado ✅</span>
+<span class="done">│   ├── Preparando ✅</span>
+<span class="done">│   ├── Enviado ✅</span>
+<span class="done">│   ├── Concluído ✅</span>
+<span class="done">│   └── Autenticação por token e sessão ✅</span>
+│
+├── 10. CUPONS ⚠️
+<span class="done">│   ├── Backend funcionando ✅</span>
+<span class="done">│   ├── Aplicar no checkout ✅</span>
+<span class="done">│   ├── Cadastro de cupons pelo mercado ✅</span>
+<span class="done">│   ├── Edição de cupons ✅</span>
+<span class="done">│   ├── Exclusão/desativação de cupons ✅</span>
+<span class="done">│   ├── Tela de gerenciamento ✅</span>
+│   └── Revisar regras e limites de uso ⏳
+│
+├── 11. PIX / MERCADO PAGO ⚠️
+<span class="done">│   ├── PIX Sandbox funcionando ✅</span>
+<span class="done">│   ├── QR Code ✅</span>
+<span class="done">│   ├── Status do pagamento ✅</span>
+<span class="done">│   ├── Proteção da consulta de pagamento ✅</span>
+<span class="done">│   ├── Isolamento entre clientes ✅</span>
+│   ├── Webhook real ⏳
+│   ├── Idempotência definitiva ⏳
+│   └── Configuração de produção ⏳
+│
+<span class="done">├── 12. ALERTA DE PREÇO ✅</span>
+<span class="done">│   ├── Backend ✅</span>
+<span class="done">│   ├── Notificações ✅</span>
+<span class="done">│   ├── Tela de alertas ✅</span>
+<span class="done">│   ├── Autenticação por token ✅</span>
+<span class="done">│   ├── Isolamento entre clientes ✅</span>
+<span class="done">│   ├── Proteção das notificações ✅</span>
+<span class="done">│   ├── Criar alerta direto pelo feed ✅</span>
+<span class="done">│   ├── Editar alerta ✅</span>
+<span class="done">│   └── Excluir alerta ✅</span>
+│
+<span class="done">├── 13. AVALIAÇÕES ✅</span>
+<span class="done">│   ├── Avaliar pedido concluído ✅</span>
+<span class="done">│   ├── Nota ✅</span>
+<span class="done">│   ├── Comentário ✅</span>
+<span class="done">│   ├── Autenticação por token e sessão ✅</span>
+<span class="done">│   ├── Mostrar avaliações no feed ✅</span>
+<span class="done">│   └── Exibir média das avaliações ✅</span>
+│
+<span class="done">├── 14. SEGURANÇA ✅</span>
+│   │
+<span class="done">│   ├── AUTENTICAÇÃO ✅</span>
+<span class="done">│   │   ├── AuthToken ✅</span>
+<span class="done">│   │   ├── Token do cliente ✅</span>
+<span class="done">│   │   ├── Token do supermercado ✅</span>
+<span class="done">│   │   ├── Autenticação centralizada ✅</span>
+<span class="done">│   │   ├── Autenticação por sessão ✅</span>
+<span class="done">│   │   ├── Bloqueio de token inválido ✅</span>
+<span class="done">│   │   └── Bloqueio sem autenticação ✅</span>
+│   │
+<span class="done">│   ├── PERMISSÕES ✅</span>
+<span class="done">│   │   ├── ClienteAutenticado ✅</span>
+<span class="done">│   │   ├── SupermercadoAutenticado ✅</span>
+<span class="done">│   │   ├── Revisão de AllowAny ✅</span>
+<span class="done">│   │   ├── Proteção de SupermercadoDetalhe ✅</span>
+<span class="done">│   │   ├── Proteção dos produtos ✅</span>
+<span class="done">│   │   ├── Proteção dos perfis ✅</span>
+<span class="done">│   │   ├── Proteção dos pedidos ✅</span>
+<span class="done">│   │   ├── Proteção dos alertas ✅</span>
+<span class="done">│   │   ├── Proteção das avaliações ✅</span>
+<span class="done">│   │   └── Restrição de dados públicos ✅</span>
+│   │
+<span class="done">│   ├── SESSÕES E LOGOUT ✅</span>
+<span class="done">│   │   ├── Renovação da sessão no login ✅</span>
+<span class="done">│   │   ├── Limpeza da sessão anterior ✅</span>
+<span class="done">│   │   ├── Revogação de token no logout ✅</span>
+<span class="done">│   │   ├── Revogação após trocar senha ✅</span>
+<span class="done">│   │   └── Proteção CSRF implementada ✅</span>
+│   │
+<span class="done">│   ├── API MOBILE ✅</span>
+<span class="done">│   │   ├── Consumo da API por token ✅</span>
+<span class="done">│   │   ├── Configuração de CORS ✅</span>
+<span class="done">│   │   ├── Origens permitidas ✅</span>
+<span class="done">│   │   ├── Preparação para Ionic + Angular ✅</span>
+<span class="done">│   │   └── Documentação API_MOBILE.md ✅</span>
+│   │
+│   └── SEGURANÇA COMPLEMENTAR ⏳
+│       ├── Revisar unicidade de e-mail ⏳
+│       ├── Revisar validação de CNPJ ⏳
+│       ├── SECRET_KEY de produção ⏳
+│       ├── HTTPS e HSTS ⏳
+│       ├── Cookies seguros em produção ⏳
+│       ├── DEBUG em produção ⏳
+│       ├── Configuração de SMTP ⏳
+│       └── Revisão final do middleware CSRF ⏳
+│
+<span class="done">├── 15. PEDIDO COM MAIS DE UM SUPERMERCADO ✅</span>
+│   ├── Hoje o status pertence ao Pedido inteiro
+│   ├── Separar pedidos por supermercado
+<span class="done">│   │   ou criar status individual por loja ✅</span>
+<span class="done">│   ├── Isolar atualização de status por loja ✅</span>
+<span class="done">│   └── Testar compras em várias lojas ✅</span>
+│
+├── 16. CANCELAMENTO / ESTOQUE ⏳
+│   ├── Pedido cancelado devolver estoque ⏳
+│   ├── PIX não pago liberar estoque ⏳
+│   ├── Cupom cancelado devolver utilização ⏳
+│   ├── Impedir devolução duplicada ⏳
+│   └── Revisar controle de estoque ⏳
+│
+├── 17. SENHA / RECUPERAÇÃO ⚠️
+<span class="done">│   ├── API para trocar senha do cliente ✅</span>
+<span class="done">│   ├── API para trocar senha do mercado ✅</span>
+<span class="done">│   ├── Validar senha atual ✅</span>
+<span class="done">│   ├── Confirmar nova senha ✅</span>
+<span class="done">│   ├── Validação de segurança da senha ✅</span>
+<span class="done">│   ├── Armazenamento por hash ✅</span>
+<span class="done">│   ├── Revogar token antigo ✅</span>
+<span class="done">│   ├── Testes automatizados ✅</span>
+│   ├── Interface web para trocar senha ⏳
+│   └── Esqueci minha senha ⏳
+│
+├── 18. INTERFACE / ACABAMENTO ⚠️
+<span class="done">│   ├── Correção do fluxo de cadastro da loja ✅</span>
+<span class="done">│   ├── Integração do frontend com CSRF ✅</span>
+<span class="done">│   ├── Centralização de requisições à API ✅</span>
+│   ├── Visão Geral do supermercado ⏳
+│   ├── Corrigir links &quot;#&quot; restantes ⏳
+│   ├── Padronizar mensagens ⏳
+│   ├── Padronizar responsividade ⏳
+│   └── Revisar telas em celular ⏳
+│
+├── 19. TESTES FINAIS ⚠️
+<span class="done">│   ├── Cliente A não vê dados do Cliente B ✅</span>
+│   │   └── Nos cenários testados
+<span class="done">│   ├── Mercado A não gerencia produtos de B ✅</span>
+<span class="done">│   ├── Bloqueio de token inválido ✅</span>
+<span class="done">│   ├── Bloqueio sem autenticação ✅</span>
+<span class="done">│   ├── Bloqueio entre tipos de conta ✅</span>
+<span class="done">│   ├── Alteração de senha ✅</span>
+<span class="done">│   ├── Revogação de token ✅</span>
+<span class="done">│   ├── Testes de CSRF ✅</span>
+<span class="done">│   ├── Testes de CORS ✅</span>
+<span class="done">│   ├── Testes de dados públicos ✅</span>
+<span class="done">│   ├── 20 testes automatizados aprovados ✅</span>
+│   ├── Estoque zerado ⏳
+│   ├── Cupom inválido ⏳
+│   ├── Pagamento recusado ⏳
+│   ├── Pedido cancelado ⏳
+│   ├── Pedidos com várias lojas ⏳
+│   ├── Teste real com Ionic ⏳
+│   └── Fluxo completo após integração ⏳
+│
+└── 20. ENTREGA DO PROJETO ⚠️
+<span class="done">    ├── requirements.txt ✅</span>
+<span class="done">    ├── .env.example existente ✅</span>
+<span class="done">    ├── Documentação da API Mobile ✅</span>
+<span class="done">    ├── Instruções para instalar backend ✅</span>
+<span class="done">    ├── Instruções para rodar backend ✅</span>
+<span class="done">    ├── Branch de segurança publicada ✅</span>
+<span class="done">    ├── 8 commits de segurança ✅</span>
+<span class="done">    ├── Pull Request #11 ✅</span>
+<span class="done">    ├── Integração da segurança ✅</span>
+    ├── README.md geral ⏳
+    ├── Revisar .env.example ⏳
+    ├── Limpar dados de teste ⏳
+    ├── Integrar branches dos colegas ⏳
+    ├── Revisar GitHub ⏳
+    ├── Merge final na main ⏳
+    └── Versão final para apresentação ⏳</pre></main></body>
+</html>

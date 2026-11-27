@@ -1,12 +1,13 @@
 from django.middleware.csrf import rotate_token
 from .csrf import assinatura_sessao
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Q, F
+from django.db.models import Q, F, Avg, Count
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -30,6 +31,7 @@ from .models import (
     Cupom,
     Pedido,
     ItemPedido,
+    PedidoPorSupermercado,
     Pagamento,
     AlertaPreco,
     Notificacao,
@@ -481,7 +483,10 @@ class FeedProdutos(APIView):
     def get(self, request):
         produtos = Produto.objects.filter(
             supermercado__isnull=False
-        ).select_related('supermercado').order_by('-criado_em')
+        ).select_related('supermercado').annotate(
+            media_avaliacoes=Avg('avaliacoes__nota'),
+            total_avaliacoes=Count('avaliacoes')
+        ).order_by('-criado_em')
 
         dados = []
 
@@ -489,10 +494,17 @@ class FeedProdutos(APIView):
             dados.append({
                 'id': produto.id,
                 'nome': produto.nome,
+                'tamanho_embalagem': produto.tamanho_embalagem,
                 'categoria': produto.categoria,
                 'preco': str(produto.preco),
                 'estoque': produto.estoque,
                 'descricao': produto.descricao,
+                'media_avaliacoes': (
+                    round(produto.media_avaliacoes, 2)
+                    if produto.media_avaliacoes is not None
+                    else None
+                ),
+                'total_avaliacoes': produto.total_avaliacoes,
                 'supermercado': {
                     'id': produto.supermercado.id,
                     'nome': produto.supermercado.nome,
@@ -521,6 +533,7 @@ class CupomList(APIView):
                 Q(limite_uso__isnull=True) |
                 Q(usos__lt=F('limite_uso'))
             )
+            .select_related('supermercado')
             .order_by('data_fim', 'codigo')
         )
 
@@ -542,9 +555,226 @@ class CupomList(APIView):
                 'data_inicio': cupom.data_inicio,
                 'data_fim': cupom.data_fim,
                 'usos_restantes': usos_restantes,
+                'supermercado_id': cupom.supermercado_id,
+                'supermercado': (
+                    cupom.supermercado.nome
+                    if cupom.supermercado
+                    else None
+                ),
             })
 
         return Response(dados)
+
+
+def serializar_cupom(cupom):
+    usos_restantes = None
+    if cupom.limite_uso is not None:
+        usos_restantes = max(cupom.limite_uso - cupom.usos, 0)
+
+    return {
+        'id': cupom.id,
+        'codigo': cupom.codigo,
+        'descricao': cupom.descricao,
+        'tipo': cupom.tipo,
+        'valor': str(cupom.valor),
+        'valor_minimo': str(cupom.valor_minimo),
+        'data_inicio': cupom.data_inicio,
+        'data_fim': cupom.data_fim,
+        'ativo': cupom.ativo,
+        'limite_uso': cupom.limite_uso,
+        'usos': cupom.usos,
+        'usos_restantes': usos_restantes,
+        'supermercado_id': cupom.supermercado_id,
+    }
+
+
+class CupomGerenciamento(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [SupermercadoAutenticado]
+
+    campos = (
+        'codigo',
+        'descricao',
+        'tipo',
+        'valor',
+        'valor_minimo',
+        'data_inicio',
+        'data_fim',
+        'ativo',
+        'limite_uso',
+    )
+
+    def get_queryset(self, request):
+        return Cupom.objects.filter(
+            supermercado_id=request.supermercado_id
+        ).order_by('-criado_em', 'codigo')
+
+    def get(self, request):
+        return Response([
+            serializar_cupom(cupom)
+            for cupom in self.get_queryset(request)
+        ])
+
+    def post(self, request):
+        return self._salvar(request)
+
+    def put(self, request, cupom_id):
+        return self._salvar(request, cupom_id=cupom_id)
+
+    def patch(self, request, cupom_id):
+        return self._salvar(request, cupom_id=cupom_id)
+
+    def delete(self, request, cupom_id):
+        cupom = get_object_or_404(
+            self.get_queryset(request),
+            pk=cupom_id
+        )
+        cupom.ativo = False
+        cupom.save(update_fields=['ativo'])
+        return Response({
+            'mensagem': 'Cupom desativado com sucesso.',
+            'id': cupom.id,
+            'ativo': False,
+        })
+
+    def _salvar(self, request, cupom_id=None):
+        if not hasattr(request.data, 'items'):
+            return Response({'erro': 'Envie os dados do cupom em um objeto.'}, status=400)
+
+        cupom = None
+        if cupom_id is not None:
+            cupom = get_object_or_404(
+                self.get_queryset(request),
+                pk=cupom_id
+            )
+
+        valores = {
+            campo: getattr(cupom, campo, None)
+            for campo in self.campos
+        }
+        valores.update(request.data)
+
+        codigo = str(valores.get('codigo') or '').strip().upper()
+        descricao = str(valores.get('descricao') or '').strip()
+        tipo = str(valores.get('tipo') or 'percentual').strip()
+
+        if not codigo:
+            return Response({'erro': 'Informe o código do cupom.'}, status=400)
+        if len(codigo) > 50:
+            return Response({'erro': 'O código pode ter até 50 caracteres.'}, status=400)
+        if tipo not in dict(Cupom.TIPO_CHOICES):
+            return Response({'erro': 'Tipo de desconto inválido.'}, status=400)
+
+        try:
+            valor = Decimal(str(valores.get('valor')))
+            valor_minimo = Decimal(str(valores.get('valor_minimo') or '0'))
+        except (InvalidOperation, ValueError, TypeError):
+            return Response({'erro': 'Informe valores numéricos válidos.'}, status=400)
+
+        if not valor.is_finite() or not valor_minimo.is_finite():
+            return Response({'erro': 'Informe valores numéricos válidos.'}, status=400)
+        if valor <= 0:
+            return Response({'erro': 'O desconto deve ser maior que zero.'}, status=400)
+        if valor_minimo < 0:
+            return Response({'erro': 'A compra mínima não pode ser negativa.'}, status=400)
+        if valor >= Decimal('100000000') or valor_minimo >= Decimal('100000000'):
+            return Response({'erro': 'Os valores devem ser inferiores a R$ 100.000.000,00.'}, status=400)
+        try:
+            if valor != valor.quantize(Decimal('0.01')) or valor_minimo != valor_minimo.quantize(Decimal('0.01')):
+                return Response({'erro': 'Os valores devem ter no máximo duas casas decimais.'}, status=400)
+        except InvalidOperation:
+            return Response({'erro': 'Informe valores numéricos válidos.'}, status=400)
+        if tipo == 'percentual' and valor > 100:
+            return Response({'erro': 'O desconto percentual deve ser de até 100%.'}, status=400)
+
+        inicio_raw = valores.get('data_inicio')
+        fim_raw = valores.get('data_fim')
+        try:
+            inicio = parse_datetime(str(inicio_raw)) if inicio_raw else None
+            fim = parse_datetime(str(fim_raw)) if fim_raw else None
+        except (TypeError, ValueError):
+            inicio = fim = None
+        if inicio is None or fim is None:
+            return Response({'erro': 'Informe datas de início e fim válidas.'}, status=400)
+        if timezone.is_naive(inicio):
+            inicio = timezone.make_aware(inicio, timezone.get_current_timezone())
+        if timezone.is_naive(fim):
+            fim = timezone.make_aware(fim, timezone.get_current_timezone())
+        if fim <= inicio:
+            return Response({'erro': 'A data final deve ser posterior à data inicial.'}, status=400)
+
+        limite_raw = valores.get('limite_uso')
+        if limite_raw in (None, ''):
+            limite_uso = None
+        else:
+            try:
+                limite_uso = int(limite_raw)
+            except (TypeError, ValueError):
+                return Response({'erro': 'O limite de uso deve ser um número inteiro.'}, status=400)
+            if limite_uso < 1:
+                return Response({'erro': 'O limite de uso deve ser maior que zero.'}, status=400)
+
+        ativo_raw = valores.get('ativo')
+        if ativo_raw is None:
+            ativo_raw = True
+        if isinstance(ativo_raw, bool):
+            ativo = ativo_raw
+        elif str(ativo_raw).lower() in ('true', '1', 'sim'):
+            ativo = True
+        elif str(ativo_raw).lower() in ('false', '0', 'nao', 'não'):
+            ativo = False
+        else:
+            return Response({'erro': 'O estado ativo do cupom é inválido.'}, status=400)
+
+        duplicado = Cupom.objects.filter(codigo__iexact=codigo)
+        if cupom is not None:
+            duplicado = duplicado.exclude(pk=cupom.pk)
+        if duplicado.exists():
+            return Response({'erro': 'Já existe um cupom com esse código.'}, status=400)
+
+        campos_atualizados = {
+            'codigo': codigo,
+            'descricao': descricao,
+            'tipo': tipo,
+            'valor': valor,
+            'valor_minimo': valor_minimo,
+            'data_inicio': inicio,
+            'data_fim': fim,
+            'ativo': ativo,
+            'limite_uso': limite_uso,
+        }
+
+        if cupom is None:
+            cupom = Cupom.objects.create(
+                supermercado_id=request.supermercado_id,
+                **campos_atualizados
+            )
+            status = 201
+        else:
+            for campo, valor_campo in campos_atualizados.items():
+                setattr(cupom, campo, valor_campo)
+            cupom.save(update_fields=list(campos_atualizados.keys()))
+            status = 200
+
+        return Response(serializar_cupom(cupom), status=status)
+
+
+def resumo_status_pedido(status_pagamento, subpedidos):
+    status_lojas = [subpedido.status for subpedido in subpedidos]
+    if not status_lojas:
+        return status_pagamento
+
+    if status_pagamento == 'aguardando_pagamento':
+        return status_pagamento
+
+    if len(set(status_lojas)) == 1:
+        return status_lojas[0]
+
+    finais = {'concluido', 'cancelado'}
+    if all(status in finais for status in status_lojas):
+        return 'parcialmente_finalizado'
+
+    return 'em_andamento'
 
 
 class PedidoList(APIView):
@@ -557,12 +787,16 @@ class PedidoList(APIView):
         pedidos = (
             Pedido.objects
             .filter(cliente_id=cliente_id)
-            .prefetch_related('itens')
+            .prefetch_related(
+                'itens__supermercado',
+                'subpedidos__supermercado'
+            )
             .order_by('-criado_em')
         )
 
         dados = []
         for pedido in pedidos:
+            subpedidos = list(pedido.subpedidos.all())
             dados.append({
                 'id': pedido.id,
                 'tipo_entrega': pedido.tipo_entrega,
@@ -573,8 +807,25 @@ class PedidoList(APIView):
                 'desconto': str(pedido.desconto),
                 'taxa_entrega': str(pedido.taxa_entrega),
                 'total': str(pedido.total),
-                'status': pedido.status,
+                'status': resumo_status_pedido(pedido.status, subpedidos),
+                'status_pagamento': pedido.status,
                 'criado_em': pedido.criado_em,
+                'supermercados': [
+                    {
+                        'id': subpedido.supermercado_id,
+                        'nome': subpedido.supermercado.nome,
+                        'status': subpedido.status,
+                        'subtotal': str(sum(
+                            (
+                                item.subtotal
+                                for item in pedido.itens.all()
+                                if item.supermercado_id == subpedido.supermercado_id
+                            ),
+                            Decimal('0.00')
+                        )),
+                    }
+                    for subpedido in subpedidos
+                ],
                 'itens': [
                     {
                         'produto_id': item.produto_id,
@@ -627,6 +878,7 @@ class PedidoList(APIView):
                 cliente = Cliente.objects.get(pk=cliente_id)
                 produtos_pedido = []
                 subtotal = Decimal('0.00')
+                subtotais_por_supermercado = {}
 
                 for item in itens:
                     produto_id = item.get('produto_id')
@@ -669,6 +921,12 @@ class PedidoList(APIView):
 
                     subtotal_item = produto.preco * quantidade
                     subtotal += subtotal_item
+                    subtotais_por_supermercado[produto.supermercado_id] = (
+                        subtotais_por_supermercado.get(
+                            produto.supermercado_id,
+                            Decimal('0.00')
+                        ) + subtotal_item
+                    )
 
                     produtos_pedido.append({
                         'produto': produto,
@@ -722,7 +980,19 @@ class PedidoList(APIView):
                             status=400
                         )
 
-                    if subtotal < cupom_obj.valor_minimo:
+                    subtotal_elegivel = subtotal
+                    if cupom_obj.supermercado_id is not None:
+                        subtotal_elegivel = subtotais_por_supermercado.get(
+                            cupom_obj.supermercado_id,
+                            Decimal('0.00')
+                        )
+                        if subtotal_elegivel <= 0:
+                            return Response(
+                                {'erro': 'Este cupom não se aplica aos produtos do carrinho.'},
+                                status=400
+                            )
+
+                    if subtotal_elegivel < cupom_obj.valor_minimo:
                         return Response(
                             {
                                 'erro': (
@@ -735,13 +1005,13 @@ class PedidoList(APIView):
 
                     if cupom_obj.tipo == 'percentual':
                         desconto = (
-                            subtotal
+                            subtotal_elegivel
                             * (cupom_obj.valor / Decimal('100'))
                         )
                     else:
                         desconto = cupom_obj.valor
 
-                    desconto = min(desconto, subtotal)
+                    desconto = min(desconto, subtotal_elegivel)
 
                 desconto = desconto.quantize(Decimal('0.01'))
                 taxa_entrega = Decimal('0.00')
@@ -784,6 +1054,15 @@ class PedidoList(APIView):
 
                     produto.estoque -= quantidade
                     produto.save(update_fields=['estoque'])
+
+                PedidoPorSupermercado.objects.bulk_create([
+                    PedidoPorSupermercado(
+                        pedido=pedido,
+                        supermercado_id=supermercado_id,
+                        status=status_pedido
+                    )
+                    for supermercado_id in subtotais_por_supermercado
+                ])
 
                 if cupom_obj is not None:
                     cupom_obj.usos += 1
@@ -977,6 +1256,10 @@ class StatusPagamentoPix(APIView):
         )
 
         if pagamento_confirmado:
+            PedidoPorSupermercado.objects.filter(
+                pedido=pedido,
+                status='aguardando_pagamento'
+            ).update(status='confirmado')
             pedido.status = 'confirmado'
             pedido.save(
                 update_fields=['status']
@@ -987,6 +1270,9 @@ class StatusPagamentoPix(APIView):
             'expired',
             'failed'
         ]:
+            PedidoPorSupermercado.objects.filter(
+                pedido=pedido
+            ).update(status='cancelado')
             pedido.status = 'cancelado'
             pedido.save(
                 update_fields=['status']
@@ -994,7 +1280,11 @@ class StatusPagamentoPix(APIView):
 
         return Response({
             'pedido_id': pedido.id,
-            'pedido_status': pedido.status,
+            'pedido_status': resumo_status_pedido(
+                pedido.status,
+                list(pedido.subpedidos.all())
+            ),
+            'status_pagamento': pedido.status,
             'pagamento': {
                 'status': pagamento.status,
                 'status_detail': pagamento.status_detail,
@@ -1136,6 +1426,71 @@ class AlertaPrecoList(APIView):
             status=201 if criado else 200
         )
 
+    def put(self, request, alerta_id):
+        return self._atualizar(request, alerta_id)
+
+    def patch(self, request, alerta_id):
+        return self._atualizar(request, alerta_id)
+
+    def delete(self, request, alerta_id):
+        alerta = get_object_or_404(
+            AlertaPreco,
+            pk=alerta_id,
+            cliente_id=request.cliente_id
+        )
+        alerta.ativo = False
+        alerta.save(update_fields=['ativo', 'atualizado_em'])
+        return Response({
+            'mensagem': 'Alerta desativado com sucesso.',
+            'id': alerta.id,
+            'ativo': False,
+        })
+
+    def _atualizar(self, request, alerta_id):
+        alerta = get_object_or_404(
+            AlertaPreco,
+            pk=alerta_id,
+            cliente_id=request.cliente_id
+        )
+
+        if 'preco_alvo' in request.data:
+            try:
+                preco_alvo = Decimal(str(request.data.get('preco_alvo')))
+            except (InvalidOperation, ValueError, TypeError):
+                return Response({'erro': 'Preço desejado inválido.'}, status=400)
+            if not preco_alvo.is_finite() or preco_alvo <= 0:
+                return Response({'erro': 'O preço desejado deve ser maior que zero.'}, status=400)
+            if preco_alvo >= Decimal('100000000'):
+                return Response({'erro': 'O preço desejado é muito alto.'}, status=400)
+            try:
+                if preco_alvo != preco_alvo.quantize(Decimal('0.01')):
+                    return Response({'erro': 'O preço deve ter no máximo duas casas decimais.'}, status=400)
+            except InvalidOperation:
+                return Response({'erro': 'Preço desejado inválido.'}, status=400)
+            alerta.preco_alvo = preco_alvo
+            alerta.atingido = False
+            alerta.ativo = True
+
+        if 'ativo' in request.data:
+            ativo_raw = request.data.get('ativo')
+            if isinstance(ativo_raw, bool):
+                alerta.ativo = ativo_raw
+            elif str(ativo_raw).lower() in ('true', '1', 'sim'):
+                alerta.ativo = True
+            elif str(ativo_raw).lower() in ('false', '0', 'nao', 'não'):
+                alerta.ativo = False
+            else:
+                return Response({'erro': 'Estado do alerta inválido.'}, status=400)
+
+        alerta.save(update_fields=['preco_alvo', 'ativo', 'atingido', 'atualizado_em'])
+        return Response({
+            'mensagem': 'Alerta atualizado com sucesso.',
+            'id': alerta.id,
+            'preco_alvo': str(alerta.preco_alvo),
+            'ativo': alerta.ativo,
+            'atingido': alerta.atingido,
+        })
+
 
 class NotificacaoList(APIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
@@ -1238,7 +1593,8 @@ class AvaliacaoList(APIView):
             ItemPedido.objects
             .filter(
                 pedido__cliente_id=cliente_id,
-                pedido__status='concluido',
+                pedido__subpedidos__supermercado_id=F('supermercado_id'),
+                pedido__subpedidos__status='concluido',
                 avaliacao__isnull=True
             )
             .select_related(
@@ -1350,7 +1706,12 @@ class AvaliacaoList(APIView):
             pedido__cliente_id=cliente_id
         )
 
-        if item.pedido.status != 'concluido':
+        loja_concluida = PedidoPorSupermercado.objects.filter(
+            pedido=item.pedido,
+            supermercado=item.supermercado,
+            status='concluido'
+        ).exists()
+        if not loja_concluida:
             return Response(
                 {
                     'erro': (
@@ -1407,6 +1768,56 @@ class AvaliacaoList(APIView):
             },
             status=201
         )
+
+
+class AvaliacoesPublicas(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        produto_id = request.query_params.get('produto_id')
+        if not produto_id or not str(produto_id).isdigit():
+            return Response(
+                {'erro': 'Informe um produto válido.'},
+                status=400
+            )
+
+        produto = get_object_or_404(
+            Produto.objects.select_related('supermercado'),
+            pk=int(produto_id)
+        )
+        avaliacoes = Avaliacao.objects.filter(
+            produto_id=produto.id
+        ).order_by('-criada_em')
+        resumo = avaliacoes.aggregate(
+            media=Avg('nota'),
+            total=Count('id')
+        )
+
+        return Response({
+            'produto_id': produto.id,
+            'produto': produto.nome,
+            'supermercado': (
+                produto.supermercado.nome
+                if produto.supermercado
+                else ''
+            ),
+            'media': (
+                round(resumo['media'], 2)
+                if resumo['media'] is not None
+                else None
+            ),
+            'total': resumo['total'],
+            'avaliacoes': [
+                {
+                    'nota': avaliacao.nota,
+                    'preco_correto': avaliacao.preco_correto,
+                    'entrega_ok': avaliacao.entrega_ok,
+                    'comentario': avaliacao.comentario,
+                    'criada_em': avaliacao.criada_em,
+                }
+                for avaliacao in avaliacoes[:20]
+            ],
+        })
 
 
 class PerfilCliente(APIView):
@@ -1553,6 +1964,11 @@ class PedidosSupermercadoList(APIView):
 
     def get(self, request):
         supermercado_id = request.supermercado_id
+        status_por_pedido = dict(
+            PedidoPorSupermercado.objects
+            .filter(supermercado_id=supermercado_id)
+            .values_list('pedido_id', 'status')
+        )
 
         itens = (
             ItemPedido.objects
@@ -1612,8 +2028,10 @@ class PedidosSupermercadoList(APIView):
                     'pagamento_status':
                         pagamento_status,
 
-                    'status':
-                        pedido.status,
+                    'status': status_por_pedido.get(
+                        pedido.id,
+                        pedido.status
+                    ),
 
                     'criado_em':
                         pedido.criado_em,
@@ -1669,6 +2087,12 @@ class StatusPedidoSupermercado(APIView):
             itens__supermercado_id=supermercado_id
         )
 
+        subpedido = get_object_or_404(
+            PedidoPorSupermercado,
+            pedido=pedido,
+            supermercado_id=supermercado_id
+        )
+
         novo_status = request.data.get(
             'status'
         )
@@ -1701,7 +2125,7 @@ class StatusPedidoSupermercado(APIView):
                 status=400
             )
 
-        if pedido.status in [
+        if subpedido.status in [
             'concluido',
             'cancelado'
         ]:
@@ -1724,7 +2148,7 @@ class StatusPedidoSupermercado(APIView):
         if novo_status != 'cancelado':
 
             status_esperado = fluxo.get(
-                pedido.status
+                subpedido.status
             )
 
             if novo_status != status_esperado:
@@ -1739,12 +2163,15 @@ class StatusPedidoSupermercado(APIView):
                     status=400
                 )
 
-        status_anterior = pedido.status
+        status_anterior = subpedido.status
+        subpedido.status = novo_status
+        subpedido.save(
+            update_fields=['status', 'atualizado_em']
+        )
 
-        pedido.status = novo_status
-
-        pedido.save(
-            update_fields=['status']
+        status_resumo = resumo_status_pedido(
+            pedido.status,
+            list(pedido.subpedidos.all())
         )
 
         return Response({
@@ -1755,7 +2182,9 @@ class StatusPedidoSupermercado(APIView):
             'status_anterior':
                 status_anterior,
             'status':
-                pedido.status,
+                subpedido.status,
+            'pedido_status':
+                status_resumo,
         })
 
 
@@ -1775,35 +2204,21 @@ class PerfilSupermercado(APIView):
             supermercado_id=supermercado_id
         )
 
-        itens = (
-            ItemPedido.objects
-            .filter(
-                supermercado_id=supermercado_id
-            )
-            .select_related('pedido')
+        subpedidos = PedidoPorSupermercado.objects.filter(
+            supermercado_id=supermercado_id
         )
-
-        pedidos_recebidos = len({
-            item.pedido_id
-            for item in itens
-        })
-
-        pedidos_abertos = len({
-            item.pedido_id
-            for item in itens
-            if item.pedido.status in [
-                'confirmado',
-                'preparando',
-                'enviado',
-            ]
-        })
-
+        pedidos_recebidos = subpedidos.count()
+        pedidos_abertos = subpedidos.filter(
+            status__in=['confirmado', 'preparando', 'enviado']
+        ).count()
+        pedidos_concluidos_ids = subpedidos.filter(
+            status='concluido'
+        ).values_list('pedido_id', flat=True)
         total_vendido = sum(
-            (
-                item.subtotal
-                for item in itens
-                if item.pedido.status == 'concluido'
-            ),
+            ItemPedido.objects.filter(
+                supermercado_id=supermercado_id,
+                pedido_id__in=pedidos_concluidos_ids
+            ).values_list('subtotal', flat=True),
             Decimal('0.00')
         )
 

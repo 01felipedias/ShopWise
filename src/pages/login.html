@@ -107,6 +107,8 @@
                     Entrar
                 </button>
 
+                <p class="auth-feedback" id="authFeedback" role="alert" aria-live="polite" hidden></p>
+
             </form>
 
 
@@ -135,6 +137,12 @@
 <script>
 
 const formLogin = document.getElementById('formLoginCliente');
+const authFeedback = document.getElementById('authFeedback');
+
+function mostrarFeedbackLogin(mensagem) {
+    authFeedback.textContent = mensagem;
+    authFeedback.hidden = false;
+}
 
 
 formLogin.addEventListener('submit', async function(event) {
@@ -172,7 +180,7 @@ formLogin.addEventListener('submit', async function(event) {
 
         if (!resposta.ok) {
 
-            alert(
+            mostrarFeedbackLogin(
                 dados.erro ||
                 'E-mail ou senha inválidos.'
             );
@@ -187,9 +195,6 @@ formLogin.addEventListener('submit', async function(event) {
         );
 
 
-        alert('Login realizado com sucesso!');
-
-
         window.location.href = 'feedproduto.html';
 
 
@@ -197,7 +202,7 @@ formLogin.addEventListener('submit', async function(event) {
 
         console.error(erro);
 
-        alert(
+        mostrarFeedbackLogin(
             'Não foi possível conectar com o servidor.'
         );
 

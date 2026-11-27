@@ -180,3 +180,57 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+.mp-feedback-message {
+    margin: 0;
+    color: #617067;
+    line-height: 1.55;
+}
+
+.mp-feedback-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.mp-feedback-button {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid #1c9b59;
+    border-radius: 9px;
+    background: #1c9b59;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mp-feedback-button:hover {
+    background: #16844b;
+}
+
+.mp-feedback-button.secondary {
+    border-color: #dbe7e2;
+    background: #fff;
+    color: #435148;
+}
+
+.mp-feedback-button.secondary:hover {
+    background: #f4f8f5;
+}
+
+.mp-feedback-button.danger {
+    border-color: #d94c4c;
+    background: #d94c4c;
+}
+
+.mp-feedback-button.danger:hover {
+    background: #bd3939;
+}
+
+.btn-notificar:disabled {
+    background: #e9eef0;
+    color: #78848b;
+    cursor: not-allowed;
+}

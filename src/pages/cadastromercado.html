@@ -85,6 +85,8 @@
                     Cadastrar Supermercado
                 </button>
 
+                <p class="auth-feedback" id="authFeedback" role="alert" aria-live="polite" hidden></p>
+
             </form>
             <div class="bottom-links">
                 <a href="login-supermercado.html">Já possui conta? Entrar</a>
@@ -108,6 +110,17 @@
 </body>
 <script>
     const form = document.getElementById('form-supermercado');
+    const authFeedback = document.getElementById('authFeedback');
+
+    function mostrarFeedbackCadastro(mensagem) {
+        authFeedback.textContent = mensagem;
+        authFeedback.hidden = false;
+    }
+
+    function mensagemErroApi(dados) {
+        if (dados.erro) return dados.erro;
+        return Object.values(dados).flat().join(' ') || 'Não foi possível realizar o cadastro.';
+    }
 
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -137,18 +150,18 @@
                 },
                 body: JSON.stringify(dadosSupermercado)
             });
+            const dados = await resposta.json().catch(() => ({}));
 
             if (resposta.ok) {
                 localStorage.removeItem('shopwise_supermercado');
-                alert('Supermercado cadastrado com sucesso! Faça login.');
                 window.location.href = 'login-supermercado.html';
             } else {
-                alert('Erro ao cadastrar supermercado.');
+                mostrarFeedbackCadastro(mensagemErroApi(dados));
             }
 
         } catch (erro) {
             console.error(erro);
-            alert('Não foi possível conectar com a API.');
+            mostrarFeedbackCadastro('Não foi possível conectar com o servidor. Tente novamente.');
         }
     });
 </script>

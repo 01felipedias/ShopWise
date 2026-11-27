@@ -43,6 +43,7 @@ Nao utilizar cookies de sessao no fluxo mobile.
 ## APIs publicas
 
 GET /api/feed/produtos/
+GET /api/feed/avaliacoes/?produto_id={id}
 GET /api/supermercados/
 POST /api/supermercados/
 POST /api/clientes/
@@ -59,12 +60,18 @@ GET /api/pedidos/{id}/status-pix/
 
 GET /api/alertas-preco/
 POST /api/alertas-preco/
+PUT /api/alertas-preco/{id}/
+PATCH /api/alertas-preco/{id}/
+DELETE /api/alertas-preco/{id}/ (desativa o alerta)
 
 GET /api/notificacoes/
 POST /api/notificacoes/{id}/marcar-lida/
 
 GET /api/avaliacoes/
 POST /api/avaliacoes/
+GET /api/feed/avaliacoes/?produto_id={id} (resumo e comentários públicos)
+
+GET /api/cupons/ (cupons ativos para o checkout)
 
 ## APIs do supermercado
 
@@ -80,6 +87,14 @@ PUT /api/perfil-supermercado/
 
 GET /api/pedidos-supermercado/
 PATCH /api/pedidos-supermercado/{id}/status/
+
+Pedidos que incluem mais de um supermercado continuam agrupados no pedido do cliente. A resposta de `GET /api/pedidos/` inclui `supermercados`, com status e subtotal de cada loja, e um status resumido do pedido. Quando as lojas estão em etapas diferentes, o resumo é `em_andamento`; quando todas terminaram com resultados mistos, é `parcialmente_finalizado`. O campo `status_pagamento` informa o status do pagamento. Para o supermercado, `GET /api/pedidos-supermercado/` retorna somente os itens daquela loja; o PATCH atualiza apenas o status da loja autenticada.
+
+GET /api/cupons/gerenciar/
+POST /api/cupons/gerenciar/
+PUT /api/cupons/gerenciar/{id}/
+PATCH /api/cupons/gerenciar/{id}/
+DELETE /api/cupons/gerenciar/{id}/ (desativa o cupom)
 
 ## Alteracao de senha
 

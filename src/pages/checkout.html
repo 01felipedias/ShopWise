@@ -460,6 +460,9 @@ let descontoValorAtual = 0;
 let taxaEntrega = 0;
 let cupomAplicado = "";
 let cuponsDisponiveis = [];
+let lojasDoCarrinhoVerificadas = carrinho.every(item =>
+    (item.supermercado?.id ?? item.supermercado_id) != null
+);
 let pedidoPixCriado = false;
 let pedidoPixId = null;
 let intervaloStatusPix = null;
@@ -580,7 +583,7 @@ function atualizarParcelas() {
 }
 
 function calcularDescontoCupom(cupom) {
-    const subtotal = subtotalCarrinho();
+    const subtotal = subtotalElegivelCupom(cupom);
     const valorCupom = precoNumero(cupom.valor);
 
     if (cupom.tipo === "percentual") {
@@ -588,6 +591,47 @@ function calcularDescontoCupom(cupom) {
     }
 
     return Math.min(subtotal, valorCupom);
+}
+
+function subtotalElegivelCupom(cupom) {
+    if (cupom.supermercado_id == null) return subtotalCarrinho();
+
+    if (!lojasDoCarrinhoVerificadas || carrinho.some(item =>
+        (item.supermercado?.id ?? item.supermercado_id) == null
+    )) return null;
+
+    return carrinho.reduce((total, item) => {
+        const supermercadoId = item.supermercado?.id ?? item.supermercado_id;
+        if (Number(supermercadoId) !== Number(cupom.supermercado_id)) {
+            return total;
+        }
+
+        return total + precoNumero(item.preco) * Number(item.quantidade || 1);
+    }, 0);
+}
+
+async function completarSupermercadoDosItens() {
+    const itensSemLoja = carrinho.some(item =>
+        (item.supermercado?.id ?? item.supermercado_id) == null
+    );
+    if (!itensSemLoja) return;
+
+    const resposta = await shopwiseFetch("/api/feed/produtos/");
+    if (!resposta.ok) throw new Error("Não foi possível confirmar a loja dos produtos.");
+
+    const produtos = await resposta.json();
+    const produtosPorId = new Map(produtos.map(produto => [Number(produto.id), produto]));
+    carrinho.forEach(item => {
+        const produto = produtosPorId.get(Number(item.id));
+        if (!produto?.supermercado?.id) return;
+        item.supermercado = produto.supermercado;
+        item.supermercado_id = produto.supermercado.id;
+        item.mercado = produto.supermercado.nome || item.mercado;
+    });
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+    lojasDoCarrinhoVerificadas = carrinho.every(item =>
+        (item.supermercado?.id ?? item.supermercado_id) != null
+    );
 }
 
 function descricaoCupom(cupom) {
@@ -603,8 +647,8 @@ function descricaoCupom(cupom) {
         : "";
 
     return cupom.descricao
-        ? `${cupom.descricao} • ${beneficio}${minimoTexto}`
-        : `${beneficio}${minimoTexto}`;
+        ? `${cupom.descricao} • ${beneficio}${minimoTexto}${cupom.supermercado ? ` • ${cupom.supermercado}` : ""}`
+        : `${beneficio}${minimoTexto}${cupom.supermercado ? ` • ${cupom.supermercado}` : ""}`;
 }
 
 function renderizarCuponsDisponiveis() {
@@ -650,6 +694,12 @@ async function carregarCupons() {
     const feedback = document.getElementById("couponFeedback");
 
     try {
+        try {
+            await completarSupermercadoDosItens();
+        } catch (erro) {
+            lojasDoCarrinhoVerificadas = false;
+            console.error(erro);
+        }
         const resposta = await shopwiseFetch("/api/cupons/");
         if (!resposta.ok) {
             throw new Error("Falha ao buscar cupons.");
@@ -696,14 +746,31 @@ function applyCoupon() {
         return;
     }
 
-    const subtotal = subtotalCarrinho();
+    const subtotal = subtotalElegivelCupom(cupom);
     const valorMinimo = precoNumero(cupom.valor_minimo);
+
+    if (subtotal == null) {
+        descontoValorAtual = 0;
+        cupomAplicado = "";
+        feedback.textContent = "Não foi possível confirmar a loja dos produtos do carrinho. Atualize a página e tente novamente.";
+        renderizarResumo();
+        return;
+    }
+
+    if (subtotal <= 0) {
+        descontoValorAtual = 0;
+        cupomAplicado = "";
+        feedback.textContent = "Este cupom não se aplica aos produtos do carrinho.";
+        renderizarResumo();
+        return;
+    }
 
     if (subtotal < valorMinimo) {
         descontoValorAtual = 0;
         cupomAplicado = "";
-        feedback.textContent =
-            `Este cupom exige compra mínima de ${dinheiro(valorMinimo)}.`;
+        feedback.textContent = cupom.supermercado_id == null
+            ? `Este cupom exige compra mínima de ${dinheiro(valorMinimo)}.`
+            : `Os produtos desta loja somam ${dinheiro(subtotal)}. O cupom exige compra mínima de ${dinheiro(valorMinimo)} nesta loja.`;
         renderizarResumo();
         return;
     }

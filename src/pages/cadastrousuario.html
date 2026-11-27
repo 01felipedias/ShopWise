@@ -120,6 +120,8 @@
                     Cadastrar-se
                 </button>
 
+                <p class="auth-feedback" id="authFeedback" role="alert" aria-live="polite" hidden></p>
+
             </form>
 
 
@@ -141,6 +143,12 @@
 <script>
 
 const formCadastro = document.getElementById('formCadastroCliente');
+const authFeedback = document.getElementById('authFeedback');
+
+function mostrarFeedbackCadastro(mensagem) {
+    authFeedback.textContent = mensagem;
+    authFeedback.hidden = false;
+}
 
 
 formCadastro.addEventListener('submit', async function(event) {
@@ -159,7 +167,7 @@ formCadastro.addEventListener('submit', async function(event) {
 
     if (senha !== confirmaSenha) {
 
-        alert('As senhas não coincidem.');
+        mostrarFeedbackCadastro('As senhas não coincidem.');
         return;
 
     }
@@ -196,25 +204,23 @@ formCadastro.addEventListener('submit', async function(event) {
         if (!resposta.ok) {
 
             if (dados.email) {
-                alert('Este e-mail já está cadastrado.');
+                mostrarFeedbackCadastro('Este e-mail já está cadastrado.');
                 return;
             }
 
             if (dados.cpf) {
-                alert('Este CPF já está cadastrado.');
+                mostrarFeedbackCadastro('Este CPF já está cadastrado.');
                 return;
             }
 
-            alert(
-                dados.erro ||
-                'Não foi possível realizar o cadastro.'
-            );
+            const mensagemErro = dados.erro ||
+                Object.values(dados).flat().join(' ') ||
+                'Não foi possível realizar o cadastro.';
+            mostrarFeedbackCadastro(mensagemErro);
 
             return;
         }
 
-
-        alert('Cadastro realizado com sucesso!');
 
         window.location.href = 'login.html';
 
@@ -223,7 +229,7 @@ formCadastro.addEventListener('submit', async function(event) {
 
         console.error(erro);
 
-        alert(
+        mostrarFeedbackCadastro(
             'Não foi possível conectar com o servidor.'
         );
 

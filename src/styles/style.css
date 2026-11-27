@@ -307,6 +307,22 @@ textarea.input-success {
     color: var(--primary-dark, #27ae60);
 }
 
+.auth-feedback {
+    margin: 14px 0 0;
+    padding: 11px 13px;
+    border: 1px solid #f0c7c3;
+    border-radius: 10px;
+    background: #fff4f2;
+    color: #a33325;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.auth-feedback[hidden] {
+    display: none !important;
+}
+
 .btn-loading,
 button:disabled {
     opacity: .7;

@@ -32,6 +32,9 @@
     const mpDescricao =
         document.getElementById('mpDescricao');
 
+    const mpTamanhoEmbalagem =
+        document.getElementById('mpTamanhoEmbalagem');
+
     const mpFormTitulo =
         document.getElementById('mpFormTitulo');
 
@@ -76,6 +79,51 @@
     let pedidosSupermercado = [];
 
     let pedidoAtual = null;
+
+    const feedbackDialog = document.getElementById('mpFeedbackDialog');
+    const feedbackTitulo = document.getElementById('mpFeedbackTitulo');
+    const feedbackMensagem = document.getElementById('mpFeedbackMensagem');
+    const feedbackConfirmar = document.getElementById('mpFeedbackConfirmar');
+    const feedbackCancelar = document.getElementById('mpFeedbackCancelar');
+    let feedbackResolver = null;
+
+    function mostrarFeedback(titulo, mensagem) {
+        if (!feedbackDialog) return;
+        feedbackTitulo.textContent = titulo;
+        feedbackMensagem.textContent = mensagem;
+        feedbackConfirmar.textContent = 'Entendi';
+        feedbackConfirmar.classList.remove('danger');
+        feedbackCancelar.hidden = true;
+        if (!feedbackDialog.open) feedbackDialog.showModal();
+    }
+
+    function confirmarFeedback(titulo, mensagem, textoConfirmar) {
+        if (!feedbackDialog) return Promise.resolve(false);
+        feedbackTitulo.textContent = titulo;
+        feedbackMensagem.textContent = mensagem;
+        feedbackConfirmar.textContent = textoConfirmar;
+        feedbackConfirmar.classList.add('danger');
+        feedbackCancelar.hidden = false;
+        return new Promise(resolve => {
+            feedbackResolver = resolve;
+            if (!feedbackDialog.open) feedbackDialog.showModal();
+        });
+    }
+
+    window.fecharMpFeedback = function (confirmado) {
+        const resolver = feedbackResolver;
+        feedbackResolver = null;
+        if (feedbackDialog?.open) feedbackDialog.close();
+        resolver?.(Boolean(confirmado));
+    };
+
+    feedbackDialog?.addEventListener('close', function () {
+        if (feedbackResolver) {
+            const resolver = feedbackResolver;
+            feedbackResolver = null;
+            resolver(false);
+        }
+    });
 
     // ======================================================
     // UTILITÁRIOS
@@ -613,9 +661,7 @@
             );
 
         if (!produto) {
-            alert(
-                'Produto não encontrado.'
-            );
+            mostrarFeedback('Produto não encontrado', 'Atualize a lista de produtos e tente novamente.');
 
             return;
         }
@@ -648,6 +694,11 @@
         if (mpDescricao) {
             mpDescricao.value =
                 produto.descricao || '';
+        }
+
+        if (mpTamanhoEmbalagem) {
+            mpTamanhoEmbalagem.value =
+                produto.tamanho_embalagem || '';
         }
 
         if (mpFormTitulo) {
@@ -733,15 +784,18 @@
                             .trim()
                         : '';
 
+                const tamanhoEmbalagem =
+                    mpTamanhoEmbalagem
+                        ? mpTamanhoEmbalagem.value.trim()
+                        : '';
+
                 if (
                     !nome ||
                     !categoria ||
                     !preco ||
                     estoque === ''
                 ) {
-                    alert(
-                        'Preencha todos os campos obrigatórios (*).'
-                    );
+                    mostrarFeedback('Campos obrigatórios', 'Preencha todos os campos marcados com asterisco.');
 
                     return;
                 }
@@ -759,9 +813,7 @@
                         ) ||
                     precoNumero <= 0
                 ) {
-                    alert(
-                        'Informe um preço válido maior que zero.'
-                    );
+                    mostrarFeedback('Preço inválido', 'Informe um preço maior que zero.');
 
                     return;
                 }
@@ -773,9 +825,7 @@
                         ) ||
                     estoqueNumero < 0
                 ) {
-                    alert(
-                        'Informe um estoque inteiro igual ou maior que zero.'
-                    );
+                    mostrarFeedback('Estoque inválido', 'Informe um número inteiro igual ou maior que zero.');
 
                     return;
                 }
@@ -794,6 +844,7 @@
                     supermercado:
                         supermercado.id,
                     nome,
+                    tamanho_embalagem: tamanhoEmbalagem,
                     categoria,
                     preco:
                         precoNumero
@@ -886,12 +937,6 @@
                         );
                     }
 
-                    alert(
-                        editando
-                            ? '✅ Produto atualizado com sucesso!'
-                            : '✅ Produto cadastrado com sucesso!'
-                    );
-
                     sairModoEdicao();
 
                     await carregarProdutos();
@@ -901,10 +946,7 @@
                         erro
                     );
 
-                    alert(
-                        erro.message ||
-                        'Não foi possível salvar o produto.'
-                    );
+                    mostrarFeedback('Não foi possível salvar o produto', erro.message || 'Tente novamente.');
 
                 } finally {
                     if (
@@ -939,10 +981,11 @@
     async function removerProduto(
         id
     ) {
-        const confirmar =
-            confirm(
-                'Tem certeza que deseja remover este produto do estoque?'
-            );
+        const confirmar = await confirmarFeedback(
+            'Excluir produto?',
+            'O produto será removido do estoque do supermercado.',
+            'Excluir produto'
+        );
 
         if (!confirmar) {
             return;
@@ -992,10 +1035,6 @@
                 sairModoEdicao();
             }
 
-            alert(
-                'Produto excluído com sucesso!'
-            );
-
             await carregarProdutos();
 
         } catch (erro) {
@@ -1003,10 +1042,7 @@
                 erro
             );
 
-            alert(
-                erro.message ||
-                'Não foi possível excluir o produto.'
-            );
+            mostrarFeedback('Não foi possível excluir o produto', erro.message || 'Tente novamente.');
         }
     }
 
@@ -1865,9 +1901,7 @@
                 pedidosSupermercado
                     .length === 0
             ) {
-                alert(
-                    'Este supermercado ainda não recebeu pedidos.'
-                );
+                mostrarFeedback('Nenhum pedido recebido', 'Os pedidos dos clientes aparecerão aqui quando chegarem.');
 
                 return;
             }
@@ -1889,10 +1923,7 @@
                 erro
             );
 
-            alert(
-                erro.message ||
-                'Erro ao carregar pedidos.'
-            );
+            mostrarFeedback('Não foi possível carregar os pedidos', erro.message || 'Tente novamente.');
         }
     }
 
@@ -2017,10 +2048,6 @@
                     dados.status;
             }
 
-            alert(
-                '✅ Status atualizado com sucesso!'
-            );
-
             mostrarPedidoNoModal(
                 pedidoAtual
             );
@@ -2030,10 +2057,7 @@
                 erro
             );
 
-            alert(
-                erro.message ||
-                'Não foi possível atualizar o status.'
-            );
+            mostrarFeedback('Não foi possível atualizar o status', erro.message || 'Tente novamente.');
         }
     }
 
@@ -2064,9 +2088,7 @@
                 ];
 
             if (!proximo) {
-                alert(
-                    'Este pedido não pode avançar para outro status.'
-                );
+                mostrarFeedback('Não é possível avançar', 'Este pedido não possui uma próxima etapa de status.');
 
                 return;
             }
@@ -2086,10 +2108,11 @@
                 return;
             }
 
-            const confirmar =
-                confirm(
-                    `Deseja realmente cancelar o pedido #${pedidoAtual.id}?`
-                );
+            const confirmar = await confirmarFeedback(
+                'Cancelar pedido?',
+                `O pedido #${pedidoAtual.id} será cancelado. Essa ação não pode ser desfeita.`,
+                'Cancelar pedido'
+            );
 
             if (!confirmar) {
                 return;
@@ -2103,17 +2126,6 @@
     // ======================================================
     // PEDIDOS - NOTIFICAR
     // ======================================================
-
-    window.notificarCliente =
-        function () {
-            if (!pedidoAtual) {
-                return;
-            }
-
-            alert(
-                'A função de notificação direta ao cliente será integrada depois.'
-            );
-        };
 
     // ======================================================
     // INICIALIZAÇÃO

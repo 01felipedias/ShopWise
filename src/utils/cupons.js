@@ -1,146 +1,107 @@
-// ==================================================
-// SHOPWISE - CUPONS E CASHBACK POR MERCADO
-// ==================================================
-
-const mercadosCashback = [
-    { nome: "Super Quaresma", logo: "../assets/quaresma.png", cashback: 3, cupons: 4 },
-    { nome: "Mix Mateus", logo: "../assets/mix.png", cashback: 2, cupons: 3 },
-    { nome: "Jorge Batista", logo: "../assets/jorge-batista.png", cashback: 0, cupons: 5 },
-    { nome: "Carvalho", logo: "../assets/carvalho.png", cashback: 0, cupons: 2 }
-];
-
 const estadoCupons = {
     termo: "",
-    filtro: "todos",
-    ordenacao: "relevantes"
+    ordenacao: "expira",
+    lista: []
 };
 
-function normalizarTextoCupom(texto) {
-    return String(texto)
-        .toLowerCase()
+function escaparHtmlCupom(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caractere]);
+}
+
+function textoCupomNormalizado(texto) {
+    return String(texto ?? "")
+        .toLocaleLowerCase("pt-BR")
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
+        .replace(/[\u0300-\u036f]/g, "");
 }
 
-function filtrarMercados() {
-    const termoNormalizado = normalizarTextoCupom(estadoCupons.termo);
-
-    let lista = mercadosCashback.filter((mercado) => {
-        const correspondeTermo =
-            termoNormalizado === "" ||
-            normalizarTextoCupom(mercado.nome).includes(termoNormalizado);
-
-        const correspondeFiltro =
-            estadoCupons.filtro === "todos" ||
-            (estadoCupons.filtro === "com-cashback" && mercado.cashback > 0) ||
-            (estadoCupons.filtro === "sem-cashback" && mercado.cashback === 0);
-
-        return correspondeTermo && correspondeFiltro;
+function dinheiroCupom(valor) {
+    return Number(valor || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
     });
+}
 
-    lista = [...lista];
-
-    switch (estadoCupons.ordenacao) {
-        case "maior-cashback":
-            lista.sort((a, b) => b.cashback - a.cashback);
-            break;
-        case "mais-cupons":
-            lista.sort((a, b) => b.cupons - a.cupons);
-            break;
-        case "nome":
-            lista.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
-            break;
-        default:
-            lista.sort((a, b) => (b.cashback + b.cupons) - (a.cashback + a.cupons));
+function ordenarCupons(lista) {
+    const resultado = [...lista];
+    if (estadoCupons.ordenacao === "nome") {
+        resultado.sort((a, b) => a.codigo.localeCompare(b.codigo, "pt-BR"));
+    } else {
+        resultado.sort((a, b) => new Date(a.data_fim) - new Date(b.data_fim));
     }
-
-    return lista;
+    return resultado;
 }
 
-function criarHtmlMercadoCupom(mercado) {
-    const tagCashback = mercado.cashback > 0
-        ? `<span class="market-cashback-tag positive">💰 ${mercado.cashback}% de volta</span>`
-        : `<span class="market-cashback-tag neutral">Sem cashback</span>`;
-
-    return `
-        <a href="feedproduto.html" class="market-coupon-card">
-            <div class="market-coupon-logo">
-                <img src="${mercado.logo}" alt="${mercado.nome}" onerror="this.onerror=null; this.src='https://placehold.co/60x60/e8faf2/00b978?text=Loja';">
-            </div>
-            <div class="market-coupon-info">
-                <h3>${mercado.nome}</h3>
-                ${tagCashback}
-                <span class="market-coupon-count">${mercado.cupons} cupom(ns) disponível(is)</span>
-            </div>
-            <span class="market-coupon-arrow" aria-hidden="true">›</span>
-        </a>
-    `;
-}
-
-function atualizarResumoMercados(listaCompleta) {
-    const totalMercados = document.getElementById("totalMercados");
-    const totalCupons = document.getElementById("totalCupons");
-
-    if (totalMercados) totalMercados.textContent = listaCompleta.length;
-
-    if (totalCupons) {
-        const soma = listaCompleta.reduce((acc, mercado) => acc + mercado.cupons, 0);
-        totalCupons.textContent = soma;
-    }
-}
-
-function renderizarMercadosCupom() {
-    const grid = document.getElementById("marketCouponGrid");
+function renderizarCupons() {
+    const grid = document.getElementById("couponGrid");
     if (!grid) return;
 
-    const lista = filtrarMercados();
+    const termo = textoCupomNormalizado(estadoCupons.termo);
+    const lista = ordenarCupons(estadoCupons.lista.filter(cupom => {
+        const pesquisavel = `${cupom.codigo} ${cupom.descricao || ""} ${cupom.supermercado || ""}`;
+        return textoCupomNormalizado(pesquisavel).includes(termo);
+    }));
 
-    if (lista.length === 0) {
-        grid.innerHTML = `
-            <div class="market-coupon-empty">
-                Nenhum supermercado encontrado com esse filtro. Tente ajustar a busca.
-            </div>
-        `;
+    if (!lista.length) {
+        grid.innerHTML = '<p class="market-coupon-empty">Nenhum cupom ativo encontrado.</p>';
         return;
     }
 
-    grid.innerHTML = lista.map(criarHtmlMercadoCupom).join("");
+    grid.innerHTML = lista.map(cupom => {
+        const desconto = cupom.tipo === "percentual"
+            ? `${escaparHtmlCupom(cupom.valor)}% de desconto`
+            : `${dinheiroCupom(cupom.valor)} de desconto`;
+        const minimo = Number(cupom.valor_minimo || 0) > 0
+            ? `Compra mínima de ${dinheiroCupom(cupom.valor_minimo)}`
+            : "Sem compra mínima";
+        const validade = new Date(cupom.data_fim).toLocaleDateString("pt-BR");
+        const loja = cupom.supermercado || "Todos os supermercados";
+
+        return `
+            <article class="info-card">
+                <h3>${escaparHtmlCupom(cupom.codigo)}</h3>
+                <p>${escaparHtmlCupom(cupom.descricao || desconto)}</p>
+                <p><strong>${desconto}</strong> · ${escaparHtmlCupom(minimo)}</p>
+                <p>${escaparHtmlCupom(loja)} · Válido até ${validade}</p>
+                <a href="carrinho.html" class="btn-card-link">Usar no carrinho</a>
+            </article>`;
+    }).join("");
 }
 
-function configurarToolbarCupons() {
-    const searchInput = document.getElementById("marketSearchInput");
-    const filterGroup = document.getElementById("marketFilterGroup");
-    const sortSelect = document.getElementById("marketSortSelect");
-
-    if (searchInput) {
-        searchInput.addEventListener("input", (event) => {
-            estadoCupons.termo = event.target.value;
-            renderizarMercadosCupom();
-        });
-    }
-
-    if (filterGroup) {
-        filterGroup.querySelectorAll(".cat-btn").forEach((botao) => {
-            botao.addEventListener("click", function () {
-                filterGroup.querySelectorAll(".cat-btn").forEach((item) => item.classList.remove("active"));
-                this.classList.add("active");
-                estadoCupons.filtro = this.dataset.filtro || "todos";
-                renderizarMercadosCupom();
-            });
-        });
-    }
-
-    if (sortSelect) {
-        sortSelect.addEventListener("change", function () {
-            estadoCupons.ordenacao = this.value;
-            renderizarMercadosCupom();
-        });
+async function carregarCuponsPublicos() {
+    const grid = document.getElementById("couponGrid");
+    try {
+        const resposta = await fetch("/api/cupons/");
+        if (!resposta.ok) throw new Error("Não foi possível carregar os cupons.");
+        estadoCupons.lista = await resposta.json();
+        const mercados = new Set(
+            estadoCupons.lista.map(cupom => cupom.supermercado_id).filter(Boolean)
+        );
+        const globais = estadoCupons.lista.filter(cupom => cupom.supermercado_id == null);
+        document.getElementById("totalMercados").textContent = mercados.size;
+        document.getElementById("totalCupons").textContent = estadoCupons.lista.length;
+        document.getElementById("totalCuponsGlobais").textContent = globais.length;
+        renderizarCupons();
+    } catch (erro) {
+        console.error(erro);
+        if (grid) grid.innerHTML = '<p class="market-coupon-empty">Não foi possível carregar os cupons agora.</p>';
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    atualizarResumoMercados(mercadosCashback);
-    configurarToolbarCupons();
-    renderizarMercadosCupom();
+    document.getElementById("marketSearchInput")?.addEventListener("input", event => {
+        estadoCupons.termo = event.target.value;
+        renderizarCupons();
+    });
+    document.getElementById("marketSortSelect")?.addEventListener("change", event => {
+        estadoCupons.ordenacao = event.target.value;
+        renderizarCupons();
+    });
+    carregarCuponsPublicos();
 });

@@ -371,6 +371,7 @@
 
             lista.innerHTML = alertasShopWise.map(alerta => {
                 const produto = alerta.produto || {};
+                const ativo = Boolean(alerta.ativo);
                 const atingido =
                     Boolean(alerta.atingido) ||
                     Number(produto.preco_atual || 0) <= Number(alerta.preco_alvo || 0);
@@ -397,13 +398,66 @@
                             <p class="alert-target-value">${dinheiro(alerta.preco_alvo)}</p>
                         </div>
 
-                        <div class="alert-status ${atingido ? "reached" : ""}">
-                            <i class="fa-solid ${atingido ? "fa-circle-check" : "fa-clock"}"></i>
-                            ${atingido ? "Meta atingida" : "Monitorando preço"}
+                        <div class="alert-status ${atingido && ativo ? "reached" : ""} ${ativo ? "" : "inactive"}">
+                            <i class="fa-solid ${!ativo ? "fa-ban" : atingido ? "fa-circle-check" : "fa-clock"}"></i>
+                            ${!ativo ? "Alerta desativado" : atingido ? "Meta atingida" : "Monitorando preço"}
+                        </div>
+                        <div class="alert-actions">
+                            <button type="button" class="alert-action-edit" data-edit-alert="${Number(alerta.id)}">Editar preço</button>
+                            ${ativo ? `<button type="button" class="alert-action-delete" data-delete-alert="${Number(alerta.id)}">Desativar</button>` : ""}
                         </div>
                     </article>
                 `;
             }).join("");
+
+            lista.querySelectorAll("[data-edit-alert]").forEach(botao => {
+                botao.addEventListener("click", () => editarAlertaPreco(Number(botao.dataset.editAlert)));
+            });
+            lista.querySelectorAll("[data-delete-alert]").forEach(botao => {
+                botao.addEventListener("click", () => desativarAlertaPreco(Number(botao.dataset.deleteAlert)));
+            });
+        }
+
+        async function editarAlertaPreco(id) {
+            const alerta = alertasShopWise.find(item => Number(item.id) === Number(id));
+            if (!alerta) return;
+            const novoPreco = window.prompt(
+                "Qual preço deseja acompanhar?",
+                String(alerta.preco_alvo).replace(".", ",")
+            );
+            if (novoPreco === null) return;
+            const preco = Number(String(novoPreco).replace(",", "."));
+            if (!Number.isFinite(preco) || preco <= 0) {
+                window.alert("Informe um preço maior que zero.");
+                return;
+            }
+
+            try {
+                const resposta = await shopwiseFetch(`/api/alertas-preco/${id}/`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ preco_alvo: preco })
+                });
+                const dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.erro || "Não foi possível atualizar o alerta.");
+                await carregarAlertas();
+            } catch (erro) {
+                window.alert(erro.message);
+            }
+        }
+
+        async function desativarAlertaPreco(id) {
+            if (!window.confirm("Desativar este alerta de preço?")) return;
+            try {
+                const resposta = await shopwiseFetch(`/api/alertas-preco/${id}/`, {
+                    method: "DELETE"
+                });
+                const dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.erro || "Não foi possível desativar o alerta.");
+                await carregarAlertas();
+            } catch (erro) {
+                window.alert(erro.message);
+            }
         }
 
         async function carregarAlertas() {

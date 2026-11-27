@@ -241,6 +241,14 @@
 
                 <section class="product-grid" id="productGrid" aria-live="polite"></section>
 
+                <dialog id="priceCompareDialog" class="price-compare-dialog" aria-labelledby="priceCompareTitle">
+                    <div class="price-compare-content">
+                        <button class="price-compare-close" type="button" aria-label="Fechar comparação" onclick="fecharComparacaoPrecos()">×</button>
+                        <h2 id="priceCompareTitle">Comparar preços</h2>
+                        <div id="priceCompareOffers"></div>
+                    </div>
+                </dialog>
+
             </main>
 
             <footer class="shopwise-footer">
@@ -379,6 +387,58 @@
         function obterNomeMercado(produto) {
             return produto.supermercado?.nome || "Supermercado";
         }
+
+        function chaveComparacao(produto) {
+            const tamanho = normalizarTexto(produto.tamanho_embalagem);
+            if (!tamanho) return null;
+            return [normalizarTexto(produto.nome), normalizarTexto(produto.categoria), tamanho].join("|");
+        }
+
+        function obterOfertasComparaveis(produto) {
+            const chave = chaveComparacao(produto);
+            if (!chave) return [produto];
+            const lojas = new Set();
+            return dadosProdutos
+                .filter(oferta => chaveComparacao(oferta) === chave)
+                .filter(oferta => {
+                    const idLoja = oferta.supermercado?.id;
+                    if (!idLoja || lojas.has(idLoja)) return false;
+                    lojas.add(idLoja);
+                    return true;
+                })
+                .sort((a, b) => precoParaNumero(a.preco) - precoParaNumero(b.preco));
+        }
+
+        function abrirComparacaoPrecos(produtoId) {
+            const produto = dadosProdutos.find(item => Number(item.id) === Number(produtoId));
+            const ofertas = produto ? obterOfertasComparaveis(produto) : [];
+            const dialogo = document.getElementById("priceCompareDialog");
+            const container = document.getElementById("priceCompareOffers");
+            if (!produto || !dialogo || !container) return;
+
+            document.getElementById("priceCompareTitle").textContent =
+                `Comparar preço${produto.tamanho_embalagem ? ` · ${produto.nome} ${produto.tamanho_embalagem}` : ` · ${produto.nome}`}`;
+            container.innerHTML = `${ofertas.length < 2 ? '<p class="price-compare-empty">Ainda não há ofertas deste produto em outros supermercados.</p>' : ""}${ofertas.map((oferta, indice) => `
+                <article class="price-compare-offer ${indice === 0 ? "price-compare-best" : ""}">
+                    <div>
+                        <strong>${escaparHtml(obterNomeMercado(oferta))}</strong>
+                        <small>${Number(oferta.estoque) > 0 ? `${Number(oferta.estoque)} unidades disponíveis` : "Sem estoque"}</small>
+                    </div>
+                    <strong class="price-compare-value">R$ ${formatarPreco(oferta.preco)}</strong>
+                    <button class="btn-add" type="button" onclick="adicionarCarrinho(${Number(oferta.id)}); fecharComparacaoPrecos()" ${Number(oferta.estoque) <= 0 ? "disabled" : ""}>
+                        ${Number(oferta.estoque) > 0 ? (ofertas.length < 2 ? "Adicionar" : "Escolher") : "Indisponível"}
+                    </button>
+                </article>
+            `).join("")}`;
+            dialogo.showModal();
+        }
+
+        function fecharComparacaoPrecos() {
+            document.getElementById("priceCompareDialog")?.close();
+        }
+
+        window.abrirComparacaoPrecos = abrirComparacaoPrecos;
+        window.fecharComparacaoPrecos = fecharComparacaoPrecos;
 
         function obterImagemProduto(produto) {
             const nome = normalizarTexto(produto.nome);
@@ -533,9 +593,15 @@
             const nome = escaparHtml(produto.nome);
             const mercado = escaparHtml(obterNomeMercado(produto));
             const categoria = escaparHtml(produto.categoria || "Sem categoria");
+            const tamanhoEmbalagem = escaparHtml(produto.tamanho_embalagem || "");
+            const ofertasComparaveis = obterOfertasComparaveis(produto);
             const descricao = escaparHtml(produto.descricao || "");
             const estoque = Number(produto.estoque || 0);
             const imagem = obterImagemProduto(produto);
+            const totalAvaliacoes = Number(produto.total_avaliacoes || 0);
+            const mediaAvaliacoes = produto.media_avaliacoes == null
+                ? "Sem avaliações"
+                : `${Number(produto.media_avaliacoes).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 })} ★ · ${totalAvaliacoes} avaliação(ões)`;
 
             return `
                 <article class="product-card">
@@ -550,13 +616,29 @@
                     <div class="product-info">
                         <div class="price-row">
                             <span class="price">R$ ${formatarPreco(produto.preco)}</span>
+                            <button class="price-alert-icon" type="button"
+                                    aria-label="Criar alerta de preço para ${nome}"
+                                    title="Acompanhar este preço"
+                                    onclick="criarAlertaPreco(${Number(produto.id)}, ${Number(produto.preco)})">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M10 21h4"></path>
+                                </svg>
+                            </button>
                         </div>
 
                         <div class="savings-text">
                             ${mercado} • ${categoria}
                         </div>
 
+                        <div class="product-rating-summary">${escaparHtml(mediaAvaliacoes)}</div>
+                        <details class="product-reviews" data-product-reviews="${Number(produto.id)}">
+                            <summary>Ver avaliações</summary>
+                            <div class="product-reviews-list">Abra para carregar as avaliações.</div>
+                        </details>
+
                         <h3 class="product-name">${nome}</h3>
+                        ${tamanhoEmbalagem ? `<p style="font-size:.85rem;color:#666;margin:.2rem 0;">${tamanhoEmbalagem}</p>` : ""}
 
                         ${descricao ? `<p style="font-size:.85rem;color:#666;margin:.35rem 0;">${descricao}</p>` : ""}
 
@@ -569,6 +651,7 @@
                                 ${estoque <= 0 ? "disabled" : ""}>
                             ${estoque > 0 ? "Adicionar" : "Sem estoque"}
                         </button>
+                        <button class="btn-price-compare" type="button" onclick="abrirComparacaoPrecos(${Number(produto.id)})">Comparar preço</button>
                     </div>
                 </article>
             `;
@@ -595,6 +678,71 @@
             }
 
             grid.innerHTML = lista.map(criarHtmlProduto).join("");
+            grid.querySelectorAll("[data-product-reviews]").forEach(detalhes => {
+                detalhes.addEventListener("toggle", () => {
+                    if (detalhes.open && detalhes.dataset.loaded !== "true") {
+                        carregarAvaliacoesPublicas(detalhes);
+                    }
+                });
+            });
+        }
+
+        async function carregarAvaliacoesPublicas(detalhes) {
+            const produtoId = Number(detalhes.dataset.productReviews);
+            const conteudo = detalhes.querySelector(".product-reviews-list");
+            detalhes.dataset.loaded = "true";
+            conteudo.textContent = "Carregando avaliações…";
+
+            try {
+                const resposta = await fetch(`/api/feed/avaliacoes/?produto_id=${produtoId}`);
+                const dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.erro || "Não foi possível carregar as avaliações.");
+                if (!dados.avaliacoes.length) {
+                    conteudo.textContent = "Este produto ainda não tem avaliações.";
+                    return;
+                }
+
+                conteudo.innerHTML = dados.avaliacoes.map(avaliacao => `
+                    <article class="product-review-item">
+                        <strong>${"★".repeat(Number(avaliacao.nota))}${"☆".repeat(5 - Number(avaliacao.nota))}</strong>
+                        <p>${escaparHtml(avaliacao.comentario || "Avaliação sem comentário.")}</p>
+                        <small>${new Date(avaliacao.criada_em).toLocaleDateString("pt-BR")}</small>
+                    </article>
+                `).join("");
+            } catch (erro) {
+                detalhes.dataset.loaded = "false";
+                conteudo.textContent = erro.message;
+            }
+        }
+
+        async function criarAlertaPreco(produtoId, precoAtual) {
+            const entrada = window.prompt(
+                "Qual preço deseja acompanhar?",
+                Number(precoAtual).toFixed(2).replace(".", ",")
+            );
+            if (entrada === null) return;
+            const precoAlvo = Number(String(entrada).replace(",", "."));
+            if (!Number.isFinite(precoAlvo) || precoAlvo <= 0) {
+                window.alert("Informe um preço maior que zero.");
+                return;
+            }
+
+            try {
+                const resposta = await shopwiseFetch("/api/alertas-preco/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ produto_id: produtoId, preco_alvo: precoAlvo })
+                });
+                const dados = await resposta.json();
+                if (resposta.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+                if (!resposta.ok) throw new Error(dados.erro || "Não foi possível criar o alerta.");
+                window.alert(dados.mensagem || "Alerta de preço salvo.");
+            } catch (erro) {
+                window.alert(erro.message);
+            }
         }
 
         function adicionarCarrinho(idProduto) {

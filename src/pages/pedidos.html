@@ -87,6 +87,41 @@
             color: #b02a37;
         }
 
+        .order-status-badge.em_andamento,
+        .order-status-badge.parcialmente_finalizado {
+            background: #fff6dd;
+            color: #8a6500;
+        }
+
+        .order-market-states {
+            display: grid;
+            gap: 7px;
+            padding: 10px 12px;
+            border: 1px solid #e7efec;
+            border-radius: 12px;
+            background: #fbfdfc;
+        }
+
+        .order-market-state {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .order-market-state span {
+            color: #526359;
+            font-weight: 700;
+        }
+
+        .order-market-state strong {
+            color: #1f8a50;
+            text-align: right;
+        }
+
+        .order-market-state strong.cancelado { color: #b02a37; }
+
         .order-products {
             display: grid;
             gap: 7px;
@@ -276,7 +311,7 @@
         <div class="modal-ped-body">
 
           <!-- Stepper somente leitura -->
-          <div>
+          <div id="acompStepperSection">
             <p class="secao-titulo">Onde está seu pedido</p>
             <div class="stepper" id="acompStepper">
               <div class="step" id="acomp-step-0">
@@ -307,6 +342,8 @@
               <div style="font-size:13px; color:#555; margin-top:3px;" id="acompStatusDesc">Seu pedido está sendo preparado com cuidado. Previsão de entrega: <strong>45 minutos</strong>.</div>
             </div>
           </div>
+
+          <div class="order-market-states" id="acompSupermercados" aria-label="Status por supermercado"></div>
 
           <!-- Itens do pedido (somente leitura) -->
           <div>
@@ -361,7 +398,9 @@
             preparando: "Em preparação",
             enviado: "Saiu para entrega",
             concluido: "Concluído",
-            cancelado: "Cancelado"
+            cancelado: "Cancelado",
+            em_andamento: "Lojas em etapas diferentes",
+            parcialmente_finalizado: "Parcialmente finalizado"
         };
 
         const pagamentoTexto = {
@@ -420,6 +459,9 @@
         }
 
         function mercadosPedido(pedido) {
+            if (Array.isArray(pedido.supermercados) && pedido.supermercados.length) {
+                return pedido.supermercados.map(loja => loja.nome).join(", ");
+            }
             const nomes = [
                 ...new Set(
                     (pedido.itens || [])
@@ -491,6 +533,13 @@
                    </div>`
                 : "";
 
+            const statusLojas = (pedido.supermercados || []).map(loja => `
+                <div class="order-market-state">
+                    <span>🏪 ${escapar(loja.nome)}</span>
+                    <strong class="${escapar(loja.status)}">${escapar(statusTexto[loja.status] || loja.status)}</strong>
+                </div>
+            `).join("");
+
             return `
                 <article class="order-card-real">
                     <div class="order-card-top">
@@ -513,6 +562,8 @@
                         <span>💳 ${escapar(pagamentoTexto[pedido.forma_pagamento] || pedido.forma_pagamento)}</span>
                         <span>📦 ${pedido.tipo_entrega === "pickup" ? "Retirada" : "Entrega"}</span>
                     </div>
+
+                    ${statusLojas ? `<div class="order-market-states">${statusLojas}</div>` : ""}
 
                     <div class="order-card-bottom">
                         <div class="order-total-box">
@@ -544,10 +595,11 @@
                         "pendente",
                         "confirmado",
                         "preparando",
-                        "enviado"
+                        "enviado",
+                        "em_andamento"
                     ].includes(p.status)
                 ),
-                concluidos: pedidosCliente.filter(p => p.status === "concluido"),
+                concluidos: pedidosCliente.filter(p => ["concluido", "parcialmente_finalizado"].includes(p.status)),
                 cancelados: pedidosCliente.filter(p => p.status === "cancelado")
             };
 
@@ -709,6 +761,16 @@
                     icone: "❌",
                     label: "Pedido cancelado",
                     desc: "Este pedido foi cancelado."
+                },
+                em_andamento: {
+                    icone: "🔄",
+                    label: "Lojas em etapas diferentes",
+                    desc: "Confira abaixo a situação atual de cada supermercado."
+                },
+                parcialmente_finalizado: {
+                    icone: "📦",
+                    label: "Pedido parcialmente finalizado",
+                    desc: "As lojas concluíram ou cancelaram seus itens em momentos diferentes. Confira cada status abaixo."
                 }
             };
 
@@ -727,6 +789,21 @@
             const indice = progressoStatus[pedido.status] ?? 0;
             const progresso = ["0%", "33%", "66%", "100%"][indice];
             const info = informacaoStatus(pedido);
+            const estadosPorLoja = document.getElementById("acompSupermercados");
+            if (estadosPorLoja) {
+                estadosPorLoja.innerHTML = (pedido.supermercados || []).map(loja => `
+                    <div class="order-market-state">
+                        <span>🏪 ${escapar(loja.nome)}</span>
+                        <strong class="${escapar(loja.status)}">${escapar(statusTexto[loja.status] || loja.status)}</strong>
+                    </div>
+                `).join("");
+                estadosPorLoja.hidden = !pedido.supermercados?.length;
+            }
+
+            const stepperSection = document.getElementById("acompStepperSection");
+            if (stepperSection) {
+                stepperSection.hidden = ["em_andamento", "parcialmente_finalizado"].includes(pedido.status);
+            }
 
             document.getElementById("acompTitulo").textContent =
                 `Pedido ${numeroPedido(pedido.id)}`;

@@ -376,6 +376,30 @@
     border: 1px solid rgba(243, 156, 18, 0.25);
 }
 
+.alert-status.inactive {
+    background: #f1f3f2;
+    color: #69756f;
+    border: 1px solid #d8dfdb;
+}
+
+.alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.alert-actions button {
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.alert-action-edit { background: #edf5f0; color: #24513a; }
+.alert-action-delete { background: #fff0ed; color: #a33325; }
+
 .alert-config-status {
     margin: 14px 0;
     padding: 14px;
