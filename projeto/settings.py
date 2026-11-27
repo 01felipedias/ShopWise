@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,10 +45,17 @@ MERCADO_PAGO_PUBLIC_KEY = os.getenv(
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5pvw4vmiu*2@%l(8d)i2ok#xbsw5a$x$b2-2=a)s$2h5&aq+jz'
+EM_PRODUCAO = os.getenv('RENDER') == 'true'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+if not SECRET_KEY:
+    if EM_PRODUCAO:
+        raise ImproperlyConfigured('Configure SECRET_KEY')
+    SECRET_KEY = 'django-insecure-shopwise-apenas-desenvolvimento-local'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not EM_PRODUCAO
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
@@ -76,6 +85,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'produtos.csrf.ShopWiseCSRFMiddleware',
@@ -191,3 +201,34 @@ CORS_ALLOWED_ORIGINS += [
 CORS_ALLOW_CREDENTIALS = False
 
 CORS_URLS_REGEX = r'^/api/.*$'
+
+
+# Hospedagem no Render
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+if os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=60,
+        ssl_require=EM_PRODUCAO,
+    )
+elif EM_PRODUCAO:
+    raise ImproperlyConfigured('Configure DATABASE_URL')
+
+if EM_PRODUCAO:
+    RENDER_HOST = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+
+    if RENDER_HOST:
+        ALLOWED_HOSTS.append(RENDER_HOST)
+        CSRF_TRUSTED_ORIGINS = [
+            f'https://{RENDER_HOST}'
+        ]
+
+    SECURE_PROXY_SSL_HEADER = (
+        'HTTP_X_FORWARDED_PROTO', 'https'
+    )
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = 3600
