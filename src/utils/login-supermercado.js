@@ -33,6 +33,13 @@
                     return;
                 }
 
+                if (dados.token) {
+                    sessionStorage.setItem(
+                        'shopwise_token_supermercado',
+                        dados.token
+                    );
+                }
+
                 // Guarda qual supermercado realizou o login
                 localStorage.setItem(
                     'shopwise_supermercado',

@@ -2,6 +2,38 @@ window.shopwiseFetch = async function (url, options = {}) {
     const destino = new URL(url, window.location.href);
     const metodo = (options.method || "GET").toUpperCase();
 
+    const tokenMercado = sessionStorage.getItem(
+        "shopwise_token_supermercado"
+    );
+
+    const rotaProdutos = /^\/api\/produtos\//.test(
+        destino.pathname
+    );
+
+    if (
+        destino.origin === window.location.origin &&
+        rotaProdutos &&
+        tokenMercado
+    ) {
+        const headers = new Headers(options.headers || {});
+        headers.set("Authorization", "Token " + tokenMercado);
+
+        const resposta = await fetch(url, {
+            ...options,
+            headers,
+            credentials: "same-origin"
+        });
+
+        if (resposta.status === 401) {
+            sessionStorage.removeItem(
+                "shopwise_token_supermercado"
+            );
+        }
+
+        return resposta;
+    }
+
+
     if (
         destino.origin !== window.location.origin ||
         !destino.pathname.startsWith("/api/") ||
