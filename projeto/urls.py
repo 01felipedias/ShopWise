@@ -20,6 +20,7 @@ from produtos.views import (
     NotificacaoList,
     NotificacaoMarcarLida,
     AvaliacaoList,
+    AvaliacaoSupermercadoList,
     AvaliacoesPublicas,
     PerfilCliente,
     LogoutCliente,
@@ -49,6 +50,14 @@ def login_supermercado(request):
 
 def manter_produtos(request):
     return render(request, 'manter-produtos.html')
+
+
+def visao_geral_supermercado(request):
+    return render(request, 'visao-geral-supermercado.html')
+
+
+def pedidos_supermercado(request):
+    return render(request, 'pedidos-supermercado.html')
 
 
 def cadastro_usuario(request):
@@ -140,6 +149,16 @@ urlpatterns = [
         'manter-produtos.html',
         manter_produtos,
         name='manter_produtos'
+    ),
+    path(
+        'visao-geral-supermercado.html',
+        visao_geral_supermercado,
+        name='visao_geral_supermercado'
+    ),
+    path(
+        'pedidos-supermercado.html',
+        pedidos_supermercado,
+        name='pedidos_supermercado'
     ),
     path(
         'perfil-supermercado.html',
@@ -328,6 +347,10 @@ urlpatterns = [
     path(
         'api/avaliacoes/',
         AvaliacaoList.as_view()
+    ),
+    path(
+        'api/avaliacoes-supermercados/',
+        AvaliacaoSupermercadoList.as_view()
     ),
     path(
         'api/feed/avaliacoes/',

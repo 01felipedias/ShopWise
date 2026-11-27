@@ -452,3 +452,46 @@ class Avaliacao(models.Model):
             f'{self.produto.nome} - '
             f'{self.nota} estrela(s)'
         )
+
+
+class AvaliacaoSupermercado(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes_supermercado'
+    )
+
+    pedido = models.ForeignKey(
+        Pedido,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes_supermercado'
+    )
+
+    supermercado = models.ForeignKey(
+        Supermercado,
+        on_delete=models.CASCADE,
+        related_name='avaliacoes'
+    )
+
+    nota = models.PositiveSmallIntegerField()
+    nota_produtos = models.PositiveSmallIntegerField(default=0)
+    nota_entrega = models.PositiveSmallIntegerField(default=0)
+    preco_correto = models.BooleanField(default=True)
+    entrega_ok = models.BooleanField(default=True)
+    comentario = models.TextField(blank=True)
+    criada_em = models.DateTimeField(auto_now_add=True)
+    atualizada_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['pedido', 'supermercado'],
+                name='unique_avaliacao_loja_pedido'
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f'{self.cliente.nome} - {self.supermercado.nome} - '
+            f'{self.nota} estrela(s)'
+        )

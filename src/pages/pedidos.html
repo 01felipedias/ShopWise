@@ -122,6 +122,26 @@
 
         .order-market-state strong.cancelado { color: #b02a37; }
 
+        .order-market-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-rate-link {
+            color: #168044;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .order-rate-link:hover { text-decoration: underline; }
+
+        .order-rated-label {
+            color: #168044;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
         .order-products {
             display: grid;
             gap: 7px;
@@ -536,7 +556,14 @@
             const statusLojas = (pedido.supermercados || []).map(loja => `
                 <div class="order-market-state">
                     <span>🏪 ${escapar(loja.nome)}</span>
-                    <strong class="${escapar(loja.status)}">${escapar(statusTexto[loja.status] || loja.status)}</strong>
+                    <div class="order-market-actions">
+                        <strong class="${escapar(loja.status)}">${escapar(statusTexto[loja.status] || loja.status)}</strong>
+                        ${loja.status === "concluido" && !loja.avaliado
+                            ? `<a class="order-rate-link" href="avaliacao.html?pedido_id=${Number(pedido.id)}&supermercado_id=${Number(loja.id)}">Avaliar loja</a>`
+                            : loja.status === "concluido" && loja.avaliado
+                                ? '<span class="order-rated-label">Avaliada ✓</span>'
+                                : ""}
+                    </div>
                 </div>
             `).join("");
 

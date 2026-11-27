@@ -71,6 +71,20 @@ GET /api/avaliacoes/
 POST /api/avaliacoes/
 GET /api/feed/avaliacoes/?produto_id={id} (resumo e comentários públicos)
 
+GET /api/avaliacoes-supermercados/ (lojas concluídas pendentes e histórico do cliente)
+POST /api/avaliacoes-supermercados/ (avalia uma loja concluída do pedido)
+
+Corpo JSON para avaliação de loja:
+
+{
+    "pedido_id": 1,
+    "supermercado_id": 1,
+    "nota_produtos": 5,
+    "nota_entrega": 4,
+    "nota": 5,
+    "comentario": "Entrega no prazo e ótimo atendimento."
+}
+
 GET /api/cupons/ (cupons ativos para o checkout)
 
 ## APIs do supermercado

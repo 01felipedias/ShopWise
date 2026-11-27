@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/alerta.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 
     <style>
         .nav-actions{display:flex;align-items:center;gap:14px}
@@ -352,7 +354,7 @@
 
             } catch (erro) {
                 console.error(erro);
-                alert("Não foi possível marcar a notificação como lida.");
+                showToast("Não foi possível marcar a notificação como lida.", "error");
             }
         }
 
@@ -421,14 +423,15 @@
         async function editarAlertaPreco(id) {
             const alerta = alertasShopWise.find(item => Number(item.id) === Number(id));
             if (!alerta) return;
-            const novoPreco = window.prompt(
+            const novoPreco = await window.showPrompt(
                 "Qual preço deseja acompanhar?",
-                String(alerta.preco_alvo).replace(".", ",")
+                String(alerta.preco_alvo).replace(".", ","),
+                { title: "Editar alerta de preço", confirmText: "Salvar" }
             );
             if (novoPreco === null) return;
             const preco = Number(String(novoPreco).replace(",", "."));
             if (!Number.isFinite(preco) || preco <= 0) {
-                window.alert("Informe um preço maior que zero.");
+                showToast("Informe um preço maior que zero.", "error");
                 return;
             }
 
@@ -442,12 +445,12 @@
                 if (!resposta.ok) throw new Error(dados.erro || "Não foi possível atualizar o alerta.");
                 await carregarAlertas();
             } catch (erro) {
-                window.alert(erro.message);
+                showToast(erro.message, "error");
             }
         }
 
         async function desativarAlertaPreco(id) {
-            if (!window.confirm("Desativar este alerta de preço?")) return;
+            if (!await window.showConfirm("Desativar este alerta de preço?", { confirmText: "Desativar", danger: true })) return;
             try {
                 const resposta = await shopwiseFetch(`/api/alertas-preco/${id}/`, {
                     method: "DELETE"
@@ -456,7 +459,7 @@
                 if (!resposta.ok) throw new Error(dados.erro || "Não foi possível desativar o alerta.");
                 await carregarAlertas();
             } catch (erro) {
-                window.alert(erro.message);
+                showToast(erro.message, "error");
             }
         }
 

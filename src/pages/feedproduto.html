@@ -9,7 +9,9 @@
     
     <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/baners.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
     <script src="{% static 'utils/shopwise-api.js' %}"></script>
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 </head>
 
 <body>
@@ -255,7 +257,7 @@
                 <div class="footer-container">
 
                     <div class="footer-brand">
-                        <a href="#" class="footer-logo" aria-label="ShopWise">
+                        <a href="feedproduto.html" class="footer-logo" aria-label="ShopWise - início">
                             <img 
                                 src="{% static 'assets/shopwise_sem_fundo.png' %}" 
                                 alt="ShopWise" 
@@ -269,67 +271,14 @@
                             Feito em Floriano por estudantes do IFPI.
                         </p>
 
-                        <div class="footer-socials" aria-label="Redes sociais">
-                            <a href="#" aria-label="Twitter">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M22 4.01c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.89-2.37 8.59 8.59 0 0 1-2.72 1.04A4.27 4.27 0 0 0 11.42 7.25c0 .34.04.67.11.98A12.1 12.1 0 0 1 2.74 3.78a4.26 4.26 0 0 0 1.32 5.7 4.2 4.2 0 0 1-1.94-.53v.05a4.27 4.27 0 0 0 3.42 4.18 4.3 4.3 0 0 1-1.93.07 4.28 4.28 0 0 0 3.99 2.97A8.58 8.58 0 0 1 2.3 18.05c-.34 0-.68-.02-1.01-.06A12.1 12.1 0 0 0 7.86 20c7.88 0 12.19-6.53 12.19-12.19v-.55A8.7 8.7 0 0 0 22 4.01z"></path>
-                                </svg>
-                            </a>
-
-                            <a href="#" aria-label="Instagram">
-                                <svg viewBox="0 0 24 24">
-                                    <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-                                    <circle cx="12" cy="12" r="4"></circle>
-                                    <circle cx="17.5" cy="6.5" r="1"></circle>
-                                </svg>
-                            </a>
-
-                            <a href="#" aria-label="LinkedIn">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                                    <rect x="2" y="9" width="4" height="12"></rect>
-                                    <circle cx="4" cy="4" r="2"></circle>
-                                </svg>
-                            </a>
-
-                            <a href="#" aria-label="GitHub">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                                </svg>
-                            </a>
-                        </div>
                     </div>
 
                     <div class="footer-column">
                         <h3>Produto</h3>
-                        <a href="#">Recursos</a>
-                        <a href="#">Cupons</a>
-                        <a href="#">Alertas</a>
-                        <a href="#">API</a>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3>Empresa</h3>
-                        <a href="#">Sobre</a>
-                        <a href="#">Carreiras</a>
-                        <a href="#">Imprensa</a>
-                        <a href="#">Blog</a>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3>Suporte</h3>
-                        <a href="#">Central de Ajuda</a>
-                        <a href="#">Contato</a>
-                        <a href="#">Status</a>
-                        <a href="#">Comunidade</a>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3>Legal</h3>
-                        <a href="#">Privacidade</a>
-                        <a href="#">Termos</a>
-                        <a href="#">Cookies</a>
-                        <a href="#">LGPD</a>
+                        <a href="feedproduto.html">Ofertas</a>
+                        <a href="cupons.html">Cupons</a>
+                        <a href="AlertaPreco.html">Alertas de preço</a>
+                        <a href="pedidos.html">Meus pedidos</a>
                     </div>
 
                 </div>
@@ -552,7 +501,9 @@
                         id: supermercado.id,
                         nome: supermercado.nome || "Supermercado",
                         cidade: supermercado.cidade || "",
-                        bairro: supermercado.bairro || ""
+                        bairro: supermercado.bairro || "",
+                        mediaAvaliacoes: supermercado.media_avaliacoes,
+                        totalAvaliacoes: Number(supermercado.total_avaliacoes || 0)
                     });
                 }
             });
@@ -573,8 +524,11 @@
 
             container.innerHTML = lojasFloriano.map((loja) => {
                 const inicial = escaparHtml(loja.nome.charAt(0).toUpperCase());
+                const avaliacaoTexto = loja.totalAvaliacoes
+                    ? `${Number(loja.mediaAvaliacoes).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ★ · ${loja.totalAvaliacoes} avaliação(ões)`
+                    : "Sem avaliações";
                 return `
-                    <a href="#" class="store-item" title="${escaparHtml(loja.nome)}"
+                    <a class="store-item" role="button" tabindex="0" title="${escaparHtml(loja.nome)}"
                        data-loja="${escaparHtml(loja.nome)}">
                         <div class="store-logo"
                              style="display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;">
@@ -582,6 +536,7 @@
                         </div>
                         <div class="store-text">
                             <span class="store-name">${escaparHtml(loja.nome)}</span>
+                            <span class="store-rating">${avaliacaoTexto}</span>
                             <span class="store-offer">Ver produtos</span>
                         </div>
                     </a>
@@ -598,11 +553,6 @@
             const descricao = escaparHtml(produto.descricao || "");
             const estoque = Number(produto.estoque || 0);
             const imagem = obterImagemProduto(produto);
-            const totalAvaliacoes = Number(produto.total_avaliacoes || 0);
-            const mediaAvaliacoes = produto.media_avaliacoes == null
-                ? "Sem avaliações"
-                : `${Number(produto.media_avaliacoes).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 })} ★ · ${totalAvaliacoes} avaliação(ões)`;
-
             return `
                 <article class="product-card">
                     <div class="product-image-wrapper">
@@ -630,12 +580,6 @@
                         <div class="savings-text">
                             ${mercado} • ${categoria}
                         </div>
-
-                        <div class="product-rating-summary">${escaparHtml(mediaAvaliacoes)}</div>
-                        <details class="product-reviews" data-product-reviews="${Number(produto.id)}">
-                            <summary>Ver avaliações</summary>
-                            <div class="product-reviews-list">Abra para carregar as avaliações.</div>
-                        </details>
 
                         <h3 class="product-name">${nome}</h3>
                         ${tamanhoEmbalagem ? `<p style="font-size:.85rem;color:#666;margin:.2rem 0;">${tamanhoEmbalagem}</p>` : ""}
@@ -678,52 +622,18 @@
             }
 
             grid.innerHTML = lista.map(criarHtmlProduto).join("");
-            grid.querySelectorAll("[data-product-reviews]").forEach(detalhes => {
-                detalhes.addEventListener("toggle", () => {
-                    if (detalhes.open && detalhes.dataset.loaded !== "true") {
-                        carregarAvaliacoesPublicas(detalhes);
-                    }
-                });
-            });
-        }
-
-        async function carregarAvaliacoesPublicas(detalhes) {
-            const produtoId = Number(detalhes.dataset.productReviews);
-            const conteudo = detalhes.querySelector(".product-reviews-list");
-            detalhes.dataset.loaded = "true";
-            conteudo.textContent = "Carregando avaliações…";
-
-            try {
-                const resposta = await fetch(`/api/feed/avaliacoes/?produto_id=${produtoId}`);
-                const dados = await resposta.json();
-                if (!resposta.ok) throw new Error(dados.erro || "Não foi possível carregar as avaliações.");
-                if (!dados.avaliacoes.length) {
-                    conteudo.textContent = "Este produto ainda não tem avaliações.";
-                    return;
-                }
-
-                conteudo.innerHTML = dados.avaliacoes.map(avaliacao => `
-                    <article class="product-review-item">
-                        <strong>${"★".repeat(Number(avaliacao.nota))}${"☆".repeat(5 - Number(avaliacao.nota))}</strong>
-                        <p>${escaparHtml(avaliacao.comentario || "Avaliação sem comentário.")}</p>
-                        <small>${new Date(avaliacao.criada_em).toLocaleDateString("pt-BR")}</small>
-                    </article>
-                `).join("");
-            } catch (erro) {
-                detalhes.dataset.loaded = "false";
-                conteudo.textContent = erro.message;
-            }
         }
 
         async function criarAlertaPreco(produtoId, precoAtual) {
-            const entrada = window.prompt(
+            const entrada = await window.showPrompt(
                 "Qual preço deseja acompanhar?",
-                Number(precoAtual).toFixed(2).replace(".", ",")
+                Number(precoAtual).toFixed(2).replace(".", ","),
+                { title: "Criar alerta de preço", confirmText: "Criar alerta" }
             );
             if (entrada === null) return;
             const precoAlvo = Number(String(entrada).replace(",", "."));
             if (!Number.isFinite(precoAlvo) || precoAlvo <= 0) {
-                window.alert("Informe um preço maior que zero.");
+                showToast("Informe um preço maior que zero.", "error");
                 return;
             }
 
@@ -739,9 +649,9 @@
                     return;
                 }
                 if (!resposta.ok) throw new Error(dados.erro || "Não foi possível criar o alerta.");
-                window.alert(dados.mensagem || "Alerta de preço salvo.");
+                showToast(dados.mensagem || "Alerta de preço salvo.", "success");
             } catch (erro) {
-                window.alert(erro.message);
+                showToast(erro.message, "error");
             }
         }
 
@@ -754,7 +664,7 @@
             const quantidadeAtual = itemExistente ? Number(itemExistente.quantidade || 0) : 0;
 
             if (quantidadeAtual >= estoque) {
-                alert("A quantidade máxima disponível desse produto já está no carrinho.");
+                showToast("A quantidade máxima disponível desse produto já está no carrinho.", "warning");
                 return;
             }
 
@@ -852,7 +762,7 @@
             }
 
             if (storesCarousel) {
-                storesCarousel.addEventListener("click", (event) => {
+                    storesCarousel.addEventListener("click", (event) => {
                     const loja = event.target.closest(".store-item");
                     if (!loja) return;
 
@@ -868,6 +778,13 @@
                     if (searchInput) searchInput.value = estadoBusca.termo;
                     renderizarProdutos();
                 });
+                    storesCarousel.addEventListener("keydown", event => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        const loja = event.target.closest(".store-item");
+                        if (!loja) return;
+                        event.preventDefault();
+                        loja.click();
+                    });
             }
         }
 

@@ -46,6 +46,20 @@
     transition: all 0.3s ease;
 }
 
+a.mp-opcao-card {
+    color: inherit;
+    text-decoration: none;
+}
+
+a.mp-opcao-card h3 {
+    color: #2c3e50;
+}
+
+a.mp-opcao-card:focus-visible {
+    outline: 3px solid rgba(46, 204, 113, .55);
+    outline-offset: 3px;
+}
+
 .mp-opcao-card:hover {
     border-color: #2ECC71;
     box-shadow: 0 4px 12px rgba(46, 204, 113, 0.15);
@@ -179,6 +193,41 @@
     font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    font: inherit;
+}
+
+.mp-action-link[data-editar] {
+    color: #168a4b;
+}
+
+.mp-action-link[data-editar]:hover {
+    color: #106d3a;
+    text-decoration: underline;
+}
+
+.mp-action-link[data-excluir]:hover {
+    color: #bd3028;
+    text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+    .mp-container { width: 100%; padding: 1.25rem; }
+    .mp-opcoes-cadastro { flex-direction: column; gap: .8rem; }
+    .mp-opcao-card { padding: 1.1rem; }
+    .mp-card { padding: 1.25rem; }
+    .mp-form-row { flex-direction: column; gap: 0; }
+    .mp-form-actions { flex-wrap: wrap; }
+    .mp-table th, .mp-table td { padding: .7rem .55rem; font-size: .85rem; }
+}
+
+@media (max-width: 480px) {
+    .mp-container { padding: 1rem .8rem; }
+    .mp-title { font-size: 1.45rem; }
+    .mp-btn { width: 100%; }
+    .mp-form-actions { flex-direction: column; }
 }
 
 .mp-feedback-message {

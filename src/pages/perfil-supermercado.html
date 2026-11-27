@@ -23,6 +23,9 @@
         rel="stylesheet"
         href="{% static 'styles/manter-produtos.css' %}"
     >
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/seller-mobile-nav.css' %}">
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 
     <style>
         .perfil-resumo {
@@ -196,6 +199,8 @@
 <body>
 
     <div class="app-layout">
+        <button class="seller-mobile-menu" id="sellerMobileMenu" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">☰</button>
+        <div class="sidebar-overlay" id="sellerSidebarOverlay"></div>
 
         <!-- SIDEBAR -->
         <aside
@@ -205,7 +210,7 @@
 
             <div class="sidebar-logo">
 
-                <a href="#">
+                <a href="visao-geral-supermercado.html" aria-label="ShopWise - visão geral">
                     <img
                         src="{% static 'assets/img/logoshopwise.png' %}"
                         alt="ShopWise"
@@ -218,7 +223,7 @@
             <nav class="sidebar-nav">
 
                 <a
-                    href="#"
+                    href="visao-geral-supermercado.html"
                     class="nav-item"
                     aria-label="Visão Geral"
                 >
@@ -294,7 +299,7 @@
 
 
                 <a
-                    href="manter-produtos.html"
+                    href="pedidos-supermercado.html"
                     class="nav-item"
                     aria-label="Pedidos Recebidos"
                 >
@@ -357,8 +362,8 @@
 
                 </a>
 
-                <a
-                    href="#"
+                <button
+                    type="button"
                     class="nav-item"
                     id="btnSairSupermercado"
                     aria-label="Sair"
@@ -376,7 +381,7 @@
                     </svg>
 
                     <span>Sair</span>
-                </a>
+                </button>
 
             </nav>
 
@@ -1738,15 +1743,6 @@
 
                 event.preventDefault();
 
-                const confirmar =
-                    confirm(
-                        'Deseja realmente sair da conta do supermercado?'
-                    );
-
-                if (!confirmar) {
-                    return;
-                }
-
                 try {
 
                     const resposta =
@@ -1778,9 +1774,9 @@
 
                     console.error(erro);
 
-                    alert(
-                        erro.message ||
-                        'Erro ao realizar logout.'
+                    mostrarMensagem(
+                        erro.message || 'Erro ao realizar logout.',
+                        'erro'
                     );
                 }
             }
@@ -1789,6 +1785,7 @@
         carregarPerfil();
 
     </script>
+    <script src="{% static 'utils/seller-mobile-nav.js' %}"></script>
 
 </body>
 

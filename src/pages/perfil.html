@@ -7,6 +7,8 @@
     <title>ShopWise - Perfil</title>
     <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/perfil.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 
     <style>
         .profile-action-row,
@@ -702,7 +704,7 @@
             } catch (erro) {
                 console.error(erro);
 
-                alert(
+                showToast(
                     erro.message ||
                     "Não foi possível encerrar a sessão."
                 );

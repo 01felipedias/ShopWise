@@ -1,0 +1,13 @@
+.seller-mobile-menu { display: none; }
+@media (max-width: 1024px) {
+    .seller-mobile-menu { position: fixed; z-index: 1003; top: 12px; left: 14px; display: grid; width: 44px; height: 44px; place-items: center; border: 0; border-radius: 12px; background: #20b968; color: #fff; box-shadow: 0 4px 14px rgba(25, 91, 52, .2); font: inherit; font-size: 1.55rem; line-height: 1; cursor: pointer; }
+    .seller-mobile-menu:hover { background: #168f50; }
+    .seller-mobile-menu:focus-visible { outline: 3px solid #125a35; outline-offset: 2px; }
+    .sidebar { width: 250px; transform: translateX(-100%); }
+    .sidebar.open { width: 250px; transform: translateX(0); }
+    .sidebar.open .sidebar-full-logo { opacity: 1; transform: translateX(0); }
+    .sidebar .nav-item span { opacity: 1; }
+    .main-content { margin-left: 0 !important; width: 100% !important; }
+    .sidebar-overlay.active { display: block; opacity: 1; }
+    .main-content .mp-container { padding-top: 4.25rem; }
+}

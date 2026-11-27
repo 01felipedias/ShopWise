@@ -319,6 +319,25 @@
     margin-bottom: 12px;
 }
 
+.payment-demo-note {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--primary-dark);
+    border-radius: 8px;
+    background: #effaf3;
+    color: #42584a;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.payment-demo-note strong {
+    color: #187844;
+    font-size: 12px;
+}
+
 .pix-copy-row {
     display: grid;
     grid-template-columns: 1fr auto;

@@ -11,7 +11,9 @@
 
     <!-- CSS exclusivo do checkout/pagamento -->
     <link rel="stylesheet" href="{% static 'styles/checkout.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
     <script src="{% static 'utils/shopwise-api.js' %}"></script>
+    <script src="{% static 'utils/ui-feedback.js' %}"></script>
 </head>
 <body>
     <div class="app-layout">
@@ -191,21 +193,21 @@
                                     <input type="radio" name="paymentMethod" value="pix" checked>
                                     <span class="payment-icon">⚡</span>
                                     <strong>PIX</strong>
-                                    <small>⚡ Aprovação imediata</small>
+                                    <small>Transferência rápida</small>
                                 </label>
 
                                 <label class="payment-method" data-payment-card="credito">
                                     <input type="radio" name="paymentMethod" value="credito">
                                     <span class="payment-icon">💳</span>
                                     <strong>Crédito</strong>
-                                    <small>💳 Até 3x sem juros</small>
+                                    <small>Até 3x sem juros</small>
                                 </label>
 
                                 <label class="payment-method" data-payment-card="debito" data-no-installments="true">
                                     <input type="radio" name="paymentMethod" value="debito">
                                     <span class="payment-icon">💳</span>
                                     <strong>Débito</strong>
-                                    <small>💳 À vista no cartão</small>
+                                    <small>À vista no cartão</small>
                                 </label>
 
                                 <label class="payment-method" data-payment-card="entrega">
@@ -227,7 +229,7 @@
                                     <div class="pix-info">
                                         <h4>Pagamento via PIX</h4>
                                         <p id="pixInstructions">
-                                            Clique em "Gerar pagamento PIX" para criar a cobrança de teste.
+                                            Clique em "Gerar pagamento PIX" para criar a cobrança.
                                         </p>
                                         <div class="pix-timer" id="pixTimer" aria-live="polite">
                                             PIX ainda não gerado
@@ -240,7 +242,7 @@
                                             <button type="button" class="btn-copy-pix" onclick="copyPixCode()">Copiar</button>
                                         </div>
 
-                                        <a id="pixTicketLink" href="#" target="_blank" rel="noopener" hidden>
+                                        <a id="pixTicketLink" target="_blank" rel="noopener" hidden>
                                             Abrir cobrança PIX
                                         </a>
                                     </div>
@@ -248,10 +250,6 @@
                             </div>
 
                             <div class="payment-panel" id="cardPanel" hidden>
-                                <div class="card-security-alert">
-                                    <strong>Segurança:</strong> os dados são usados apenas para simular a tokenização do gateway. Não armazene cartão real no navegador.
-                                </div>
-
                                 <div class="card-form-grid">
                                     <div class="checkout-input-group card-full">
                                         <label for="cardName" class="checkout-label">Nome impresso no cartão</label>
@@ -298,7 +296,7 @@
                             </div>
 
                             <div class="gateway-status" id="gatewayStatus" aria-live="polite">
-                                Mercado Pago sandbox pronto para gerar a cobrança PIX de teste.
+                                Selecione uma forma de pagamento para continuar.
                             </div>
                         </div>
                     </div>
@@ -472,6 +470,15 @@ const dinheiro = valor => Number(valor || 0).toLocaleString("pt-BR", {
     style: "currency", currency: "BRL"
 });
 const precoNumero = valor => Number(String(valor ?? "0").replace(",", ".")) || 0;
+
+function exibirStatusPagamento(mensagem, tipo = "") {
+    const status = document.getElementById("gatewayStatus");
+    if (!status) return;
+
+    status.textContent = mensagem;
+    status.classList.remove("processing", "success", "error");
+    if (tipo) status.classList.add(tipo);
+}
 
 function subtotalCarrinho() {
     return carrinho.reduce((total, item) =>
@@ -804,26 +811,45 @@ function copyPixCode() {
     const input = document.getElementById("pixCode");
 
     if (!input.value.trim()) {
-        alert("Gere o PIX antes de copiar o código.");
+        exibirStatusPagamento("Gere o PIX para liberar o código copia e cola.", "error");
         return;
     }
 
-    navigator.clipboard?.writeText(input.value)
-        .then(() => alert("Código PIX copiado."))
-        .catch(() => alert("Não foi possível copiar automaticamente. Selecione o código manualmente."));
+    if (!navigator.clipboard?.writeText) {
+        input.focus();
+        input.select();
+        input.setSelectionRange(0, input.value.length);
+        exibirStatusPagamento("Selecione e copie o código PIX manualmente.", "error");
+        return;
+    }
+
+    navigator.clipboard.writeText(input.value)
+        .then(() => exibirStatusPagamento("Código PIX copiado para a área de transferência.", "success"))
+        .catch(() => {
+            input.focus();
+            input.select();
+            input.setSelectionRange(0, input.value.length);
+            exibirStatusPagamento("Não foi possível copiar automaticamente. O código está selecionado para cópia manual.", "error");
+        });
 }
 
 function validarCheckout() {
-    if (!carrinho.length) { alert("Seu carrinho está vazio."); return false; }
+    if (!carrinho.length) {
+        exibirStatusPagamento("Seu carrinho está vazio. Adicione produtos antes de finalizar.", "error");
+        return false;
+    }
     const entrega = document.querySelector('input[name="deliveryMethod"]:checked')?.value === "delivery";
     if (entrega && !document.getElementById("deliveryAddress").value.trim()) {
-        alert("Informe o endereço de entrega."); return false;
+        exibirStatusPagamento("Informe o endereço de entrega para continuar.", "error");
+        document.getElementById("deliveryAddress").focus();
+        return false;
     }
     const metodo=document.querySelector('input[name="paymentMethod"]:checked')?.value;
     if (metodo==="credito" || metodo==="debito") {
         const campos=["cardName","cardNumber","cardExpiry","cardCvv"];
         if (campos.some(id=>!document.getElementById(id).value.trim())) {
-            alert("Preencha os dados do cartão para continuar."); return false;
+            exibirStatusPagamento("Preencha todos os campos do cartão para continuar.", "error");
+            return false;
         }
     }
     return true;
@@ -881,7 +907,6 @@ async function consultarStatusPixAutomaticamente(pedidoId, total, pagamentoInici
         const dados = await resposta.json();
 
         const pixTimer = document.getElementById("pixTimer");
-        const gatewayStatus = document.getElementById("gatewayStatus");
         const botao = document.getElementById("payButton");
         const botaoMobile = document.getElementById("mobilePayButton");
 
@@ -890,8 +915,10 @@ async function consultarStatusPixAutomaticamente(pedidoId, total, pagamentoInici
 
             pixTimer.textContent = "Pagamento aprovado";
 
-            gatewayStatus.textContent =
-                `Pedido SW-${String(pedidoId).padStart(6, "0")} pago e confirmado.`;
+            exibirStatusPagamento(
+                `Pedido SW-${String(pedidoId).padStart(6, "0")} pago e confirmado.`,
+                "success"
+            );
 
             botao.textContent = "PAGAMENTO APROVADO";
             botaoMobile.textContent = "PAGAMENTO APROVADO";
@@ -913,15 +940,14 @@ async function consultarStatusPixAutomaticamente(pedidoId, total, pagamentoInici
 
             pixTimer.textContent = "Pagamento cancelado";
 
-            gatewayStatus.textContent =
-                "A cobrança PIX foi cancelada ou expirou.";
+            exibirStatusPagamento("A cobrança PIX foi cancelada ou expirou.", "error");
 
             botao.textContent = "PIX CANCELADO";
             botaoMobile.textContent = "PIX CANCELADO";
             botao.disabled = true;
             botaoMobile.disabled = true;
 
-            alert("O pagamento PIX foi cancelado ou expirou.");
+            exibirStatusPagamento("O pagamento PIX foi cancelado ou expirou. Você pode voltar aos pedidos para conferir o status.", "error");
             return;
         }
 
@@ -932,8 +958,10 @@ async function consultarStatusPixAutomaticamente(pedidoId, total, pagamentoInici
             dados.pagamento?.order_status_detail ||
             "waiting_transfer";
 
-        gatewayStatus.textContent =
-            `Pedido SW-${String(pedidoId).padStart(6, "0")} aguardando pagamento PIX (${detalhe}).`;
+        exibirStatusPagamento(
+            `Pedido SW-${String(pedidoId).padStart(6, "0")} aguardando pagamento PIX (${detalhe}).`,
+            "processing"
+        );
 
     } catch (erro) {
         console.error("Erro ao consultar status do PIX:", erro);
@@ -960,8 +988,9 @@ function iniciarMonitoramentoPix(pedidoId, total, pagamentoInicial) {
         if (tentativasStatusPix >= 150) {
             pararMonitoramentoPix();
 
-            document.getElementById("gatewayStatus").textContent =
-                "A consulta automática foi encerrada. Você ainda pode acompanhar o pedido pela página de Pedidos.";
+            exibirStatusPagamento(
+                "A consulta automática foi encerrada. Você ainda pode acompanhar o pedido pela página de Pedidos."
+            );
 
             return;
         }
@@ -990,7 +1019,7 @@ async function finalizarPedido() {
         document.querySelector('input[name="paymentMethod"]:checked')?.value || "pix";
 
     if (formaPagamento === "pix" && pedidoPixCriado) {
-        alert("O PIX deste pedido já foi gerado. Use o QR Code ou o código copia e cola.");
+        exibirStatusPagamento("O PIX deste pedido já foi gerado. Use o QR Code ou o código copia e cola acima.");
         return;
     }
 
@@ -1025,9 +1054,9 @@ async function finalizarPedido() {
 
         if (!resposta.ok) {
             if (resposta.status === 401) {
-                alert("Faça login como cliente antes de finalizar o pedido.");
+                exibirStatusPagamento("Faça login como cliente antes de finalizar o pedido.", "error");
             } else {
-                alert(dados.erro || "Não foi possível criar o pedido.");
+                exibirStatusPagamento(dados.erro || "Não foi possível criar o pedido.", "error");
             }
             return;
         }
@@ -1036,7 +1065,7 @@ async function finalizarPedido() {
             const pagamento = dados.pagamento;
 
             if (!pagamento || !pagamento.qr_code) {
-                alert("O pedido foi criado, mas o Mercado Pago não retornou o PIX corretamente.");
+                exibirStatusPagamento("O pedido foi criado, mas o Mercado Pago não retornou o PIX. Confira o pedido antes de tentar novamente.", "error");
                 return;
             }
 
@@ -1050,7 +1079,6 @@ async function finalizarPedido() {
             const pixTicketLink = document.getElementById("pixTicketLink");
             const pixInstructions = document.getElementById("pixInstructions");
             const pixTimer = document.getElementById("pixTimer");
-            const gatewayStatus = document.getElementById("gatewayStatus");
 
             pixCode.value = pagamento.qr_code;
 
@@ -1068,12 +1096,13 @@ async function finalizarPedido() {
             }
 
             pixInstructions.textContent =
-                "Escaneie o QR Code ou use o código copia e cola para concluir o pagamento de teste.";
+                "Escaneie o QR Code ou use o código copia e cola para concluir o pagamento.";
             pixTimer.textContent = "Aguardando pagamento";
 
-            gatewayStatus.textContent =
-                `Pedido SW-${String(dados.pedido.id).padStart(6, "0")} criado. ` +
-                "Aguardando confirmação do PIX pelo Mercado Pago sandbox.";
+            exibirStatusPagamento(
+                `Pedido SW-${String(dados.pedido.id).padStart(6, "0")} criado. Aguardando confirmação do PIX pelo Mercado Pago.`,
+                "processing"
+            );
 
             botao.textContent = "PIX gerado - aguardando pagamento";
             botaoMobile.textContent = "PIX gerado";
@@ -1086,10 +1115,6 @@ async function finalizarPedido() {
                 pagamento
             );
 
-            alert(
-                "PIX sandbox gerado com sucesso! " +
-                "O ShopWise agora vai acompanhar a confirmação automaticamente."
-            );
             return;
         }
 
@@ -1122,7 +1147,7 @@ async function finalizarPedido() {
 
     } catch (erro) {
         console.error(erro);
-        alert("Não foi possível conectar ao servidor. Tente novamente.");
+        exibirStatusPagamento("Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.", "error");
     } finally {
         if (!pedidoPixCriado) {
             botao.disabled = false;

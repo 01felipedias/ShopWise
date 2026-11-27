@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="{% static 'styles/feed.css' %}">
     <link rel="stylesheet" href="{% static 'styles/avaliacao.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/ui-feedback.css' %}">
 
     <style>
         .avaliacao-select-group {
@@ -262,100 +263,88 @@
                 </div>
             </header>
 
-            <main class="page-container" role="main">
+            <main class="page-container avaliacao-page" role="main">
 
                 <section class="avaliacao-hero">
-                    <span class="avaliacao-badge">Avaliação</span>
-                    <h1 class="avaliacao-title">Como foi sua compra?</h1>
-                    <p class="avaliacao-subtitle">
-                        Avalie apenas produtos de pedidos concluídos.
-                        Sua opinião ajuda outros consumidores e aumenta a confiabilidade dos supermercados parceiros.
-                    </p>
+                    <a class="avaliacao-voltar" href="pedidos.html" aria-label="Voltar aos pedidos">←</a>
+                    <h1 class="avaliacao-title">Avaliar pedido</h1>
+                    <a class="avaliacao-fechar" href="pedidos.html" aria-label="Fechar avaliação">×</a>
                 </section>
 
+                <p class="avaliacao-subtitle">
+                    Conte como foi sua experiência com este supermercado. Sua opinião ajuda outros consumidores.
+                </p>
+
                 <div id="avaliacaoSemItens" class="avaliacao-vazio" hidden>
-                    Você não possui produtos disponíveis para avaliação neste momento.
+                    Você não tem supermercados aguardando avaliação. A opção aparece quando uma loja conclui o pedido.
                 </div>
 
                 <form class="avaliacao-form" id="avaliacaoForm" action="#">
 
                     <div class="avaliacao-select-group">
-                        <label class="avaliacao-label" for="itemPedidoSelect">
-                            Produto comprado
+                        <label class="avaliacao-label" for="lojaPedidoSelect">
+                            Supermercado e pedido
                         </label>
 
-                        <select id="itemPedidoSelect" class="avaliacao-select">
-                            <option value="">Carregando produtos...</option>
+                        <select id="lojaPedidoSelect" class="avaliacao-select">
+                            <option value="">Carregando lojas...</option>
                         </select>
                     </div>
 
-                    <section class="avaliacao-grid" aria-label="Resumo da avaliação">
+                    <div class="avaliacao-pedido-resumo" id="avaliacaoPedidoResumo">
+                        Escolha um pedido concluído para avaliar.
+                    </div>
 
-                        <article class="avaliacao-card">
-                            <h3>Nota geral</h3>
-
-                            <div
-                                class="avaliacao-stars"
-                                id="avaliacaoStars"
-                                role="radiogroup"
-                                aria-label="Escolha de 1 a 5 estrelas"
-                            >
+                    <section class="avaliacao-ratings" aria-label="Notas da avaliação">
+                        <div class="avaliacao-rating-row">
+                            <span>Qualidade dos produtos</span>
+                            <div class="avaliacao-stars" data-rating-group="notaProdutos" role="radiogroup" aria-label="Qualidade dos produtos, de 1 a 5 estrelas">
                                 <button type="button" class="avaliacao-star" data-nota="1" aria-label="1 estrela">★</button>
                                 <button type="button" class="avaliacao-star" data-nota="2" aria-label="2 estrelas">★</button>
                                 <button type="button" class="avaliacao-star" data-nota="3" aria-label="3 estrelas">★</button>
                                 <button type="button" class="avaliacao-star" data-nota="4" aria-label="4 estrelas">★</button>
                                 <button type="button" class="avaliacao-star" data-nota="5" aria-label="5 estrelas">★</button>
                             </div>
-
-                            <p id="avaliacaoNotaTexto">Selecione sua nota</p>
-                        </article>
-
-                        <article class="avaliacao-card">
-                            <h3>Preço correto?</h3>
-
-                            <label class="avaliacao-check-option">
-                                <input type="radio" name="precoCorreto" value="true" checked>
-                                <span>Sim, preço conferido</span>
-                            </label>
-
-                            <label class="avaliacao-check-option">
-                                <input type="radio" name="precoCorreto" value="false">
-                                <span>Não, houve diferença</span>
-                            </label>
-                        </article>
-
-                        <article class="avaliacao-card">
-                            <h3>Entrega</h3>
-
-                            <label class="avaliacao-check-option">
-                                <input type="radio" name="entregaOk" value="true" checked>
-                                <span>Dentro do prazo / tudo certo</span>
-                            </label>
-
-                            <label class="avaliacao-check-option">
-                                <input type="radio" name="entregaOk" value="false">
-                                <span>Houve algum problema</span>
-                            </label>
-                        </article>
-
+                            <input type="hidden" id="notaProdutos" value="">
+                        </div>
+                        <div class="avaliacao-rating-row">
+                            <span>Entrega ou retirada</span>
+                            <div class="avaliacao-stars" data-rating-group="notaEntrega" role="radiogroup" aria-label="Entrega ou retirada, de 1 a 5 estrelas">
+                                <button type="button" class="avaliacao-star" data-nota="1" aria-label="1 estrela">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="2" aria-label="2 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="3" aria-label="3 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="4" aria-label="4 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="5" aria-label="5 estrelas">★</button>
+                            </div>
+                            <input type="hidden" id="notaEntrega" value="">
+                        </div>
+                        <div class="avaliacao-rating-row">
+                            <span>Avaliação final</span>
+                            <div class="avaliacao-stars" data-rating-group="notaAvaliacao" role="radiogroup" aria-label="Avaliação final, de 1 a 5 estrelas">
+                                <button type="button" class="avaliacao-star" data-nota="1" aria-label="1 estrela">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="2" aria-label="2 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="3" aria-label="3 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="4" aria-label="4 estrelas">★</button>
+                                <button type="button" class="avaliacao-star" data-nota="5" aria-label="5 estrelas">★</button>
+                            </div>
+                            <input type="hidden" id="notaAvaliacao" value="">
+                        </div>
                     </section>
 
-                    <h3>Comentário</h3>
-
                     <label class="avaliacao-label" for="comentarioAvaliacao">
-                        Conte como foi sua experiência
+                        Escreva sua avaliação
                     </label>
 
                     <textarea
                         id="comentarioAvaliacao"
                         class="avaliacao-textarea"
-                        placeholder="Ex.: entrega rápida, produtos bem embalados e preço igual ao anunciado..."
+                        maxlength="1000"
+                        placeholder="Conte como foi sua experiência com a loja..."
                     ></textarea>
-
-                    <input type="hidden" id="notaAvaliacao" value="">
+                    <div class="avaliacao-contador"><span id="comentarioContagem">0</span>/1000</div>
 
                     <button type="submit" class="avaliacao-submit" id="btnEnviarAvaliacao">
-                        Enviar avaliação
+                        Envie sua avaliação
                     </button>
 
                     <p id="avaliacaoFeedback" class="avaliacao-feedback" aria-live="polite"></p>
@@ -376,7 +365,7 @@
     <script src="{% static 'utils/ui-feedback.js' %}"></script>
 
     <script>
-        let itensAvaliaveis = [];
+        let lojasAvaliaveis = [];
         let avaliacoesCliente = [];
 
         function escapar(texto) {
@@ -403,6 +392,13 @@
                 year: "numeric",
                 hour: "2-digit",
                 minute: "2-digit"
+            });
+        }
+
+        function dinheiro(valor) {
+            return Number(valor || 0).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
             });
         }
 
@@ -447,56 +443,96 @@
         }
 
         function limparEstrelas() {
-            document.getElementById("notaAvaliacao").value = "";
+            ["notaProdutos", "notaEntrega", "notaAvaliacao"].forEach(id => {
+                document.getElementById(id).value = "";
+            });
 
             document.querySelectorAll(".avaliacao-star").forEach(item => {
                 item.classList.remove("active");
+                item.setAttribute("aria-checked", "false");
             });
-
-            document.getElementById("avaliacaoNotaTexto").textContent =
-                "Selecione sua nota";
         }
 
         function configurarEstrelas() {
-            const estrelas = document.querySelectorAll(".avaliacao-star");
-            const notaInput = document.getElementById("notaAvaliacao");
-            const texto = document.getElementById("avaliacaoNotaTexto");
+            document.querySelectorAll(".avaliacao-stars[data-rating-group]").forEach(grupo => {
+                const notaInput = document.getElementById(grupo.dataset.ratingGroup);
+                const estrelas = grupo.querySelectorAll(".avaliacao-star");
 
-            estrelas.forEach(estrela => {
-                estrela.addEventListener("click", () => {
-                    const nota = Number(estrela.dataset.nota);
+                estrelas.forEach(estrela => {
+                    estrela.setAttribute("aria-checked", "false");
+                    estrela.addEventListener("click", () => {
+                        const nota = Number(estrela.dataset.nota);
+                        notaInput.value = nota;
 
-                    notaInput.value = nota;
-
-                    estrelas.forEach(item => {
-                        const valor = Number(item.dataset.nota);
-
-                        item.classList.toggle(
-                            "active",
-                            valor <= nota
-                        );
+                        estrelas.forEach(item => {
+                            const ativo = Number(item.dataset.nota) <= nota;
+                            item.classList.toggle("active", ativo);
+                            item.setAttribute(
+                                "aria-checked",
+                                Number(item.dataset.nota) === nota ? "true" : "false"
+                            );
+                        });
                     });
-
-                    texto.textContent =
-                        nota === 1
-                            ? "1 de 5 estrelas"
-                            : `${nota} de 5 estrelas`;
                 });
             });
         }
 
-        function renderizarItensAvaliaveis() {
-            const select = document.getElementById("itemPedidoSelect");
+        function renderizarLojasAvaliaveis() {
+            const select = document.getElementById("lojaPedidoSelect");
             const aviso = document.getElementById("avaliacaoSemItens");
             const form = document.getElementById("avaliacaoForm");
             const botao = document.getElementById("btnEnviarAvaliacao");
 
             select.innerHTML = "";
 
-            if (!itensAvaliaveis.length) {
+            const resumo = document.getElementById("avaliacaoPedidoResumo");
+            const atualizarResumo = () => {
+                const loja = lojasAvaliaveis.find(item =>
+                    `${item.pedido_id}:${item.supermercado_id}` === select.value
+                );
+                resumo.replaceChildren();
+                if (!loja) {
+                    resumo.textContent = "Escolha um pedido concluído para avaliar.";
+                    return;
+                }
+
+                const titulo = document.createElement("strong");
+                titulo.className = "avaliacao-pedido-titulo";
+                titulo.textContent = `${loja.supermercado} · Pedido SW-${String(loja.pedido_id).padStart(6, "0")}`;
+                resumo.appendChild(titulo);
+
+                const produtosTitulo = document.createElement("span");
+                produtosTitulo.className = "avaliacao-produtos-titulo";
+                produtosTitulo.textContent = "Produtos comprados";
+                resumo.appendChild(produtosTitulo);
+
+                const lista = document.createElement("ul");
+                lista.className = "avaliacao-produtos-lista";
+                (loja.produtos || []).forEach(produto => {
+                    const linha = document.createElement("li");
+                    const nome = document.createElement("span");
+                    nome.textContent = `${Number(produto.quantidade)}x ${produto.nome}`;
+                    linha.appendChild(nome);
+                    if (produto.subtotal != null) {
+                        const valor = document.createElement("strong");
+                        valor.textContent = dinheiro(produto.subtotal);
+                        linha.appendChild(valor);
+                    }
+                    lista.appendChild(linha);
+                });
+
+                if (!lista.children.length) {
+                    const linha = document.createElement("li");
+                    linha.textContent = "Produtos do pedido não encontrados.";
+                    lista.appendChild(linha);
+                }
+                resumo.appendChild(lista);
+            };
+
+            if (!lojasAvaliaveis.length) {
                 select.innerHTML = `
                     <option value="">
-                        Nenhum produto disponível para avaliação
+                        Nenhum supermercado disponível para avaliação
                     </option>
                 `;
 
@@ -512,20 +548,28 @@
 
             const placeholder = document.createElement("option");
             placeholder.value = "";
-            placeholder.textContent = "Selecione um produto";
+            placeholder.textContent = "Selecione a loja e o pedido";
             select.appendChild(placeholder);
 
-            itensAvaliaveis.forEach(item => {
+            lojasAvaliaveis.forEach(loja => {
                 const option = document.createElement("option");
 
-                option.value = item.item_pedido_id;
-
+                option.value = `${loja.pedido_id}:${loja.supermercado_id}`;
                 option.textContent =
-                    `Pedido SW-${String(item.pedido_id).padStart(6, "0")} • ` +
-                    `${item.produto} • ${item.supermercado}`;
+                    `Pedido SW-${String(loja.pedido_id).padStart(6, "0")} • ` +
+                    `${loja.supermercado}`;
 
                 select.appendChild(option);
             });
+
+            const parametros = new URLSearchParams(window.location.search);
+            const pedidoId = parametros.get("pedido_id");
+            const supermercadoId = parametros.get("supermercado_id");
+            if (pedidoId && supermercadoId) {
+                select.value = `${pedidoId}:${supermercadoId}`;
+            }
+            select.addEventListener("change", atualizarResumo);
+            atualizarResumo();
         }
 
         function estrelasTexto(nota) {
@@ -550,7 +594,7 @@
 
                     <div class="avaliacao-historico-topo">
                         <div>
-                            <h3>${escapar(avaliacao.produto)}</h3>
+                            <h3>${escapar(avaliacao.supermercado)}</h3>
 
                             <div class="avaliacao-historico-meta">
                                 Pedido SW-${String(avaliacao.pedido_id).padStart(6, "0")}
@@ -567,14 +611,10 @@
                         </div>
                     </div>
 
-                    <div class="avaliacao-historico-tags">
-                        <span class="avaliacao-tag ${avaliacao.preco_correto ? "" : "negativo"}">
-                            ${avaliacao.preco_correto ? "Preço correto" : "Preço diferente"}
-                        </span>
-
-                        <span class="avaliacao-tag ${avaliacao.entrega_ok ? "" : "negativo"}">
-                            ${avaliacao.entrega_ok ? "Entrega OK" : "Problema na entrega"}
-                        </span>
+                    <div class="avaliacao-historico-notas">
+                        <span>Produtos ${estrelasTexto(avaliacao.nota_produtos)}</span>
+                        <span>Entrega ${estrelasTexto(avaliacao.nota_entrega)}</span>
+                        <span>Geral ${estrelasTexto(avaliacao.nota)}</span>
                     </div>
 
                     ${
@@ -591,7 +631,7 @@
             const feedback = document.getElementById("avaliacaoFeedback");
 
             try {
-                const resposta = await shopwiseFetch("/api/avaliacoes/");
+                const resposta = await shopwiseFetch("/api/avaliacoes-supermercados/");
                 const dados = await resposta.json();
 
                 if (resposta.status === 401) {
@@ -608,15 +648,15 @@
                     );
                 }
 
-                itensAvaliaveis = Array.isArray(dados.itens_avaliaveis)
-                    ? dados.itens_avaliaveis
+                lojasAvaliaveis = Array.isArray(dados.lojas_avaliaveis)
+                    ? dados.lojas_avaliaveis
                     : [];
 
                 avaliacoesCliente = Array.isArray(dados.avaliacoes)
                     ? dados.avaliacoes
                     : [];
 
-                renderizarItensAvaliaveis();
+                renderizarLojasAvaliaveis();
                 renderizarHistorico();
 
             } catch (erro) {
@@ -635,28 +675,24 @@
             const feedback = document.getElementById("avaliacaoFeedback");
             const botao = document.getElementById("btnEnviarAvaliacao");
 
-            const itemPedidoId =
-                document.getElementById("itemPedidoSelect").value;
+            const selecaoLoja =
+                document.getElementById("lojaPedidoSelect").value;
+
+            const notaProdutos =
+                Number(document.getElementById("notaProdutos").value);
+
+            const notaEntrega =
+                Number(document.getElementById("notaEntrega").value);
 
             const nota =
                 Number(document.getElementById("notaAvaliacao").value);
 
-            const precoCorreto =
-                document.querySelector(
-                    'input[name="precoCorreto"]:checked'
-                )?.value === "true";
-
-            const entregaOk =
-                document.querySelector(
-                    'input[name="entregaOk"]:checked'
-                )?.value === "true";
-
             const comentario =
                 document.getElementById("comentarioAvaliacao").value.trim();
 
-            if (!itemPedidoId) {
+            if (!selecaoLoja) {
                 feedback.textContent =
-                    "Selecione o produto que deseja avaliar.";
+                    "Selecione o supermercado e o pedido que deseja avaliar.";
 
                 feedback.className =
                     "avaliacao-feedback erro";
@@ -664,9 +700,9 @@
                 return;
             }
 
-            if (!nota) {
+            if (!notaProdutos || !notaEntrega || !nota) {
                 feedback.textContent =
-                    "Escolha uma nota de 1 a 5 estrelas.";
+                    "Dê uma nota para produtos, entrega e experiência geral.";
 
                 feedback.className =
                     "avaliacao-feedback erro";
@@ -677,17 +713,20 @@
             botao.disabled = true;
             botao.textContent = "Enviando avaliação...";
 
+            const [pedidoId, supermercadoId] = selecaoLoja.split(":").map(Number);
+
             try {
-                const resposta = await shopwiseFetch("/api/avaliacoes/", {
+                const resposta = await shopwiseFetch("/api/avaliacoes-supermercados/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        item_pedido_id: Number(itemPedidoId),
+                        pedido_id: pedidoId,
+                        supermercado_id: supermercadoId,
+                        nota_produtos: notaProdutos,
+                        nota_entrega: notaEntrega,
                         nota: nota,
-                        preco_correto: precoCorreto,
-                        entrega_ok: entregaOk,
                         comentario: comentario
                     })
                 });
@@ -707,17 +746,12 @@
                     "avaliacao-feedback sucesso";
 
                 document.getElementById("comentarioAvaliacao").value = "";
-                document.getElementById("itemPedidoSelect").value = "";
+                document.getElementById("comentarioContagem").textContent = "0";
+                document.getElementById("lojaPedidoSelect").value = "";
+                document.getElementById("avaliacaoPedidoResumo").textContent =
+                    "Escolha um pedido concluído para avaliar.";
 
                 limparEstrelas();
-
-                document.querySelector(
-                    'input[name="precoCorreto"][value="true"]'
-                ).checked = true;
-
-                document.querySelector(
-                    'input[name="entregaOk"][value="true"]'
-                ).checked = true;
 
                 await carregarAvaliacoes();
 
@@ -743,6 +777,11 @@
             document
                 .getElementById("avaliacaoForm")
                 ?.addEventListener("submit", enviarAvaliacao);
+
+            document.getElementById("comentarioAvaliacao")?.addEventListener("input", event => {
+                document.getElementById("comentarioContagem").textContent =
+                    event.target.value.length;
+            });
 
             carregarAvaliacoes();
         });

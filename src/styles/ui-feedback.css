@@ -1,0 +1,20 @@
+.shopwise-toast-container { position: fixed; z-index: 3000; right: 22px; bottom: 22px; display: grid; gap: 10px; max-width: min(420px, calc(100vw - 32px)); pointer-events: none; }
+.shopwise-toast { padding: 14px 18px; border: 1px solid #e1e9e4; border-left: 4px solid #4585a0; border-radius: 12px; background: #fff; color: #2d3d34; box-shadow: 0 12px 34px rgba(24, 46, 33, .16); font-size: .94rem; line-height: 1.45; opacity: 0; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
+.shopwise-toast.show { opacity: 1; transform: translateY(0); }
+.shopwise-toast.success { border-left-color: #20a460; }
+.shopwise-toast.error { border-left-color: #d74d4d; }
+.shopwise-toast.warning { border-left-color: #d99a25; }
+.shopwise-action-dialog { width: min(500px, calc(100vw - 28px)); max-width: none; padding: 0; border: 0; border-radius: 18px; background: transparent; color: #293a31; box-shadow: 0 24px 80px rgba(0,0,0,.2); }
+.shopwise-action-dialog::backdrop { background: rgba(20, 32, 25, .42); backdrop-filter: blur(3px); }
+.shopwise-action-card { position: relative; display: grid; gap: 12px; padding: 26px; border-radius: 18px; background: #fff; }
+.shopwise-action-card h2 { margin: 0; padding-right: 30px; font-size: 1.2rem; }
+.shopwise-action-card p { margin: 0; color: #68766e; line-height: 1.5; }
+.shopwise-action-close { position: absolute; top: 15px; right: 17px; border: 0; background: transparent; color: #68766e; font-size: 1.6rem; cursor: pointer; }
+.shopwise-prompt-field { display: grid; gap: 6px; color: #47564c; font-size: .88rem; font-weight: 650; }
+.shopwise-prompt-field[hidden] { display: none; }
+.shopwise-prompt-field input { min-height: 46px; padding: 10px 12px; border: 1px solid #d5e1d9; border-radius: 10px; font: inherit; }
+.shopwise-action-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+.shopwise-action-buttons button { min-height: 42px; padding: 0 16px; border: 1px solid #dce7e0; border-radius: 10px; background: #fff; color: #435148; font: inherit; font-weight: 700; cursor: pointer; }
+.shopwise-action-buttons .shopwise-action-confirm { border-color: #20a460; background: #20a460; color: #fff; }
+.shopwise-action-buttons .shopwise-action-confirm.danger { border-color: #d74d4d; background: #d74d4d; }
+@media (max-width: 560px) { .shopwise-toast-container { right: 12px; bottom: 12px; left: 12px; max-width: none; } }

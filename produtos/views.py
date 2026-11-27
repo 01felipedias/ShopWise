@@ -36,6 +36,7 @@ from .models import (
     AlertaPreco,
     Notificacao,
     Avaliacao,
+    AvaliacaoSupermercado,
 )
 
 from .mercado_pago import (
@@ -488,6 +489,13 @@ class FeedProdutos(APIView):
             total_avaliacoes=Count('avaliacoes')
         ).order_by('-criado_em')
 
+        avaliacoes_lojas = {
+            item['supermercado_id']: item
+            for item in AvaliacaoSupermercado.objects
+            .values('supermercado_id')
+            .annotate(media=Avg('nota'), total=Count('id'))
+        }
+
         dados = []
 
         for produto in produtos:
@@ -510,6 +518,14 @@ class FeedProdutos(APIView):
                     'nome': produto.supermercado.nome,
                     'cidade': produto.supermercado.cidade,
                     'bairro': produto.supermercado.bairro,
+                    'media_avaliacoes': (
+                        round(avaliacoes_lojas[produto.supermercado_id]['media'], 2)
+                        if produto.supermercado_id in avaliacoes_lojas
+                        else None
+                    ),
+                    'total_avaliacoes': avaliacoes_lojas.get(
+                        produto.supermercado_id, {}
+                    ).get('total', 0),
                 }
             })
 
@@ -794,8 +810,15 @@ class PedidoList(APIView):
             .order_by('-criado_em')
         )
 
+        pedidos_lista = list(pedidos)
+        avaliacoes_enviadas = set(
+            AvaliacaoSupermercado.objects
+            .filter(cliente_id=cliente_id)
+            .values_list('pedido_id', 'supermercado_id')
+        )
+
         dados = []
-        for pedido in pedidos:
+        for pedido in pedidos_lista:
             subpedidos = list(pedido.subpedidos.all())
             dados.append({
                 'id': pedido.id,
@@ -815,6 +838,10 @@ class PedidoList(APIView):
                         'id': subpedido.supermercado_id,
                         'nome': subpedido.supermercado.nome,
                         'status': subpedido.status,
+                        'avaliado': (
+                            pedido.id,
+                            subpedido.supermercado_id
+                        ) in avaliacoes_enviadas,
                         'subtotal': str(sum(
                             (
                                 item.subtotal
@@ -1768,6 +1795,147 @@ class AvaliacaoList(APIView):
             },
             status=201
         )
+
+
+class AvaliacaoSupermercadoList(APIView):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [ClienteAutenticado]
+
+    def get(self, request):
+        cliente_id = request.cliente_id
+        avaliacoes = (
+            AvaliacaoSupermercado.objects
+            .filter(cliente_id=cliente_id)
+            .select_related('pedido', 'supermercado')
+            .order_by('-criada_em')
+        )
+        ids_avaliados = set(
+            avaliacoes.values_list('pedido_id', 'supermercado_id')
+        )
+        subpedidos = (
+            PedidoPorSupermercado.objects
+            .filter(pedido__cliente_id=cliente_id, status='concluido')
+            .select_related('pedido', 'supermercado')
+            .prefetch_related('pedido__itens')
+            .order_by('-pedido__criado_em')
+        )
+        lojas_avaliaveis = []
+        for subpedido in subpedidos:
+            chave = (subpedido.pedido_id, subpedido.supermercado_id)
+            if chave in ids_avaliados:
+                continue
+            lojas_avaliaveis.append({
+                'pedido_id': subpedido.pedido_id,
+                'supermercado_id': subpedido.supermercado_id,
+                'pedido_criado_em': subpedido.pedido.criado_em,
+                'supermercado': subpedido.supermercado.nome,
+                'produtos': [
+                    {
+                        'nome': item.nome_produto,
+                        'quantidade': item.quantidade,
+                        'subtotal': str(item.subtotal),
+                    }
+                    for item in subpedido.pedido.itens.all()
+                    if item.supermercado_id == subpedido.supermercado_id
+                ],
+            })
+
+        return Response({
+            'lojas_avaliaveis': lojas_avaliaveis,
+            'avaliacoes': [
+                {
+                    'id': avaliacao.id,
+                    'pedido_id': avaliacao.pedido_id,
+                    'supermercado_id': avaliacao.supermercado_id,
+                    'supermercado': avaliacao.supermercado.nome,
+                    'nota': avaliacao.nota,
+                    'nota_produtos': avaliacao.nota_produtos,
+                    'nota_entrega': avaliacao.nota_entrega,
+                    'preco_correto': avaliacao.preco_correto,
+                    'entrega_ok': avaliacao.entrega_ok,
+                    'comentario': avaliacao.comentario,
+                    'criada_em': avaliacao.criada_em,
+                }
+                for avaliacao in avaliacoes
+            ],
+        })
+
+    def post(self, request):
+        try:
+            pedido_id = int(request.data.get('pedido_id'))
+            supermercado_id = int(request.data.get('supermercado_id'))
+            nota = int(request.data.get('nota'))
+            nota_produtos = int(request.data.get('nota_produtos'))
+            nota_entrega = int(request.data.get('nota_entrega'))
+        except (TypeError, ValueError):
+            return Response(
+                {
+                    'erro': (
+                        'Pedido, supermercado e as três notas '
+                        'são obrigatórios.'
+                    )
+                },
+                status=400
+            )
+
+        if any(valor < 1 or valor > 5 for valor in (
+            nota_produtos, nota_entrega, nota
+        )):
+            return Response(
+                {'erro': 'Todas as notas devem estar entre 1 e 5 estrelas.'},
+                status=400
+            )
+
+        subpedido = get_object_or_404(
+            PedidoPorSupermercado.objects.select_related(
+                'pedido', 'supermercado'
+            ),
+            pedido_id=pedido_id,
+            supermercado_id=supermercado_id,
+            pedido__cliente_id=request.cliente_id
+        )
+        if subpedido.status != 'concluido':
+            return Response(
+                {'erro': 'Só é possível avaliar uma loja após a conclusão do pedido.'},
+                status=400
+            )
+
+        if AvaliacaoSupermercado.objects.filter(
+            pedido_id=pedido_id,
+            supermercado_id=supermercado_id
+        ).exists():
+            return Response(
+                {'erro': 'Esta loja deste pedido já foi avaliada.'},
+                status=400
+            )
+
+        avaliacao = AvaliacaoSupermercado.objects.create(
+            cliente_id=request.cliente_id,
+            pedido=subpedido.pedido,
+            supermercado=subpedido.supermercado,
+            nota=nota,
+            nota_produtos=nota_produtos,
+            nota_entrega=nota_entrega,
+            preco_correto=nota_produtos >= 3,
+            entrega_ok=nota_entrega >= 3,
+            comentario=str(request.data.get('comentario', '')).strip(),
+        )
+
+        return Response({
+            'mensagem': 'Avaliação do supermercado enviada com sucesso.',
+            'avaliacao': {
+                'id': avaliacao.id,
+                'pedido_id': avaliacao.pedido_id,
+                'supermercado_id': avaliacao.supermercado_id,
+                'supermercado': avaliacao.supermercado.nome,
+                'nota': avaliacao.nota,
+                'nota_produtos': avaliacao.nota_produtos,
+                'nota_entrega': avaliacao.nota_entrega,
+                'preco_correto': avaliacao.preco_correto,
+                'entrega_ok': avaliacao.entrega_ok,
+                'comentario': avaliacao.comentario,
+            }
+        }, status=201)
 
 
 class AvaliacoesPublicas(APIView):
