@@ -52,9 +52,15 @@ class SupermercadoList(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        supermercados = Supermercado.objects.all()
-        serializer = SupermercadoSerializer(supermercados, many=True)
-        return Response(serializer.data)
+        supermercados = Supermercado.objects.values(
+            'id',
+            'nome',
+            'cidade',
+            'estado',
+            'bairro'
+        )
+
+        return Response(list(supermercados))
 
     def post(self, request):
         serializer = SupermercadoSerializer(data=request.data)
